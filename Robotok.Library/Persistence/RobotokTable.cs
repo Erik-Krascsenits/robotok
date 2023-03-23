@@ -11,9 +11,15 @@ namespace ELTE.Robotok.Persistence
     /// </summary>
     public class RobotokTable
     {
+        struct Field
+        {
+            private Int32 _fieldValue;
+            private Int32 _remainingCleaningOperations;
+            bool _attachmentOnTop, _attachmentOnBottom, _attachmentOnLeft, _attachmentOnRight;
+        }
         #region Fields
 
-        private Int32[,] _fieldValues; // mezőértékek
+        private Field[,] _fields; // mezők
 
         #endregion
 
@@ -22,12 +28,12 @@ namespace ELTE.Robotok.Persistence
         /// <summary>
         /// Játéktábla szélességének lekérdezése.
         /// </summary>
-        public Int32 SizeX { get { return _fieldValues.GetLength(1); } }
+        public Int32 SizeX { get { return _fields.GetLength(1); } }
 
         /// <summary>
         /// Játéktábla magasságának lekérdezése.
         /// </summary>
-        public Int32 SizeY { get { return _fieldValues.GetLength(0); } }
+        public Int32 SizeY { get { return _fields.GetLength(0); } }
 
         #endregion
 
@@ -41,7 +47,7 @@ namespace ELTE.Robotok.Persistence
         /// <param name="regionSize">Ház mérete.</param>
         public RobotokTable(Int32 tableSizeX, Int32 tableSizeY)
         {
-            _fieldValues = new Int32[tableSizeX, tableSizeY];
+            _fields= new Field[tableSizeX, tableSizeY];
         }
 
         #endregion
