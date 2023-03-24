@@ -25,6 +25,7 @@ namespace ELTE.Robotok.Model
         private GameDifficulty _gameDifficulty; // nehézség
         private Int32 _gameStepCount; // hátralevő lépések száma a játék végéig
         private Int32 _remainingSeconds; // hátralevő másodpercek száma a következő lépésig
+        private Int32 _cleaningOperations; // játék nehézségétől függő tisztítási műveletek száma
 
         #endregion
 
@@ -84,17 +85,28 @@ namespace ELTE.Robotok.Model
 
         #region Constructor
 
-        public RobotokGameModel(IRobotokDataAccess dataAccess)
+        public RobotokGameModel(IRobotokDataAccess dataAccess, int selectedDifficulty)
         {
+            switch(selectedDifficulty)
+            {
+                case 1:
+                    _gameDifficulty = GameDifficulty.Easy;
+                    _cleaningOperations = 2;
+                    _remainingSeconds = 6;
+                    break;
+                case 2:
+                    _gameDifficulty = GameDifficulty.Medium;
+                    _cleaningOperations = 3;
+                    _remainingSeconds = 5;
+                    break;
+                case 3:
+                    _gameDifficulty = GameDifficulty.Hard;
+                    _cleaningOperations = 4;
+                    _remainingSeconds = 4;
+                    break;
+
+            }
             _dataAccess = dataAccess;
-            //Táblák létrehozása a modellben
-            _table = new RobotokTable(28, 17);
-            _tablePlayerOne = new RobotokTable(20, 11);
-            _tablePlayerTwo = new RobotokTable(20, 11);
-            _tableNoticeBoardOne = new RobotokTable(4, 4);
-            _tableNoticeBoardTwo = new RobotokTable(4, 4);
-            _remainingSeconds = 5; // műveletek közötti gondolkodási idő
-            _gameStepCount = 300; // játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
         }
 
         #endregion
@@ -106,13 +118,17 @@ namespace ELTE.Robotok.Model
         /// </summary>
         public void NewGame()
         {
-            _table = new RobotokTable(28, 17);
-            _tablePlayerOne = new RobotokTable(20, 11);
-            _tablePlayerTwo = new RobotokTable(20, 11);
+            // Táblák létrehozása
+            _table = new RobotokTable(17, 28);
+            _tablePlayerOne = new RobotokTable(11, 20);
+            _tablePlayerTwo = new RobotokTable(11, 20);
             _tableNoticeBoardOne = new RobotokTable(4, 4);
             _tableNoticeBoardTwo = new RobotokTable(4, 4);
             _remainingSeconds = 5; // műveletek közötti gondolkodási idő
             _gameStepCount = 300; // játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
+
+            // Kezdeti értékek generálása a mezőknek
+            GenerateFields();
         }
 
         /// <summary>
@@ -127,12 +143,20 @@ namespace ELTE.Robotok.Model
 
             _remainingSeconds--; 
 
-            // OnGameAdvanced();
-
             if (_remainingSeconds == -1) // ha lejárt a lépések közötti idő, újraindítjuk a visszaszámlálást, majd végrehajtuk a megadott játékműveletet
             {
-                // OnGameAdvanced();
-                _remainingSeconds = 5; // visszaállítja a hátralevő időt a következő műveletnek
+                switch (GameDifficulty)
+                {
+                    case GameDifficulty.Easy:
+                        _remainingSeconds = 6;
+                        break;
+                    case GameDifficulty.Medium:
+                        _remainingSeconds = 5;
+                        break;
+                    case GameDifficulty.Hard:
+                        _remainingSeconds = 4;
+                        break;
+                }
                 _gameStepCount--; // csökkenti a hátralevő lépések számát
 
             }
@@ -141,6 +165,35 @@ namespace ELTE.Robotok.Model
         #endregion
 
         #region Private game methods
+
+        /// <summary>
+        /// Mezők generálása.
+        /// </summary>
+        private void GenerateFields()
+        {
+            Random random = new Random();
+            for (Int32 i = 0; i < _table.SizeX; i++)
+            {
+                for (Int32 j = 0; j < _table.SizeY; j++)
+                {
+                    // Azoknak a mezőknek az esete, amelyek a pálya határán túl helyezkednek el
+                    if (i < 3 || i > 13 || j < 4 || j > 23)
+                    {
+                        _table.SetValue(i, j, -2, -1); // A pálya határán túli mezők törhetetlenek, ezért -1 a tisztító műveletük
+                    }
+                    // A határt képező mezők esete
+                    else if (i == 3 || i == 13 || j == 4 || j == 23)
+                    {
+                        _table.SetValue(i, j, -1, -1); // A pálya határán túli mezők törhetetlenek, ezért -1 a tisztító műveletük
+                    }
+                    // A többi mező kitöltése (általánosan, játékosok, akadályok, kijáratok mezői még nincsenek)
+                    else
+                    {
+                        _table.SetValue(i, j, 7, _cleaningOperations);
+                    }
+                }
+            }
+        }
 
         #endregion
 

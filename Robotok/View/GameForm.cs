@@ -25,18 +25,20 @@ namespace ELTE.Robotok.View
         /// Játékablak példányosítása.
         /// </summary>
 
-        public GameForm()
+        public GameForm(int selectedDifficulty)
         {
             InitializeComponent();
 
             // modell létrehozása
-            _model = new RobotokGameModel(_dataAccess);
+            _model = new RobotokGameModel(_dataAccess, selectedDifficulty);
 
             // időzítő létrehozása
             _timer = new System.Windows.Forms.Timer();
             _timer.Interval = 1000;
             _timer.Tick += new EventHandler(Timer_Tick);
 
+            // új játék elkezdése
+            _model.NewGame();
             // játéktáblák inicializálása
             GenerateTables();
 
@@ -88,11 +90,16 @@ namespace ELTE.Robotok.View
                     _buttonGrid[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
                     _buttonGrid[i, j].Enabled = false; // kikapcsolt állapot
                     _buttonGrid[i, j].Visible = false; // megjelenítés alapértelmezett kikapcsolása
-                    //_buttonGrid[i, j].TabIndex = 100 + i * _model.Table.Size + j; // a gomb számát a TabIndex-ben tároljuk
                     _buttonGrid[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
-                    //_buttonGrid[i, j].MouseClick += new MouseEventHandler(ButtonGrid_MouseClick);
-                    // közös eseménykezelő hozzárendelése minden gombhoz
-                    // ezek a sorok ki vannak kommentezve, azért hagytam benne, mert nemsokára implementálni kell, és így nem kell keresni
+
+                    if (_model.Table.GetFieldValue(i, j) == -2)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Gray;
+                    }
+                    else if (_model.Table.GetFieldValue(i, j) == -1)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Black;
+                    }
 
                     Controls.Add(_buttonGrid[i, j]);
                     // felvesszük az ablakra a gombot
@@ -111,13 +118,9 @@ namespace ELTE.Robotok.View
                     _buttonGridPlayerOne[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
                     _buttonGridPlayerOne[i, j].Enabled = false; // kikapcsolt állapot
                     _buttonGridPlayerOne[i, j].Visible = true;
-                    //_buttonGrid[i, j].TabIndex = 100 + i * _model.Table.Size + j; // a gomb számát a TabIndex-ben tároljuk
                     _buttonGridPlayerOne[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
-                    //_buttonGrid[i, j].MouseClick += new MouseEventHandler(ButtonGrid_MouseClick);
-                    // közös eseménykezelő hozzárendelése minden gombhoz
 
                     Controls.Add(_buttonGridPlayerOne[i, j]);
-                    //SetDoubleBuffer(_buttonGridPlayerOne[i, j], true);
                     // felvesszük az ablakra a gombot
                 }
             }
@@ -134,13 +137,9 @@ namespace ELTE.Robotok.View
                     _buttonGridPlayerTwo[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
                     _buttonGridPlayerTwo[i, j].Enabled = false; // kikapcsolt állapot
                     _buttonGridPlayerTwo[i, j].Visible = true;
-                    //_buttonGrid[i, j].TabIndex = 100 + i * _model.Table.Size + j; // a gomb számát a TabIndex-ben tároljuk
                     _buttonGridPlayerTwo[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
-                    //_buttonGrid[i, j].MouseClick += new MouseEventHandler(ButtonGrid_MouseClick);
-                    // közös eseménykezelő hozzárendelése minden gombhoz
 
                     Controls.Add(_buttonGridPlayerTwo[i, j]);
-                    //SetDoubleBuffer(_buttonGridPlayerTwo[i, j], true);
                     // felvesszük az ablakra a gombot
                 }
             }
@@ -157,13 +156,9 @@ namespace ELTE.Robotok.View
                     _buttonGridNoticeBoardOne[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
                     _buttonGridNoticeBoardOne[i, j].Enabled = false; // kikapcsolt állapot
                     _buttonGridNoticeBoardOne[i, j].Visible = true;
-                    //_buttonGrid[i, j].TabIndex = 100 + i * _model.Table.Size + j; // a gomb számát a TabIndex-ben tároljuk
                     _buttonGridNoticeBoardOne[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
-                    //_buttonGrid[i, j].MouseClick += new MouseEventHandler(ButtonGrid_MouseClick);
-                    // közös eseménykezelő hozzárendelése minden gombhoz
 
                     Controls.Add(_buttonGridNoticeBoardOne[i, j]);
-                    //SetDoubleBuffer(_buttonGridNoticeBoardOne[i, j], true);
                     // felvesszük az ablakra a gombot
                 }
             }
@@ -180,13 +175,9 @@ namespace ELTE.Robotok.View
                     _buttonGridNoticeBoardTwo[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
                     _buttonGridNoticeBoardTwo[i, j].Enabled = false; // kikapcsolt állapot
                     _buttonGridNoticeBoardTwo[i, j].Visible = true;
-                    //_buttonGrid[i, j].TabIndex = 100 + i * _model.Table.Size + j; // a gomb számát a TabIndex-ben tároljuk
                     _buttonGridNoticeBoardTwo[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
-                    //_buttonGrid[i, j].MouseClick += new MouseEventHandler(ButtonGrid_MouseClick);
-                    // közös eseménykezelő hozzárendelése minden gombhoz
 
                     Controls.Add(_buttonGridNoticeBoardTwo[i, j]);
-                    //SetDoubleBuffer(_buttonGridNoticeBoardTwo[i, j], true);
                     // felvesszük az ablakra a gombot
                 }
             }
