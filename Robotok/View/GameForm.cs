@@ -15,6 +15,7 @@ namespace ELTE.Robotok.View
         private Button[,] _buttonGridNoticeBoardOne = null!; // gombrács (hirdetőtábla 1)
         private Button[,] _buttonGridNoticeBoardTwo = null!; // gombrács (hirdetőtábla 2)
         private bool isRefereeModeVisible = false; // játékvezetői mód pályájának láthatósága
+        private System.Windows.Forms.Timer _timer = null!;
 
         #endregion
 
@@ -28,11 +29,18 @@ namespace ELTE.Robotok.View
         {
             InitializeComponent();
 
-            //modell létrehozása
+            // modell létrehozása
             _model = new RobotokGameModel(_dataAccess);
+
+            // időzítő létrehozása
+            _timer = new System.Windows.Forms.Timer();
+            _timer.Interval = 1000;
+            _timer.Tick += new EventHandler(Timer_Tick);
 
             // játéktáblák inicializálása
             GenerateTables();
+
+            _timer.Start();
 
         }
 
@@ -51,6 +59,16 @@ namespace ELTE.Robotok.View
         #endregion
 
         #region Timer event handlers
+
+        private void Timer_Tick(Object? sender, EventArgs e)
+        {
+            _model.AdvanceTime(); // játék léptetése
+            remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc"; // frissítjük a hátralevő másodpercek számának kijelzését
+            if (_model.RemainingSeconds == 0)
+            {
+                stepsLeftValueText.Text = _model.GameStepCount.ToString(); // ha elfogyott a gondolkodási idő, csökkenti a hátralevő lépések számát
+            }
+        }
 
         #endregion
 

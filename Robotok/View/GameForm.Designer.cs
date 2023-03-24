@@ -257,7 +257,7 @@
             this.remainingSecondsValueText.Name = "remainingSecondsValueText";
             this.remainingSecondsValueText.Size = new System.Drawing.Size(116, 25);
             this.remainingSecondsValueText.TabIndex = 19;
-            this.remainingSecondsValueText.Text = "4 másodperc";
+            this.remainingSecondsValueText.Text = "5 másodperc";
             // 
             // remainingSecondsText
             // 

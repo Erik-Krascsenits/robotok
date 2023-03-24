@@ -23,8 +23,8 @@ namespace ELTE.Robotok.Model
         private RobotokTable _tableNoticeBoardOne; // Hirdetőtábla 1
         private RobotokTable _tableNoticeBoardTwo; // Hirdetőtábla 2
         private GameDifficulty _gameDifficulty; // nehézség
-        private Int32 _gameStepCount; // hátralevő lépések száma
-        private Int32 _gameTime; // fennmaradó játékidő a következő lépésig
+        private Int32 _gameStepCount; // hátralevő lépések száma a játék végéig
+        private Int32 _remainingSeconds; // hátralevő másodpercek száma a következő lépésig
 
         #endregion
 
@@ -38,7 +38,7 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Hátramaradt játékidő lekérdezése.
         /// </summary>
-        public Int32 GameTime { get { return _gameTime; } }
+        public Int32 RemainingSeconds { get { return _remainingSeconds; } }
 
         /// <summary>
         /// Játéktábla lekérdezése.(játékvezetői)
@@ -93,13 +93,17 @@ namespace ELTE.Robotok.Model
             _tablePlayerTwo = new RobotokTable(20, 11);
             _tableNoticeBoardOne = new RobotokTable(4, 4);
             _tableNoticeBoardTwo = new RobotokTable(4, 4);
-            _gameStepCount = 700; //játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
+            _remainingSeconds = 5; // műveletek közötti gondolkodási idő
+            _gameStepCount = 300; // játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
         }
 
         #endregion
 
         #region Public game methods
 
+        /// <summary>
+        /// Új játék kezdése.
+        /// </summary>
         public void NewGame()
         {
             _table = new RobotokTable(28, 17);
@@ -107,7 +111,31 @@ namespace ELTE.Robotok.Model
             _tablePlayerTwo = new RobotokTable(20, 11);
             _tableNoticeBoardOne = new RobotokTable(4, 4);
             _tableNoticeBoardTwo = new RobotokTable(4, 4);
-            _gameStepCount = 700; //játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
+            _remainingSeconds = 5; // műveletek közötti gondolkodási idő
+            _gameStepCount = 300; // játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
+        }
+
+        /// <summary>
+        /// Játékidő léptetése.
+        /// </summary>
+        public void AdvanceTime()
+        {
+            if (IsGameOver) // ha már vége, nem folytathatjuk
+            {
+                return;
+            }
+
+            _remainingSeconds--; 
+
+            // OnGameAdvanced();
+
+            if (_remainingSeconds == -1) // ha lejárt a lépések közötti idő, újraindítjuk a visszaszámlálást, majd végrehajtuk a megadott játékműveletet
+            {
+                // OnGameAdvanced();
+                _remainingSeconds = 5; // visszaállítja a hátralevő időt a következő műveletnek
+                _gameStepCount--; // csökkenti a hátralevő lépések számát
+
+            }
         }
 
         #endregion
