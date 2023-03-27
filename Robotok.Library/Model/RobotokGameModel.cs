@@ -1,7 +1,9 @@
 ﻿using ELTE.Robotok.Persistence;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +13,9 @@ namespace ELTE.Robotok.Model
     public class RobotokGameModel
     {
         #region Difficulty constants
+        private Int32 _ManhattanDistanceEasy = 4;
+        private Int32 _ManhattanDistanceMedium = 3;
+        private Int32 _ManhattanDistanceHard = 2;
 
         #endregion
 
@@ -297,6 +302,63 @@ namespace ELTE.Robotok.Model
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Észlelés.
+        /// </summary>
+        private void Observation()
+        {
+
+        }
+
+        /// <summary>
+        /// Manhattan távolság.
+        /// </summary>
+        private void ManhattanDistance(GameDifficulty _difficulty, int player)
+        {
+            int tempX = -1;
+            int tempY = -1;
+
+            for (int i = 0; tempX != -1; ++i)
+            {
+                for (int j = 0; tempY != -1; ++j)
+                {
+                    if (_table.GetFieldValue(i,j) == player)
+                    {
+                        tempX = i;
+                        tempY = j;
+                    }
+                }
+            }
+
+            int tempDistance = _ManhattanDistanceEasy;
+            switch (_gameDifficulty)
+            {
+                case GameDifficulty.Easy:
+                    tempDistance = _ManhattanDistanceEasy;
+                    break;
+                case GameDifficulty.Medium:
+                    tempDistance = _ManhattanDistanceMedium;
+                    break;
+                case GameDifficulty.Hard:
+                    tempDistance = _ManhattanDistanceHard;
+                    break;
+            }
+
+
+            for (int i = 0; i < _table.SizeX; i++)
+            {
+                for (int j = 0; j < _table.SizeY; j++)
+                {
+                    if (Math.Abs(i - tempX) + Math.Abs(j - tempY) < tempDistance)
+                    {
+                        //tükrözi a nézetre
+                    }
+                }
+            }
+            
+
         }
 
         #endregion
