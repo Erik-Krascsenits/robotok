@@ -16,6 +16,7 @@ namespace ELTE.Robotok.View
         private Button[,] _buttonGridNoticeBoardTwo = null!; // gombrács (hirdetőtábla 2)
         private bool isRefereeModeVisible = false; // játékvezetői mód pályájának láthatósága
         private System.Windows.Forms.Timer _timer = null!;
+        
 
         #endregion
 
@@ -69,6 +70,8 @@ namespace ELTE.Robotok.View
             if (_model.RemainingSeconds == 0)
             {
                 stepsLeftValueText.Text = _model.GameStepCount.ToString(); // ha elfogyott a gondolkodási idő, csökkenti a hátralevő lépések számát
+                RefreshViews(); // nézet frissítése, egyelőre csak játékvezetői mód 
+                EnableButtons(); // elérhetővé tesszük a műveleteket
             }
         }
 
@@ -100,6 +103,15 @@ namespace ELTE.Robotok.View
                     {
                         _buttonGrid[i, j].BackColor = Color.Black;
                     }
+                    else if(_model.Table.GetFieldValue(i, j) == 1)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Red;
+                    }
+                    else if(_model.Table.GetFieldValue(i, j) == 2)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Green;
+                    }
+                   
 
                     Controls.Add(_buttonGrid[i, j]);
                     // felvesszük az ablakra a gombot
@@ -306,6 +318,97 @@ namespace ELTE.Robotok.View
                             _buttonGridNoticeBoardOne[i, j].Location = new Point(215 + 25 * j, 740 + 25 * i);
                             _buttonGridNoticeBoardTwo[i, j].Location = new Point(365 + 25 * j, 740 + 25 * i);
                         }
+                    }
+                }
+            }
+        }
+
+       
+        // Csökkenti a körök számát, a másik játékos következik
+        private void waitButton_Click(object sender, EventArgs e)
+        {
+            _model.Wait();
+            stepsLeftValueText.Text = _model.GameStepCount.ToString();
+        }
+
+        // Elküldi az irány paraméterét a játékos számával a modelnek, és végrehajtja a mozgást (egyelőre kapcsolódás nélkül)
+        private void moveButton_Click(object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(operationParameter.Text) && (operationParameter.Text != "észak") && operationParameter.Text != "dél" && operationParameter.Text != "kelet" && operationParameter.Text != "nyugat")
+            {
+                // hibaüzenet megjelenítésének helye
+
+
+            }
+            else
+            {
+                if (int.Parse(stepsLeftValueText.Text) % 2 == 0) 
+                {
+                    _model.Move(operationParameter.Text, 1);
+                }
+                else
+                {
+                    _model.Move(operationParameter.Text, 2);
+                }
+                DisableButtons();
+            } 
+        }
+        
+        // Letiltja a műveletek használatát
+        private void DisableButtons()
+        {
+            waitButton.Enabled = false;
+            moveButton.Enabled = false;
+            turnButton.Enabled = false;
+            attachButton.Enabled = false;
+            detachButton.Enabled = false;
+            clearButton.Enabled = false;
+            attachCubesButton.Enabled = false;
+            detachCubesButton.Enabled = false;
+        }
+
+        // Engedélyezi a műveletek használatát
+        private void EnableButtons()
+        {
+            waitButton.Enabled = true;
+            moveButton.Enabled = true;
+            turnButton.Enabled = true;
+            attachButton.Enabled = true;
+            detachButton.Enabled = true;
+            clearButton.Enabled = true;
+            attachCubesButton.Enabled = true;
+            detachCubesButton.Enabled = true;
+        }
+
+        /* 
+        Frissíti a játékvezetői tábla nézetét (a többi tábla frissítése, megjelenítése még hátra van)
+        Megj.: A kockák és akadályok még nem jelennek meg 
+        */
+        private void RefreshViews()
+        {
+            for (Int32 i = 0; i < _model.Table.SizeX; i++)
+            {
+                for (Int32 j = 0; j < _model.Table.SizeY; j++)
+                {
+                    if (_model.Table.GetFieldValue(i, j) == -2)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Gray;
+                    }
+                    else if (_model.Table.GetFieldValue(i, j) == -1)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Black;
+                    }
+                    else if (_model.Table.GetFieldValue(i, j) == 1)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Red;
+                    }
+                    else if (_model.Table.GetFieldValue(i, j) == 2)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Green;
+                    }
+                    else if (_model.Table.GetFieldValue(i, j) == 7)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.White;
                     }
                 }
             }

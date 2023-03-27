@@ -27,6 +27,7 @@ namespace ELTE.Robotok.Model
         private Int32 _remainingSeconds; // hátralevő másodpercek száma a következő lépésig
         private Int32 _cleaningOperations; // játék nehézségétől függő tisztítási műveletek száma
 
+
         #endregion
 
         #region Properties
@@ -172,6 +173,7 @@ namespace ELTE.Robotok.Model
         private void GenerateFields()
         {
             Random random = new Random();
+
             for (Int32 i = 0; i < _table.SizeX; i++)
             {
                 for (Int32 j = 0; j < _table.SizeY; j++)
@@ -190,6 +192,108 @@ namespace ELTE.Robotok.Model
                     else
                     {
                         _table.SetValue(i, j, 7, _cleaningOperations);
+                    }
+                }
+            }
+            // Játékosok mezőinek random generálása 
+            int playerOne_i, playerOne_j, playerTwo_i, playerTwo_j;
+            playerOne_i = random.Next(4, 13);
+            playerOne_j = random.Next(5, 23);
+            playerTwo_i = random.Next(4, 13);
+            playerTwo_j = random.Next(5, 23);
+
+            while (playerTwo_i == playerOne_i && playerTwo_j == playerOne_j)
+            {
+                playerTwo_j = random.Next(5, 23);
+            }
+
+            _table.SetValue(playerOne_i, playerOne_j, 1, _cleaningOperations);
+            _table.SetValue(playerTwo_i, playerTwo_j, 2, _cleaningOperations);
+        }
+
+        /// <summary>
+        /// Várakozás logikája
+        /// </summary>
+        public void Wait()
+        {
+            _remainingSeconds = 0;
+        }
+
+
+        /// <summary>
+        /// Lépés logikája
+        /// </summary>
+        public void Move(String direction, int playerNumber)
+        {
+            if(direction == "észak")
+            {
+                for(int i = 4; i < 13; i++)
+                {
+                    for(int j = 5; j < 23; j++)
+                    {
+                        if(_table.GetFieldValue(i,j) == playerNumber)
+                        {
+                            if(_table.GetFieldValue(i - 1, j) == 7)
+                            {
+                                _table.SetValue(i, j, 7, _cleaningOperations);
+                                _table.SetValue(i - 1, j, playerNumber, _cleaningOperations);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else if(direction == "dél")
+            {
+                for (int i = 12; i > 3; i--)
+                {
+                    for (int j = 22; j > 4; j--)
+                    {
+                        if (_table.GetFieldValue(i, j) == playerNumber)
+                        {
+                            if (_table.GetFieldValue(i + 1, j) == 7)
+                            {
+                                _table.SetValue(i, j, 7, _cleaningOperations);
+                                _table.SetValue(i + 1, j, playerNumber, _cleaningOperations);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else if(direction == "kelet")
+            {
+                for (int i = 4; i < 13; i++)
+                {
+                    for (int j = 5; j < 23; j++)
+                    {
+                        if (_table.GetFieldValue(i, j) == playerNumber)
+                        {
+                            if (_table.GetFieldValue(i, j - 1) == 7)
+                            {
+                                _table.SetValue(i, j, 7, _cleaningOperations);
+                                _table.SetValue(i, j - 1, playerNumber, _cleaningOperations);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 12; i > 3; i--)
+                {
+                    for (int j = 22; j > 4; j--)
+                    {
+                        if (_table.GetFieldValue(i, j) == playerNumber)
+                        {
+                            if (_table.GetFieldValue(i , j + 1) == 7)
+                            {
+                                _table.SetValue(i, j, 7, _cleaningOperations);
+                                _table.SetValue(i , j + 1, playerNumber, _cleaningOperations);
+                                break;
+                            }
+                        }
                     }
                 }
             }

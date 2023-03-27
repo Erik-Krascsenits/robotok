@@ -306,6 +306,7 @@
             this.waitButton.Size = new System.Drawing.Size(50, 50);
             this.waitButton.TabIndex = 23;
             this.waitButton.UseVisualStyleBackColor = true;
+            this.waitButton.Click += new System.EventHandler(this.waitButton_Click);
             // 
             // moveButton
             // 
@@ -316,6 +317,7 @@
             this.moveButton.Size = new System.Drawing.Size(50, 50);
             this.moveButton.TabIndex = 24;
             this.moveButton.UseVisualStyleBackColor = true;
+            this.moveButton.Click += new System.EventHandler(this.moveButton_Click);
             // 
             // turnButton
             // 
