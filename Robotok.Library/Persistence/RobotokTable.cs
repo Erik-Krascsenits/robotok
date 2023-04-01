@@ -98,6 +98,26 @@ namespace ELTE.Robotok.Persistence
             return _fields[x, y]._fieldValue;
         }
 
+        /// <summary>
+        /// Tisztításhoz szükséges lépésel száma.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <returns>A mező értéke.</returns>
+        public Int32 GetFieldRemainingCleaningOperations(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            return _fields[x, y]._remainingCleaningOperations;
+        }
+
         #endregion
 
         #region Private methods

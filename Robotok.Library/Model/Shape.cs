@@ -9,37 +9,42 @@ namespace Robotok.Library.Model
     public class Shape
     {
         #region Fields
-        private Int32 x;
-        private Int32 y;
-        private Int32[,] _shape;
-        private Int32[,] _cube = new Int32[2, 2] {
-            {3, 3},
-            {3, 3}
+        private Int32 x; // a táblán vízszintes elhelyezkedése
+        private Int32 y; // a táblán függőleges elhelyezkedése
+        private Int32[,] _shape; // maga az alakzat
+        private Int32[,] _cube = new Int32[4, 4] {
+            {0, 0, 0, 0},
+            {0, 3, 3, 0},
+            {0, 3, 3, 0},
+            {0, 0, 0, 0}
         };
 
-        private Int32[,] _triangle = new Int32[2, 2] {
-            {0, 4},
-            {4, 4}
+        private Int32[,] _triangle = new Int32[4, 4] {
+            {0, 0, 0, 0},
+            {0, 0, 4, 0},
+            {0, 4, 4, 0},
+            {0, 0, 0, 0}
         };
 
         private Int32[,] _straight = new Int32[4, 4] {
             {0, 0, 0, 0},
-            {6, 6, 6, 6},
+            {5, 5, 5, 5},
             {0, 0, 0, 0},
             {0, 0, 0, 0}
         };
 
         private Int32[,] _lType = new Int32[4, 3] {
-            {7, 0, 0},
-            {7, 7, 7},
+            {6, 0, 0},
+            {6, 6, 6},
             {0, 0, 0},
-            {0, 0, 0 }
+            {0, 0, 0}
         };
 
-        private Int32[,] _rhombus = new Int32[3, 3] {
-            {0, 3, 0},
-            {3, 3, 3},
-            {0, 3, 0},
+        private Int32[,] _rhombus = new Int32[4, 4] {
+            {0, 0, 0, 0},
+            {0, 0, 3, 0},
+            {0, 3, 3, 3},
+            {0, 0, 3, 0}
         };
 
         private Int32[,] _piType = new Int32[4, 4] {
@@ -62,9 +67,30 @@ namespace Robotok.Library.Model
         #region Constructor
         public Shape() 
         {
+            _shape = _cube;
             GenerateShape();
             x = _shape.GetLength(0);
             y = _shape.GetLength(1);
+        }
+
+        public int GetColor()
+        {
+            if (_shape == _cube || _shape == _rhombus)
+            {
+                return 3;
+            }
+
+            if (_shape == _piType || _shape == _triangle)
+            {
+                return 4;
+            }
+
+            if (_shape == _straight)
+            {
+                return 5;
+            }
+
+            return 6;
         }
         #endregion
 
@@ -106,7 +132,7 @@ namespace Robotok.Library.Model
             {
                 for (Int32 j = 0; j < y; ++j)
                 {
-                    _shape[x, y] = 8;
+                    _shape[x, y] = -1;
                 }
             }
         }
@@ -131,6 +157,25 @@ namespace Robotok.Library.Model
             }
 
             return _shape[x, y];
+        }
+        /// <summary>
+        /// Mező értékének beállítása.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <param name="value">Érték.</param>
+        public void SetValue(Int32 x, Int32 y, Int32 value)
+        {
+            if (x < 0 || x >= _shape.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _shape.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _shape[x, y] = value;
         }
         #endregion
     }

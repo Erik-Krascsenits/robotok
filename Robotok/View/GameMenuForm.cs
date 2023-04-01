@@ -51,28 +51,27 @@ public partial class GameMenuForm : Form
         (például le tudják kérdezni a játéktábla tartalmát)
         */
         instance = this;
-        InitializeComponent();
         selectedDifficulty = 2; // alapértelmezetten közepes nehézséget állítunk be
         selectedGroupCount = 1; // alapértelmezetten egy csoportos játékos állítunk be
         actualPlayer = 1; // beállítjuk a zöld csapat 1. játékosát kezdõ játékosnak
+        InitializeComponent();
     }
 
     #endregion
-
     #region Menu button events
 
     private void startButton_Click(object sender, EventArgs e)
     {
-        _model = new RobotokGameModel(_dataAccess, selectedDifficulty); // amikor a játékos el akarja indítani a játékot a fõmenübõl, akkor példányosítjuk a model-t
+        _model = new RobotokGameModel(_dataAccess, selectedDifficulty, selectedGroupCount); // amikor a játékos el akarja indítani a játékot a fõmenübõl, akkor példányosítjuk a model-t
         _model.NewGame(); // új játék kezdete (a modell legenerálja a kezdõ pályát)
 
         // Példányosítjuk és megjelenítjük a zöld csapat játékosainak ablakait és jelezzük, hogy melyik ablak melyik játékosé
 
-        _gameFormGreenTeamPlayerOne = new GameForm();
+        _gameFormGreenTeamPlayerOne = new GameForm(selectedDifficulty, selectedGroupCount, actualPlayer);
         _gameFormGreenTeamPlayerOne.Text = "Robotok - Zöld csapat - 1. játékos nézet";
         _gameFormGreenTeamPlayerOne.playerViewText.Text = "Zöld csapat - 1. játékos nézet:";
         _gameFormGreenTeamPlayerOne.Show();
-        _gameFormGreenTeamPlayerTwo = new GameForm();
+        _gameFormGreenTeamPlayerTwo = new GameForm(selectedDifficulty, selectedGroupCount, actualPlayer);
         _gameFormGreenTeamPlayerTwo.Text = "Robotok - Zöld csapat - 2. játékos nézet";
         _gameFormGreenTeamPlayerTwo.playerViewText.Text = "Zöld csapat - 2. játékos nézet:";
         _gameFormGreenTeamPlayerTwo.Show();
@@ -81,11 +80,11 @@ public partial class GameMenuForm : Form
 
         if (selectedGroupCount == 2)
         {
-            _gameFormRedTeamPlayerOne = new GameForm();
+            _gameFormRedTeamPlayerOne = new GameForm(selectedDifficulty, selectedGroupCount, actualPlayer);
             _gameFormRedTeamPlayerOne.Text = "Robotok - Piros csapat - 1. játékos nézet";
             _gameFormRedTeamPlayerOne.playerViewText.Text = "Piros csapat - 1. játékos nézet:";
             _gameFormRedTeamPlayerOne.Show();
-            _gameFormRedTeamPlayerTwo = new GameForm();
+            _gameFormRedTeamPlayerTwo = new GameForm(selectedDifficulty, selectedGroupCount, actualPlayer);
             _gameFormRedTeamPlayerTwo.Text = "Robotok - Piros csapat - 2. játékos nézet";
             _gameFormRedTeamPlayerTwo.playerViewText.Text = "Piros csapat - 2. játékos nézet:";
             _gameFormRedTeamPlayerTwo.Show();
@@ -163,6 +162,7 @@ public partial class GameMenuForm : Form
                     actualPlayer = 1;
                 }
             }
+
             _gameFormGreenTeamPlayerOne.stepsLeftValueText.Text = _model.GameStepCount.ToString(); // ha elfogyott a gondolkodási idõ, csökkenti a hátralevõ lépések számát
             _gameFormGreenTeamPlayerTwo.stepsLeftValueText.Text = _model.GameStepCount.ToString();
 
@@ -172,8 +172,10 @@ public partial class GameMenuForm : Form
                 _gameFormRedTeamPlayerTwo.stepsLeftValueText.Text = _model.GameStepCount.ToString();
             }
 
+
             UpdatePlayerButtonStatuses();
             ShowNextPlayerForm();
+            
 
             if (refereeModeCheckbox.Checked)
             {
@@ -271,6 +273,7 @@ public partial class GameMenuForm : Form
             {
                 _gameFormGreenTeamPlayerOne.EnableButtons();
                 _gameFormGreenTeamPlayerTwo.DisableButtons();
+
             }
             else
             {
@@ -316,18 +319,22 @@ public partial class GameMenuForm : Form
         if (actualPlayer == 1)
         {
             _gameFormGreenTeamPlayerOne.BringToFront();
+            _gameFormGreenTeamPlayerOne.RefreshTable(actualPlayer);
         }
         else if (actualPlayer == 2)
         {
-            _gameFormGreenTeamPlayerTwo.BringToFront();    
+            _gameFormGreenTeamPlayerTwo.BringToFront();
+            _gameFormGreenTeamPlayerTwo.RefreshTable(actualPlayer);
         }
         else if (actualPlayer == 3)
         {
             _gameFormRedTeamPlayerOne.BringToFront();
+            _gameFormRedTeamPlayerOne.RefreshTable(actualPlayer);
         }
         else if (actualPlayer == 4)
         {
             _gameFormRedTeamPlayerTwo.BringToFront();
+            _gameFormRedTeamPlayerTwo.RefreshTable(actualPlayer);
         }
     }
 

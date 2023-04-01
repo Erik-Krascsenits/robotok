@@ -55,11 +55,39 @@ namespace Robotok.WinForms.View
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 1)
                     {
-                        _buttonGrid[i, j].BackColor = Color.Red;
+                        _buttonGrid[i, j].BackColor = Color.Green;
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 2)
                     {
-                        _buttonGrid[i, j].BackColor = Color.Green;
+                        _buttonGrid[i, j].BackColor = Color.Red;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 3)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Yellow;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 4)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Orange;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 5)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Blue;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 6)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Violet;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 7)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.White;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 8)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.DarkGreen;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 9)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.DarkRed;
                     }
 
 
@@ -85,15 +113,39 @@ namespace Robotok.WinForms.View
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 1)
                     {
-                        _buttonGrid[i, j].BackColor = Color.Red;
+                        _buttonGrid[i, j].BackColor = Color.Green;
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 2)
                     {
-                        _buttonGrid[i, j].BackColor = Color.Green;
+                        _buttonGrid[i, j].BackColor = Color.Red;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 3)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Yellow;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 4)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Orange;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 5)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Blue;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 6)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Violet;
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 7)
                     {
                         _buttonGrid[i, j].BackColor = Color.White;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 8)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.DarkGreen;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 9)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.DarkRed;
                     }
                 }
             }

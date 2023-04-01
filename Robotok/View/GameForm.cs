@@ -10,7 +10,8 @@ namespace ELTE.Robotok.View
         private Button[,] _buttonGridPlayer = null!; // gombrács a játékos nézetének megjelenítésére
         private Button[,] _buttonGridNoticeBoardOne = null!; // gombrács (hirdetőtábla 1)
         private Button[,] _buttonGridNoticeBoardTwo = null!; // gombrács (hirdetőtábla 2)
-
+        private int _difficulty;
+        private int _teams = 0;
         #endregion
 
         #region Constructor
@@ -19,12 +20,13 @@ namespace ELTE.Robotok.View
         /// Játékablak példányosítása.
         /// </summary>
 
-        public GameForm()
+        public GameForm(int difficulty, int teams, int activePlayer)
         {
             InitializeComponent();
-
+            _difficulty = difficulty;
+            _teams = teams;
             // Játéktáblák inicializálása
-            GenerateTables();
+            GenerateTables(activePlayer);
 
         }
 
@@ -45,25 +47,73 @@ namespace ELTE.Robotok.View
         #region Private methods
 
         // Létrehozza a gombokat, amiből a játékosnézet és a hirdektőtáblák felépülnek
-        private void GenerateTables()
+        private void GenerateTables(int active) // i - 3, j - 4 hiszen nekünk nem kell a nem látható területeket
         {
+            GameMenuForm.instance._model.ManhattanDistance(_difficulty, 1);
             // Játékos táblája
-            _buttonGridPlayer = new Button[GameMenuForm.instance._model.TablePlayerOne.SizeX, GameMenuForm.instance._model.TablePlayerOne.SizeY];
-            for (Int32 i = 0; i < GameMenuForm.instance._model.TablePlayerOne.SizeX; i++)
+            _buttonGridPlayer = new Button[GameMenuForm.instance._model.TableGreenPlayerOne.SizeX, GameMenuForm.instance._model.TableGreenPlayerOne.SizeY];
+            for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
             {
-                for (Int32 j = 0; j < GameMenuForm.instance._model.TablePlayerOne.SizeY; j++)
+                for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
                 {
-                    _buttonGridPlayer[i, j] = new Button();
-                    _buttonGridPlayer[i, j].Location = new Point(60 + 25 * j, 85 + 25 * i); // elhelyezkedés
-                    _buttonGridPlayer[i, j].Size = new Size(25, 25); // méret
-                    _buttonGridPlayer[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
-                    _buttonGridPlayer[i, j].Enabled = false; // kikapcsolt állapot
-                    _buttonGridPlayer[i, j].Visible = true;
-                    _buttonGridPlayer[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
-
-                    Controls.Add(_buttonGridPlayer[i, j]);
+                    if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                    {
+                        _buttonGridPlayer[i - 3, j - 4] = new Button();
+                        _buttonGridPlayer[i - 3, j - 4].Location = new Point(60 + 25 * (j-4), 85 + 25 * (i-3)); // elhelyezkedés
+                        _buttonGridPlayer[i - 3, j - 4].Size = new Size(25, 25); // méret
+                        _buttonGridPlayer[i - 3, j - 4].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
+                        _buttonGridPlayer[i - 3, j - 4].Enabled = false; // kikapcsolt állapot
+                        _buttonGridPlayer[i - 3, j - 4].Visible = true;
+                        _buttonGridPlayer[i - 3, j - 4].FlatStyle = FlatStyle.Flat; // lapított stípus
+                        if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i-3, j-4) == -1)
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
+                        }
+                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 1)
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
+                        }
+                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 2)
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
+                        }
+                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 3)
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Yellow;
+                        }
+                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 4)
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Orange;
+                        }
+                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 5)
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Blue;
+                        }
+                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 6)
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Violet;
+                        }
+                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 7)
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.White;
+                        }
+                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 8)
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
+                        }
+                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 9)
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
+                        }
+                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
+                        }
+                        Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
+                    }
                     // felvesszük az ablakra a gombot
                 }
+                
             }
             
             // Hirdetőtábla 1
@@ -79,9 +129,32 @@ namespace ELTE.Robotok.View
                     _buttonGridNoticeBoardOne[i, j].Enabled = false; // kikapcsolt állapot
                     _buttonGridNoticeBoardOne[i, j].Visible = true;
                     _buttonGridNoticeBoardOne[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
+                    if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 3)
+                    {
+                        _buttonGridNoticeBoardOne[i, j].BackColor = Color.Yellow;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 4)
+                    {
+                        _buttonGridNoticeBoardOne[i, j].BackColor = Color.Orange;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 5)
+                    {
+                        _buttonGridNoticeBoardOne[i, j].BackColor = Color.Blue;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 6)
+                    {
+                        _buttonGridNoticeBoardOne[i, j].BackColor = Color.Violet;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 7)
+                    {
+                        _buttonGridNoticeBoardOne[i, j].BackColor = Color.White;
+                    }
 
                     Controls.Add(_buttonGridNoticeBoardOne[i, j]);
                     // felvesszük az ablakra a gombot
+
+                    GameMenuForm.instance._model.ManhattanDistance(_difficulty, active);
+                    //
                 }
             }
 
@@ -98,11 +171,32 @@ namespace ELTE.Robotok.View
                     _buttonGridNoticeBoardTwo[i, j].Enabled = false; // kikapcsolt állapot
                     _buttonGridNoticeBoardTwo[i, j].Visible = true;
                     _buttonGridNoticeBoardTwo[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
-
+                    if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 3) // szín
+                    {
+                        _buttonGridNoticeBoardTwo[i, j].BackColor = Color.Yellow;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 4)
+                    {
+                        _buttonGridNoticeBoardTwo[i, j].BackColor = Color.Orange;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 5)
+                    {
+                        _buttonGridNoticeBoardTwo[i, j].BackColor = Color.Blue;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 6)
+                    {
+                        _buttonGridNoticeBoardTwo[i, j].BackColor = Color.Violet;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 7)
+                    {
+                        _buttonGridNoticeBoardTwo[i, j].BackColor = Color.White;
+                    }
                     Controls.Add(_buttonGridNoticeBoardTwo[i, j]);
                     // felvesszük az ablakra a gombot
                 }
             }
+
+
         }
 
 
@@ -134,6 +228,248 @@ namespace ELTE.Robotok.View
                 }
                 DisableButtons();
             } 
+        }
+
+        public void RefreshTable(int active)
+        {
+
+            if (active == 1)
+            {
+                GameMenuForm.instance._model.ManhattanDistance(_difficulty, 1);
+                for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
+                {
+                    for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
+                    {
+                        if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                        {
+                            if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == -1)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 1)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 2)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 3)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Yellow;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 4)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Orange;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 5)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Blue;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 6)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Violet;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 7)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.White;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 8)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 9)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
+                            }
+                            Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
+                        }
+                    }
+                }
+            }
+            if (active == 2)
+            {
+                GameMenuForm.instance._model.ManhattanDistance(_difficulty, 8);
+                for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
+                {
+                    for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
+                    {
+                        if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                        {
+                            if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == -1)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 1)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 2)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 3)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Yellow;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 4)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Orange;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 5)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Blue;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 6)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Violet;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 7)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.White;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 8)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 9)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
+                            }
+                            else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
+                            }
+                            Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
+                        }
+                    }
+                }
+            }
+            if (_teams == 2)
+            {
+                if (active == 3)
+                {
+                    GameMenuForm.instance._model.ManhattanDistance(_difficulty, 2);
+
+                    for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
+                    {
+                        for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
+                        {
+                            if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                            {
+                                if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == -1)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 1)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 2)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 3)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Yellow;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 4)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Orange;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 5)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Blue;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 6)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Violet;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 7)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.White;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 8)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 9)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
+                                }
+                                Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
+                            }
+                        }
+                    }
+                } 
+                else if (active == 4)
+                {
+                    GameMenuForm.instance._model.ManhattanDistance(_difficulty, 9);
+
+                    for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
+                    {
+                        for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
+                        {
+                            if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                            {
+                                if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == -1)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 1)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 2)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 3)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Yellow;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 4)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Orange;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 5)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Blue;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 6)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Violet;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 7)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.White;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 8)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 9)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
+                                }
+                                else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
+                                }
+                                Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
+                            }
+                        }
+                    }
+                }
+            }
         }
         
         // Letiltja a műveletek használatát
