@@ -12,7 +12,7 @@ namespace Robotok.Library.Model
         private Int32 x; // a táblán vízszintes elhelyezkedése
         private Int32 y; // a táblán függőleges elhelyezkedése
         private Int32[,] _shape; // maga az alakzat
-        private Int32[,] _cube = new Int32[4, 4] {
+        private Int32[,] _cube = new Int32[4, 4] { // egyszerűség kedvéért, most minden alakzat 4x4 méretű mátrixban lesz, de jövőben ez megváltoztathatjuk
             {0, 0, 0, 0},
             {0, 3, 3, 0},
             {0, 3, 3, 0},
@@ -67,31 +67,12 @@ namespace Robotok.Library.Model
         #region Constructor
         public Shape() 
         {
-            _shape = _cube;
+            _shape = _cube; // nem annyira fonts, hiszen majd egy új random alkzattá válik
             GenerateShape();
             x = _shape.GetLength(0);
             y = _shape.GetLength(1);
         }
 
-        public int GetColor()
-        {
-            if (_shape == _cube || _shape == _rhombus)
-            {
-                return 3;
-            }
-
-            if (_shape == _piType || _shape == _triangle)
-            {
-                return 4;
-            }
-
-            if (_shape == _straight)
-            {
-                return 5;
-            }
-
-            return 6;
-        }
         #endregion
 
         #region Private methods
@@ -176,6 +157,29 @@ namespace Robotok.Library.Model
             }
 
             _shape[x, y] = value;
+        }
+
+        /// <summary>
+        /// Szín lekérdezése.
+        /// </summary>
+        public int GetColor()
+        {
+            if (_shape == _cube || _shape == _rhombus)
+            {
+                return 3;
+            }
+
+            if (_shape == _piType || _shape == _triangle)
+            {
+                return 4;
+            }
+
+            if (_shape == _straight)
+            {
+                return 5;
+            }
+
+            return 6;
         }
         #endregion
     }

@@ -52,7 +52,7 @@ namespace ELTE.Robotok.Model
         /// </summary>
         public Int32 RemainingSeconds { get { return _remainingSeconds; } }
         /// <summary>
-        /// Hátramaradt játékidő lekérdezése.
+        /// Csapatak széma lekérdezése
         /// </summary>
         public Int32 Teams { get { return _teams; } }
 
@@ -72,12 +72,12 @@ namespace ELTE.Robotok.Model
         public RobotokTable TableGreenPlayerTwo { get { return _tableGreenPlayerTwo; } }
 
         /// <summary>
-        /// Játéktábla lekérdezése (zöld csapataban 1. játékosé).
+        /// Játéktábla lekérdezése (piros csapataban 1. játékosé).
         /// </summary>
         public RobotokTable TableRedPlayerOne { get { return _tableRedPlayerOne; } }
 
         /// <summary>
-        /// Játéktábla lekérdezése (zöld csapatban 2. játékosé).
+        /// Játéktábla lekérdezése (piros csapatban 2. játékosé).
         /// </summary>
         public RobotokTable TableRedPlayerTwo { get { return _tableRedPlayerTwo; } }
 
@@ -143,7 +143,6 @@ namespace ELTE.Robotok.Model
         #endregion
 
         #region Public game methods
-
         /// <summary>
         /// Új játék kezdése.
         /// </summary>
@@ -163,7 +162,7 @@ namespace ELTE.Robotok.Model
             GenerateFields();
             
 
-            // Beállítjuk a hirdetőtáblákban lévő alakzatoknak a színét
+            // Beállítjuk a hirdetőtáblákon lévő alakzatoknak a színét
             for (int i = 0; i < _figure1.Figure.GetLength(0); ++i)
             {
                 for (int j = 0; j < _figure1.Figure.GetLength(1); ++j)
@@ -196,6 +195,125 @@ namespace ELTE.Robotok.Model
         }
 
         /// <summary>
+        /// Manhattan távolság.
+        /// </summary>
+        public void ManhattanDistance(int _difficulty, int player)
+        {
+            int tempX = 0;
+            int tempY = 0;
+
+            for (int i = 0; i < _table.SizeX; i++) // megkeressük a táblán a játékosat
+            {
+                for (int j = 0; j < _table.SizeY; j++)
+                {
+                    if (_table.GetFieldValue(i, j) == player)
+                    {
+                        tempX = i;
+                        tempY = j;
+                    }
+                }
+            }
+
+            int tempDistance = _ManhattanDistanceEasy; // nézzük, hogy milyen a nehézség
+            switch (_difficulty)
+            {
+                case 1:
+                    tempDistance = _ManhattanDistanceEasy;
+                    break;
+                case 2:
+                    tempDistance = _ManhattanDistanceMedium;
+                    break;
+                case 3:
+                    tempDistance = _ManhattanDistanceHard;
+                    break;
+            }
+
+
+            for (int i = 0; i < _table.SizeX; i++)
+            {
+                for (int j = 0; j < _table.SizeY; j++)
+                {
+                    if (i > 3 && i < 13 && j > 4 && j < 23) // játék pályán vagyunk-e
+                    {
+                        if (Math.Abs(i - tempX) + Math.Abs(j - tempY) < tempDistance) // ha igen, akkor megnézzük, hogy benne van a mező a Manhattan távolságban.
+                        {
+                            if (player == 1)
+                            {
+                                _tableGreenPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j)); // minden játékosnak külön van egy saját "pálya", amin megjelenítjük a Manhattan távolságot
+                            }
+
+                            if (player == 8)
+                            {
+                                _tableGreenPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
+                            }
+
+                            if (_teams == 2)
+                            {
+                                if (player == 2)
+                                {
+                                    _tableRedPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
+                                }
+
+                                if (player == 9)
+                                {
+                                    _tableRedPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
+                                }
+                            }
+                        }
+                        else // abban az esetben ha Manhattan távolságon kívül vagyunk, akkor minket nem érdekel hogy milyen mező van ott, ezért 10-esekkel jelöljük őket
+                        {
+                            if (player == 1)
+                            {
+                                _tableGreenPlayerOne.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
+                            }
+
+                            if (player == 8)
+                            {
+                                _tableGreenPlayerTwo.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
+                            }
+                            if (_teams == 2)
+                            {
+                                if (player == 2)
+                                {
+                                    _tableRedPlayerOne.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
+                                }
+
+                                if (player == 9)
+                                {
+                                    _tableRedPlayerTwo.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
+                                }
+                            }
+                        }
+                    }
+                    else if ((i == 3 || i == 13) && (j >= 4 && j <= 23) || (i >= 3 && i <= 13) && (j == 4 || j == 23)) // de ugy a pálya határa az mindenképp kell, hogy megjelenjen
+                    {
+                        if (player == 1)
+                        {
+                            _tableGreenPlayerOne.SetValue(i - 3, j - 4, -1, -1);
+                        }
+
+                        if (player == 8)
+                        {
+                            _tableGreenPlayerTwo.SetValue(i - 3, j - 4, -1, -1);
+                        }
+
+                        if (_teams == 2)
+                        {
+                            if (player == 2)
+                            {
+                                _tableRedPlayerOne.SetValue(i - 3, j - 4, -1, -1);
+                            }
+
+                            if (player == 9)
+                            {
+                                _tableRedPlayerTwo.SetValue(i - 3, j - 4, -1, -1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
         /// Játékidő léptetése.
         /// </summary>
         public void AdvanceTime()
@@ -225,11 +343,94 @@ namespace ELTE.Robotok.Model
 
             }
         }
-
+        /// <summary>
+        /// Várakozás logikája
+        /// </summary>
+        public void Wait()
+        {
+            _remainingSeconds = 0;
+        }
+        /// <summary>
+        /// Lépés logikája
+        /// </summary>
+        public void Move(String direction, int playerNumber)
+        {
+            if (direction == "észak")
+            {
+                for (int i = 4; i < 13; i++)
+                {
+                    for (int j = 5; j < 23; j++)
+                    {
+                        if (_table.GetFieldValue(i, j) == playerNumber)
+                        {
+                            if (_table.GetFieldValue(i - 1, j) == 7)
+                            {
+                                _table.SetValue(i, j, 7, _cleaningOperations);
+                                _table.SetValue(i - 1, j, playerNumber, _cleaningOperations);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (direction == "dél")
+            {
+                for (int i = 12; i > 3; i--)
+                {
+                    for (int j = 22; j > 4; j--)
+                    {
+                        if (_table.GetFieldValue(i, j) == playerNumber)
+                        {
+                            if (_table.GetFieldValue(i + 1, j) == 7)
+                            {
+                                _table.SetValue(i, j, 7, _cleaningOperations);
+                                _table.SetValue(i + 1, j, playerNumber, _cleaningOperations);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (direction == "kelet")
+            {
+                for (int i = 4; i < 13; i++)
+                {
+                    for (int j = 5; j < 23; j++)
+                    {
+                        if (_table.GetFieldValue(i, j) == playerNumber)
+                        {
+                            if (_table.GetFieldValue(i, j - 1) == 7)
+                            {
+                                _table.SetValue(i, j, 7, _cleaningOperations);
+                                _table.SetValue(i, j - 1, playerNumber, _cleaningOperations);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 12; i > 3; i--)
+                {
+                    for (int j = 22; j > 4; j--)
+                    {
+                        if (_table.GetFieldValue(i, j) == playerNumber)
+                        {
+                            if (_table.GetFieldValue(i, j + 1) == 7)
+                            {
+                                _table.SetValue(i, j, 7, _cleaningOperations);
+                                _table.SetValue(i, j + 1, playerNumber, _cleaningOperations);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Private game methods
-
         /// <summary>
         /// Mezők generálása.
         /// </summary>
@@ -282,7 +483,7 @@ namespace ELTE.Robotok.Model
                 redPlayerTwo_j = random.Next(5, 23);
                 
 
-                while (_table.GetFieldValue(redPlayerOne_i ,redPlayerOne_j) != 7)
+                while (_table.GetFieldValue(redPlayerOne_i ,redPlayerOne_j) != 7) // megnézzük, hogy a táblán a véletlenszerűen kiválasztott mezőnek mi az értéke, ha nem(7), azaz üres mező, akkor tovább generálunk egy új értéket
                 {
                     redPlayerOne_i = random.Next(4, 13);
                     redPlayerOne_j = random.Next(5, 23);
@@ -298,7 +499,7 @@ namespace ELTE.Robotok.Model
                 _table.SetValue(redPlayerTwo_i, greenPlayerTwo_j, 9, -1);
             }
 
-            //Alakzatoknak az építőelemeinek generálása
+            //Alakzatoknak az építőkockainek generálása
             for (int i = 0; i < 2; i++)
             {
                 if (i == 0)
@@ -347,211 +548,6 @@ namespace ELTE.Robotok.Model
             }
         }
 
-        /// <summary>
-        /// Manhattan távolság.
-        /// </summary>
-        public void ManhattanDistance(int _difficulty, int player)
-        {
-            int tempX = 0;
-            int tempY = 0;
-
-            for (int i = 0; i < _table.SizeX; i++)
-            {
-                for (int j = 0; j < _table.SizeY; j++)
-                {
-                    if (_table.GetFieldValue(i,j) == player)
-                    {
-                        tempX = i;
-                        tempY = j;
-                    }
-                }
-            }
-
-            int tempDistance = _ManhattanDistanceEasy;
-            switch (_difficulty)
-            {
-                case 1:
-                    tempDistance = _ManhattanDistanceEasy;
-                    break;
-                case 2:
-                    tempDistance = _ManhattanDistanceMedium;
-                    break;
-                case 3:
-                    tempDistance = _ManhattanDistanceHard;
-                    break;
-            }
-
-
-            for (int i = 0; i < _table.SizeX; i++)
-            {
-                for (int j = 0; j < _table.SizeY; j++)
-                {
-                    if (i > 3 && i < 13 && j > 4 && j < 23)
-                    {
-                        if (Math.Abs(i - tempX) + Math.Abs(j - tempY) < tempDistance)
-                        {
-                            if (player == 1)
-                            {
-                                _tableGreenPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i,j));
-                            }
-
-                            if (player == 8)
-                            {
-                                _tableGreenPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
-                            }
-                            
-                            if (_teams == 2)
-                            {
-                                if (player == 2)
-                                {
-                                    _tableRedPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
-                                }
-
-                                if (player == 9)
-                                {
-                                    _tableRedPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
-                                }
-                            }
-                        } 
-                        else
-                        {
-                            if (player == 1)
-                            {
-                                _tableGreenPlayerOne.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
-                            }
-
-                            if (player == 8)
-                            {
-                                _tableGreenPlayerTwo.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
-                            }
-                            if (_teams == 2)
-                            {
-                                if (player == 2)
-                                {
-                                    _tableRedPlayerOne.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
-                                }
-
-                                if (player == 9)
-                                {
-                                    _tableRedPlayerTwo.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
-                                }
-                            }
-                        }
-                    }
-                    else if ((i == 3 || i == 13) && (j >= 4 && j <= 23) || (i >= 3 && i <= 13) && (j == 4 || j == 23))
-                    {
-                        if (player == 1)
-                        {
-                            _tableGreenPlayerOne.SetValue(i - 3, j - 4, -1, -1);
-                        }
-
-                        if (player == 8)
-                        {
-                            _tableGreenPlayerTwo.SetValue(i - 3, j - 4, -1, -1);
-                        }
-
-                        if (_teams == 2)
-                        {
-                            if (player == 2)
-                            {
-                                _tableRedPlayerOne.SetValue(i - 3, j - 4, -1, -1);
-                            }
-
-                            if (player == 9)
-                            {
-                                _tableRedPlayerTwo.SetValue(i - 3, j - 4, -1, -1);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        /// <summary>
-        /// Várakozás logikája
-        /// </summary>
-        public void Wait()
-        {
-            _remainingSeconds = 0;
-        }
-
-        /// <summary>
-        /// Lépés logikája
-        /// </summary>
-        public void Move(String direction, int playerNumber)
-        {
-            if(direction == "észak")
-            {
-                for(int i = 4; i < 13; i++)
-                {
-                    for(int j = 5; j < 23; j++)
-                    {
-                        if(_table.GetFieldValue(i,j) == playerNumber)
-                        {
-                            if(_table.GetFieldValue(i - 1, j) == 7)
-                            {
-                                _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i - 1, j, playerNumber, _cleaningOperations);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            else if(direction == "dél")
-            {
-                for (int i = 12; i > 3; i--)
-                {
-                    for (int j = 22; j > 4; j--)
-                    {
-                        if (_table.GetFieldValue(i, j) == playerNumber)
-                        {
-                            if (_table.GetFieldValue(i + 1, j) == 7)
-                            {
-                                _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i + 1, j, playerNumber, _cleaningOperations);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            else if(direction == "kelet")
-            {
-                for (int i = 4; i < 13; i++)
-                {
-                    for (int j = 5; j < 23; j++)
-                    {
-                        if (_table.GetFieldValue(i, j) == playerNumber)
-                        {
-                            if (_table.GetFieldValue(i, j - 1) == 7)
-                            {
-                                _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i, j - 1, playerNumber, _cleaningOperations);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 12; i > 3; i--)
-                {
-                    for (int j = 22; j > 4; j--)
-                    {
-                        if (_table.GetFieldValue(i, j) == playerNumber)
-                        {
-                            if (_table.GetFieldValue(i , j + 1) == 7)
-                            {
-                                _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i , j + 1, playerNumber, _cleaningOperations);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         /// <summary>
         /// Észlelés.

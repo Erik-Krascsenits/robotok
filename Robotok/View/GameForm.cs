@@ -10,8 +10,8 @@ namespace ELTE.Robotok.View
         private Button[,] _buttonGridPlayer = null!; // gombrács a játékos nézetének megjelenítésére
         private Button[,] _buttonGridNoticeBoardOne = null!; // gombrács (hirdetőtábla 1)
         private Button[,] _buttonGridNoticeBoardTwo = null!; // gombrács (hirdetőtábla 2)
-        private int _difficulty;
-        private int _teams = 0;
+        private int _difficulty; // játék nehézsége
+        private int _teams = 0; // csapatok száma
         #endregion
 
         #region Constructor
@@ -20,7 +20,7 @@ namespace ELTE.Robotok.View
         /// Játékablak példányosítása.
         /// </summary>
 
-        public GameForm(int difficulty, int teams, int activePlayer)
+        public GameForm(int difficulty, int teams, int activePlayer) // ez a három paraméter alapján majd meg fognak változni a nézetek
         {
             InitializeComponent();
             _difficulty = difficulty;
@@ -45,13 +45,13 @@ namespace ELTE.Robotok.View
         #endregion
 
         #region Private methods
-
+        // Lejebb sokszor található lesz i - 3, illetve j - 4. Ez azért van, mert maga a játékpálya sokkal nagyobb mint a játékosak "játékpályai", ezért hogy ne legyen semmilyen túlindexelés vagy valami hasonló, ezt így oldottam meg
         // Létrehozza a gombokat, amiből a játékosnézet és a hirdektőtáblák felépülnek
-        private void GenerateTables(int active) // i - 3, j - 4 hiszen nekünk nem kell a nem látható területeket
+        private void GenerateTables(int active) 
         {
             GameMenuForm.instance._model.ManhattanDistance(_difficulty, 1);
             // Játékos táblája
-            _buttonGridPlayer = new Button[GameMenuForm.instance._model.TableGreenPlayerOne.SizeX, GameMenuForm.instance._model.TableGreenPlayerOne.SizeY];
+            _buttonGridPlayer = new Button[GameMenuForm.instance._model.TableGreenPlayerOne.SizeX, GameMenuForm.instance._model.TableGreenPlayerOne.SizeY]; // Mindegy hogy melyik játékos tábláját használjuk, mindegyik ugyanaz a méretű
             for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
             {
                 for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
@@ -65,7 +65,7 @@ namespace ELTE.Robotok.View
                         _buttonGridPlayer[i - 3, j - 4].Enabled = false; // kikapcsolt állapot
                         _buttonGridPlayer[i - 3, j - 4].Visible = true;
                         _buttonGridPlayer[i - 3, j - 4].FlatStyle = FlatStyle.Flat; // lapított stípus
-                        if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i-3, j-4) == -1)
+                        if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i-3, j-4) == -1) // minden mezőnek megadjuk a színét
                         {
                             _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
                         }
@@ -105,13 +105,13 @@ namespace ELTE.Robotok.View
                         {
                             _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
                         }
-                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
+                        else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 10) // Manhattan távolságon belül nem látható mezők
                         {
                             _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
                         }
                         Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
+                        // felvesszük az ablakra a gombot
                     }
-                    // felvesszük az ablakra a gombot
                 }
                 
             }
@@ -198,8 +198,9 @@ namespace ELTE.Robotok.View
 
 
         }
+        #endregion
 
-
+        #region Public methods
         // Csökkenti a körök számát, a másik játékos következik
         public void waitButton_Click(object sender, EventArgs e)
         {
@@ -229,11 +230,11 @@ namespace ELTE.Robotok.View
                 DisableButtons();
             } 
         }
-
+        //Lejebb egy nagy függvény van. Igazából jobb lene, hogy ha lenne valami eszköz a tömörítéséhez, de szerintem ez itt lehetetlen, hoszen minden jétákosnak van egy saját táblája, és így külön mindegyiket kell frissíteni.
         public void RefreshTable(int active)
         {
 
-            if (active == 1)
+            if (active == 1) //első játékos zöld csapat esetén
             {
                 GameMenuForm.instance._model.ManhattanDistance(_difficulty, 1);
                 for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
@@ -291,7 +292,7 @@ namespace ELTE.Robotok.View
                     }
                 }
             }
-            if (active == 2)
+            if (active == 2) //másik játékos zöld csapat esetén
             {
                 GameMenuForm.instance._model.ManhattanDistance(_difficulty, 8);
                 for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
@@ -351,7 +352,7 @@ namespace ELTE.Robotok.View
             }
             if (_teams == 2)
             {
-                if (active == 3)
+                if (active == 3) //első játékos piros csapat esetén
                 {
                     GameMenuForm.instance._model.ManhattanDistance(_difficulty, 2);
 
@@ -410,7 +411,7 @@ namespace ELTE.Robotok.View
                         }
                     }
                 } 
-                else if (active == 4)
+                else if (active == 4) //másik játékos piros csapat esetén
                 {
                     GameMenuForm.instance._model.ManhattanDistance(_difficulty, 9);
 
@@ -497,7 +498,6 @@ namespace ELTE.Robotok.View
             attachCubesButton.Enabled = true;
             detachCubesButton.Enabled = true;
         }
-
 
         #endregion
     }

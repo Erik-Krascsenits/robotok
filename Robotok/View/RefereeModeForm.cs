@@ -96,7 +96,9 @@ namespace Robotok.WinForms.View
                 }
             }
         }
+        #endregion
 
+        #region Public methods
         public void RefreshRefereeView()
         {
             for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)

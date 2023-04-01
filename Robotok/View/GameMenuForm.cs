@@ -58,6 +58,7 @@ public partial class GameMenuForm : Form
     }
 
     #endregion
+
     #region Menu button events
 
     private void startButton_Click(object sender, EventArgs e)
@@ -314,27 +315,27 @@ public partial class GameMenuForm : Form
         }
     }
 
-    private void ShowNextPlayerForm()
+    private void ShowNextPlayerForm() // egyben, amikor megjelenítjük a nézetet, frissítjük is
     {
         if (actualPlayer == 1)
         {
-            _gameFormGreenTeamPlayerOne.BringToFront();
             _gameFormGreenTeamPlayerOne.RefreshTable(actualPlayer);
+            _gameFormGreenTeamPlayerOne.BringToFront();
         }
         else if (actualPlayer == 2)
         {
-            _gameFormGreenTeamPlayerTwo.BringToFront();
             _gameFormGreenTeamPlayerTwo.RefreshTable(actualPlayer);
+            _gameFormGreenTeamPlayerTwo.BringToFront();
         }
         else if (actualPlayer == 3)
         {
-            _gameFormRedTeamPlayerOne.BringToFront();
             _gameFormRedTeamPlayerOne.RefreshTable(actualPlayer);
+            _gameFormRedTeamPlayerOne.BringToFront();
         }
         else if (actualPlayer == 4)
         {
-            _gameFormRedTeamPlayerTwo.BringToFront();
             _gameFormRedTeamPlayerTwo.RefreshTable(actualPlayer);
+            _gameFormRedTeamPlayerTwo.BringToFront();
         }
     }
 
