@@ -65,7 +65,7 @@
             this.nextRoundValueText = new System.Windows.Forms.Label();
             this.nextRoundText = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.successfulText = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // playerViewText
@@ -427,22 +427,22 @@
             this.label1.TabIndex = 37;
             this.label1.Text = "Előző művelet sikeressége:";
             // 
-            // label2
+            // successfulText
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(848, 356);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 25);
-            this.label2.TabIndex = 38;
-            this.label2.Text = "sikeres";
+            this.successfulText.AutoSize = true;
+            this.successfulText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.successfulText.Location = new System.Drawing.Point(848, 356);
+            this.successfulText.Name = "successfulText";
+            this.successfulText.Size = new System.Drawing.Size(65, 25);
+            this.successfulText.TabIndex = 38;
+            this.successfulText.Text = "sikeres";
             // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(992, 671);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.successfulText);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.nextRoundValueText);
             this.Controls.Add(this.nextRoundText);
@@ -527,6 +527,6 @@
         public Label nextRoundValueText;
         public Label nextRoundText;
         public Label label1;
-        public Label label2;
+        public Label successfulText;
     }
 }

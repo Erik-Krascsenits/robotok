@@ -12,6 +12,7 @@ namespace ELTE.Robotok.View
         private Button[,] _buttonGridNoticeBoardTwo = null!; // gombrács (hirdetőtábla 2)
         private int _difficulty; // játék nehézsége
         private int _teams = 0; // csapatok száma
+        private int _activePlayer; // játékos azonosítója
         #endregion
 
         #region Constructor
@@ -25,6 +26,7 @@ namespace ELTE.Robotok.View
             InitializeComponent();
             _difficulty = difficulty;
             _teams = teams;
+            _activePlayer = activePlayer;
             // Játéktáblák inicializálása
             GenerateTables(activePlayer);
 
@@ -201,11 +203,13 @@ namespace ELTE.Robotok.View
         #endregion
 
         #region Public methods
-        // Csökkenti a körök számát, a másik játékos következik
+        // Csökkenti a körök számát, a másik játékos következik (javításra szorul)
         public void waitButton_Click(object sender, EventArgs e)
         {
+           
             GameMenuForm.instance._model.Wait();
             stepsLeftValueText.Text = GameMenuForm.instance._model.GameStepCount.ToString();
+            DisableButtons();
         }
 
         // Elküldi az irány paraméterét a játékos számával a modelnek, és végrehajtja a mozgást (egyelőre kapcsolódás nélkül)
@@ -214,25 +218,20 @@ namespace ELTE.Robotok.View
             if (String.IsNullOrEmpty(operationParameter.Text) && (operationParameter.Text != "észak") && operationParameter.Text != "dél" && operationParameter.Text != "kelet" && operationParameter.Text != "nyugat")
             {
                 // hibaüzenet megjelenítésének helye
-
+                successfulText.Text = "Sikertelen mozgás!";
 
             }
             else
             {
-                if (int.Parse(stepsLeftValueText.Text) % 2 == 0) 
-                {
-                    GameMenuForm.instance._model.Move(operationParameter.Text, 1);
-                }
-                else
-                {
-                    GameMenuForm.instance._model.Move(operationParameter.Text, 2);
-                }
+                successfulText.Text = "Sikeres mozgás!";
+                GameMenuForm.instance._model.Move(operationParameter.Text, _activePlayer);
                 DisableButtons();
             } 
         }
         //Lejebb egy nagy függvény van. Igazából jobb lene, hogy ha lenne valami eszköz a tömörítéséhez, de szerintem ez itt lehetetlen, hoszen minden jétákosnak van egy saját táblája, és így külön mindegyiket kell frissíteni.
         public void RefreshTable(int active)
         {
+            _activePlayer = active;
 
             if (active == 1) //első játékos zöld csapat esetén
             {

@@ -127,7 +127,7 @@ public partial class GameMenuForm : Form
 
     private void Timer_Tick(Object? sender, EventArgs e)
     {
-        _model.AdvanceTime(); // Játék léptetése
+        _model.AdvanceTime(actualPlayer); // Játék léptetése
 
         _gameFormGreenTeamPlayerOne.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc"; // frissítjük a hátralevõ másodpercek számának kijelzését
         _gameFormGreenTeamPlayerTwo.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc"; 
@@ -159,19 +159,33 @@ public partial class GameMenuForm : Form
                     actualPlayer++;
                 }
                 else
-                {
+                {  
                     actualPlayer = 1;
                 }
             }
-
-            _gameFormGreenTeamPlayerOne.stepsLeftValueText.Text = _model.GameStepCount.ToString(); // ha elfogyott a gondolkodási idõ, csökkenti a hátralevõ lépések számát
-            _gameFormGreenTeamPlayerTwo.stepsLeftValueText.Text = _model.GameStepCount.ToString();
-
-            if (selectedGroupCount == 2) // 2 csapat esetén a pirosakét is frissíteni kell
+            if (actualPlayer == 1)
             {
-                _gameFormRedTeamPlayerOne.stepsLeftValueText.Text = _model.GameStepCount.ToString();
-                _gameFormRedTeamPlayerTwo.stepsLeftValueText.Text = _model.GameStepCount.ToString();
+                _gameFormGreenTeamPlayerOne.stepsLeftValueText.Text = (_model.GameStepCount - 1).ToString(); // ha elfogyott a gondolkodási idõ, csökkenti a hátralevõ lépések számát
+                _gameFormGreenTeamPlayerTwo.stepsLeftValueText.Text = (_model.GameStepCount - 1).ToString();
+
+                if (selectedGroupCount == 2) // 2 csapat esetén a pirosakét is frissíteni kell
+                {
+                    _gameFormRedTeamPlayerOne.stepsLeftValueText.Text = (_model.GameStepCount - 1).ToString();
+                    _gameFormRedTeamPlayerTwo.stepsLeftValueText.Text = (_model.GameStepCount - 1).ToString();
+                }
             }
+            else
+            {
+                _gameFormGreenTeamPlayerOne.stepsLeftValueText.Text = _model.GameStepCount.ToString(); // ha elfogyott a gondolkodási idõ, csökkenti a hátralevõ lépések számát
+                _gameFormGreenTeamPlayerTwo.stepsLeftValueText.Text = _model.GameStepCount.ToString();
+
+                if (selectedGroupCount == 2) // 2 csapat esetén a pirosakét is frissíteni kell
+                {
+                    _gameFormRedTeamPlayerOne.stepsLeftValueText.Text = _model.GameStepCount.ToString();
+                    _gameFormRedTeamPlayerTwo.stepsLeftValueText.Text = _model.GameStepCount.ToString();
+                }
+            }
+           
 
 
             UpdatePlayerButtonStatuses();

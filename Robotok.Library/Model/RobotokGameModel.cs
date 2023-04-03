@@ -38,6 +38,12 @@ namespace ELTE.Robotok.Model
         private Shape _figure2; // másik alakzat
         private Int32 _teams; // csapatok száma
 
+        private Boolean _SyncGreenPlayerOne;
+        private Boolean _SyncGreenPlayerTwo;
+        private Boolean _SyncRedPlayerOne;
+        private Boolean _SyncRedPlayerTwo;
+
+
         #endregion
 
         #region Properties
@@ -158,6 +164,26 @@ namespace ELTE.Robotok.Model
             }
             _remainingSeconds = 5; // műveletek közötti gondolkodási idő
             _gameStepCount = 300; // játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
+
+            _SyncGreenPlayerOne = false;
+            _SyncGreenPlayerTwo = false;
+            _SyncRedPlayerOne = false;
+            _SyncRedPlayerTwo = false;
+
+            for (int i = 0; i < 11; i++) // játékosok tábláját feltöltjük nem látható mezőkkel
+            {
+                for (int j = 0; j < 20; j++)
+                {
+                    _tableGreenPlayerOne.SetValue(i , j , 10, _cleaningOperations);
+                    _tableGreenPlayerTwo.SetValue(i , j , 10, _cleaningOperations);
+                    if (_teams == 2)
+                    {
+                        _tableRedPlayerOne.SetValue(i, j, 10, _cleaningOperations);
+                        _tableRedPlayerTwo.SetValue(i, j, 10, _cleaningOperations);
+                    }
+                }
+            }
+
             // Kezdeti értékek generálása a mezőknek
             GenerateFields();
             
@@ -227,7 +253,11 @@ namespace ELTE.Robotok.Model
                     tempDistance = _ManhattanDistanceHard;
                     break;
             }
-
+           
+         
+            
+            
+            Boolean toMerge = false;   
 
             for (int i = 0; i < _table.SizeX; i++)
             {
@@ -240,11 +270,19 @@ namespace ELTE.Robotok.Model
                             if (player == 1)
                             {
                                 _tableGreenPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j)); // minden játékosnak külön van egy saját "pálya", amin megjelenítjük a Manhattan távolságot
+                                if (_table.GetFieldValue(i, j) == 8) // Ha a csapattárs benne van a manhattan távolságban, akkor a két játékos nézetét egyesíteni kell 
+                                {
+                                    toMerge = true; 
+                                }
                             }
 
                             if (player == 8)
                             {
                                 _tableGreenPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
+                                if (_table.GetFieldValue(i, j) == 1)
+                                {
+                                    toMerge = true;
+                                }
                             }
 
                             if (_teams == 2)
@@ -252,38 +290,51 @@ namespace ELTE.Robotok.Model
                                 if (player == 2)
                                 {
                                     _tableRedPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
+                                    if (_table.GetFieldValue(i, j) == 9)
+                                    {
+                                        toMerge = true;
+                                    }
                                 }
 
                                 if (player == 9)
                                 {
+                                  
+
                                     _tableRedPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
+                                    if (_table.GetFieldValue(i, j) == 2)
+                                    {
+                                        toMerge = true;
+                                    }
                                 }
                             }
-                        }
-                        else // abban az esetben ha Manhattan távolságon kívül vagyunk, akkor minket nem érdekel hogy milyen mező van ott, ezért 10-esekkel jelöljük őket
+                        }  // Ez a rész nem kell abban az esetben, ha előre feltöltjük a mezőket üresre
+                        /*else // abban az esetben ha Manhattan távolságon kívül vagyunk, akkor minket nem érdekel hogy milyen mező van ott, ezért 10-esekkel jelöljük őket
                         {
-                            if (player == 1)
+                            if (_gameStepCount == 300 ) //Ha ez az első kör, akkor az észlelési területen kívül szürke lesz minden
                             {
-                                _tableGreenPlayerOne.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
-                            }
-
-                            if (player == 8)
-                            {
-                                _tableGreenPlayerTwo.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
-                            }
-                            if (_teams == 2)
-                            {
-                                if (player == 2)
+                                if (player == 1)
                                 {
-                                    _tableRedPlayerOne.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
+                                    _tableGreenPlayerOne.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
                                 }
 
-                                if (player == 9)
+                                if (player == 8)
                                 {
-                                    _tableRedPlayerTwo.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
+                                    _tableGreenPlayerTwo.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
+                                }
+                                if (_teams == 2)
+                                {
+                                    if (player == 2)
+                                    {
+                                        _tableRedPlayerOne.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
+                                    }
+
+                                    if (player == 9)
+                                    {
+                                        _tableRedPlayerTwo.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
+                                    }
                                 }
                             }
-                        }
+                        }*/
                     }
                     else if ((i == 3 || i == 13) && (j >= 4 && j <= 23) || (i >= 3 && i <= 13) && (j == 4 || j == 23)) // de ugy a pálya határa az mindenképp kell, hogy megjelenjen
                     {
@@ -312,11 +363,45 @@ namespace ELTE.Robotok.Model
                     }
                 }
             }
+            if (toMerge) //Ha volt Manhattan távolságon belül csapattárs, akkor belépünk az if-be, és egyesítünk
+            {
+                Merge(player);
+            }
+
+            switch (player) //Ha az egyik játékos már látta a másikat, akkor frissítjük a másik csapattárs területét a jelenleg észlelt területtel
+            {
+                case 1:
+                    if (_SyncGreenPlayerTwo)
+                    {
+                        Observation(8, 1, tempX, tempY, tempDistance);
+                    }
+                    break;
+                case 8:
+
+                    if (_SyncGreenPlayerOne)
+                    {
+                        Observation(1, 8, tempX, tempY, tempDistance);
+                    }
+                    break;
+                case 2:
+                    if (_SyncRedPlayerOne)
+                    {
+                        Observation(9, 2, tempX, tempY, tempDistance);
+                    }
+                    break;
+                case 9:
+                    if (_SyncRedPlayerTwo)
+                    {
+                        Observation(2, 9, tempX, tempY, tempDistance);
+                    }
+                    break;
+            }
+
         }
         /// <summary>
         /// Játékidő léptetése.
         /// </summary>
-        public void AdvanceTime()
+        public void AdvanceTime(int player)
         {
             if (IsGameOver) // ha már vége, nem folytathatjuk
             {
@@ -339,7 +424,10 @@ namespace ELTE.Robotok.Model
                         _remainingSeconds = 4;
                         break;
                 }
-                _gameStepCount--; // csökkenti a hátralevő lépések számát
+                if (player == 1)
+                {
+                    _gameStepCount--; // csökkenti a hátralevő lépések számát, ha az első játékos következik
+                }
 
             }
         }
@@ -348,25 +436,43 @@ namespace ELTE.Robotok.Model
         /// </summary>
         public void Wait()
         {
-            _remainingSeconds = 0;
+            _remainingSeconds = 1;
         }
         /// <summary>
         /// Lépés logikája
         /// </summary>
         public void Move(String direction, int playerNumber)
         {
+            int num = 0;
+            switch (playerNumber)
+            {
+                case 1:
+                    num = 1;
+                    break;
+                case 2:
+                    num = 8;
+                    break;
+                case 3:
+                    num = 2;
+                    break;
+
+                case 4:
+                    num = 9;
+                    break;
+            }
+
             if (direction == "észak")
             {
                 for (int i = 4; i < 13; i++)
                 {
                     for (int j = 5; j < 23; j++)
                     {
-                        if (_table.GetFieldValue(i, j) == playerNumber)
+                        if (_table.GetFieldValue(i, j) == num)
                         {
                             if (_table.GetFieldValue(i - 1, j) == 7)
                             {
                                 _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i - 1, j, playerNumber, _cleaningOperations);
+                                _table.SetValue(i - 1, j, num, _cleaningOperations);
                                 break;
                             }
                         }
@@ -379,30 +485,30 @@ namespace ELTE.Robotok.Model
                 {
                     for (int j = 22; j > 4; j--)
                     {
-                        if (_table.GetFieldValue(i, j) == playerNumber)
+                        if (_table.GetFieldValue(i, j) == num)
                         {
                             if (_table.GetFieldValue(i + 1, j) == 7)
                             {
                                 _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i + 1, j, playerNumber, _cleaningOperations);
+                                _table.SetValue(i + 1, j, num, _cleaningOperations);
                                 break;
                             }
                         }
                     }
                 }
             }
-            else if (direction == "kelet")
+            else if (direction == "nyugat")
             {
                 for (int i = 4; i < 13; i++)
                 {
                     for (int j = 5; j < 23; j++)
                     {
-                        if (_table.GetFieldValue(i, j) == playerNumber)
+                        if (_table.GetFieldValue(i, j) == num)
                         {
                             if (_table.GetFieldValue(i, j - 1) == 7)
                             {
                                 _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i, j - 1, playerNumber, _cleaningOperations);
+                                _table.SetValue(i, j - 1, num, _cleaningOperations);
                                 break;
                             }
                         }
@@ -415,12 +521,12 @@ namespace ELTE.Robotok.Model
                 {
                     for (int j = 22; j > 4; j--)
                     {
-                        if (_table.GetFieldValue(i, j) == playerNumber)
+                        if (_table.GetFieldValue(i, j) == num)
                         {
                             if (_table.GetFieldValue(i, j + 1) == 7)
                             {
                                 _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i, j + 1, playerNumber, _cleaningOperations);
+                                _table.SetValue(i, j + 1, num, _cleaningOperations);
                                 break;
                             }
                         }
@@ -552,8 +658,125 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Észlelés.
         /// </summary>
-        private void Observation()
+        private void Observation(int player, int player2, int posX, int posY, int distance)
         {
+            int playerTwoPosX = 0;
+            int playerTwoPosY = 0;
+            for (int i = 0; i < _table.SizeX; i++) // megkeressük a táblán a csapattársat
+            {
+                for (int j = 0; j < _table.SizeY; j++)
+                {
+                    if (_table.GetFieldValue(i, j) == player2)
+                    {
+                        playerTwoPosX = i; // eltároljuk a pozícióját
+                        playerTwoPosY = j;
+                    }
+                }
+            }
+
+
+            for (int i = 0; i < _table.SizeX; i++)
+            {
+                for (int j = 0; j < _table.SizeY; j++)
+                {
+                    if (i > 3 && i < 13 && j > 4 && j < 23) // játék pályán vagyunk-e
+                    {                                                                                                  
+                        if (Math.Abs(i - playerTwoPosX) + Math.Abs(j - playerTwoPosY) < distance ) // ha igen, akkor megnézzük, hogy benne van-e a mező a Manhattan távolságban.
+                        {
+                            if(player == 1) //frissítjük az egyes játékosok látómezőjét a csapattárs aktuális látómezőjével
+                            {
+                                _tableGreenPlayerOne.SetValue(i - 3, j - 4, _tableGreenPlayerTwo.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                            }
+                            if (player == 8)
+                            {
+                                _tableGreenPlayerTwo.SetValue(i - 3, j - 4, _tableGreenPlayerOne.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                            }
+                            if (_teams == 2)
+                            {
+                                if (player == 2)
+                                {
+                                    _tableRedPlayerOne.SetValue(i - 3, j - 4, _tableRedPlayerTwo.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                                }
+
+                                if (player == 9)
+                                {
+                                    _tableRedPlayerTwo.SetValue(i - 3, j - 4, _tableRedPlayerOne.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
+        //Szürke részek frissülnek, viszont az egyik robot által jelenleg nem látott, de  a másik által látott terület nem.
+
+        /// <summary>
+        /// Első találkozás során a pálya frissítése
+        /// </summary>
+        private void Merge(int player) 
+        {
+            if (player == 1) // Megnézzük, hogy melyik játékos észlelte a másikat, és az ő területét frissítjük
+            {
+                for (int i = 0; i < 11; i++)
+                {
+                    for (int j = 0; j < 20; j++)
+                    {
+                        if(TableGreenPlayerOne.GetFieldValue(i,j) == 10 && TableGreenPlayerTwo.GetFieldValue(i,j) != 10)
+                        {
+                            TableGreenPlayerOne.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                        }
+                    }
+                }
+                _SyncGreenPlayerOne = true;  // Innentől kezdve folyamatosan szinkronizálják majd a térképeket
+
+            }
+            else if(player == 8)
+            {
+                for (int i = 0; i < 11; i++)
+                {
+                    for (int j = 0; j < 20; j++)
+                    {
+                        if (TableGreenPlayerTwo.GetFieldValue(i, j) == 10 && TableGreenPlayerOne.GetFieldValue(i, j) != 10)
+                        {
+                            TableGreenPlayerTwo.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                        }
+                    }
+                }
+                _SyncGreenPlayerTwo = true;
+            }
+            else if (player == 2)
+            {
+                for (int i = 0; i < 11; i++)
+                {
+                    for (int j = 0; j < 20; j++)
+                    {
+                        if (TableRedPlayerOne.GetFieldValue(i, j) == 10 && TableRedPlayerTwo.GetFieldValue(i, j) != 10)
+                        {
+                            TableRedPlayerOne.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                        }
+                    }
+                }
+                _SyncRedPlayerOne = true;
+            }
+            else
+            {
+                for (int i = 0; i < 11; i++)
+                {
+                    for (int j = 0; j < 20; j++)
+                    {
+                        if (TableRedPlayerTwo.GetFieldValue(i, j) == 10 && TableRedPlayerOne.GetFieldValue(i, j) != 10)
+                        {
+                            TableRedPlayerTwo.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                        }
+                    }
+                }
+                _SyncRedPlayerTwo = true;
+            }
+
+
+           
 
         }
 
