@@ -572,7 +572,7 @@ namespace ELTE.Robotok.Model
             greenPlayerTwo_i = random.Next(4, 13);
             greenPlayerTwo_j = random.Next(5, 23);
 
-            while (greenPlayerOne_i == greenPlayerTwo_j && greenPlayerTwo_j == greenPlayerOne_j)
+            while (greenPlayerOne_i == greenPlayerTwo_i && greenPlayerTwo_j == greenPlayerOne_j)
             {
                 greenPlayerOne_j = random.Next(5, 23);
             }
