@@ -37,11 +37,13 @@ namespace ELTE.Robotok.Model
         private Shape _figure1; // első alakzat
         private Shape _figure2; // másik alakzat
         private Int32 _teams; // csapatok száma
+        private Int32[,] _greenTeamObservation;
+        private Int32[,] _redTeamObservation;
 
-        private Boolean _SyncGreenPlayerOne;
-        private Boolean _SyncGreenPlayerTwo;
-        private Boolean _SyncRedPlayerOne;
-        private Boolean _SyncRedPlayerTwo;
+        private Boolean _SyncGreenPlayerOne; // zöld csapatban 1. játékos látta-e a zöld 2. játékost
+        private Boolean _SyncGreenPlayerTwo; // zöld csapatban 2. játékos látta-e a zöld 1. játékost
+        private Boolean _SyncRedPlayerOne; // piros csapatban 1. játékos látta-e a piros 2. játékost
+        private Boolean _SyncRedPlayerTwo; // piros csapatban 2. játékos látta-e a piros 1. játékost
 
 
         #endregion
@@ -158,6 +160,8 @@ namespace ELTE.Robotok.Model
             _table = new RobotokTable(17, 28);
             _tableGreenPlayerOne = new RobotokTable(11, 20);
             _tableGreenPlayerTwo = new RobotokTable(11, 20);
+            _greenTeamObservation = new Int32[11, 20];
+            _redTeamObservation = new Int32[11, 20];
             if (_teams == 2) { 
                 _tableRedPlayerOne = new RobotokTable(11, 20);
                 _tableRedPlayerTwo = new RobotokTable(11, 20);
@@ -174,10 +178,12 @@ namespace ELTE.Robotok.Model
             {
                 for (int j = 0; j < 20; j++)
                 {
+                    _greenTeamObservation[i, j] = 0;
                     _tableGreenPlayerOne.SetValue(i , j , 10, _cleaningOperations);
                     _tableGreenPlayerTwo.SetValue(i , j , 10, _cleaningOperations);
                     if (_teams == 2)
                     {
+                        _redTeamObservation[i, j] = 0;
                         _tableRedPlayerOne.SetValue(i, j, 10, _cleaningOperations);
                         _tableRedPlayerTwo.SetValue(i, j, 10, _cleaningOperations);
                     }
@@ -269,6 +275,7 @@ namespace ELTE.Robotok.Model
                         {
                             if (player == 1)
                             {
+                                _greenTeamObservation[i - 3, j - 4] = 1;
                                 _tableGreenPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j)); // minden játékosnak külön van egy saját "pálya", amin megjelenítjük a Manhattan távolságot
                                 if (_table.GetFieldValue(i, j) == 8) // Ha a csapattárs benne van a manhattan távolságban, akkor a két játékos nézetét egyesíteni kell 
                                 {
@@ -278,6 +285,7 @@ namespace ELTE.Robotok.Model
 
                             if (player == 8)
                             {
+                                _greenTeamObservation[i - 3, j - 4] = 8;
                                 _tableGreenPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
                                 if (_table.GetFieldValue(i, j) == 1)
                                 {
@@ -289,17 +297,17 @@ namespace ELTE.Robotok.Model
                             {
                                 if (player == 2)
                                 {
+                                    _redTeamObservation[i - 3, j - 4] = 2;
                                     _tableRedPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
                                     if (_table.GetFieldValue(i, j) == 9)
                                     {
                                         toMerge = true;
                                     }
                                 }
-
+                                    
                                 if (player == 9)
                                 {
-                                  
-
+                                    _redTeamObservation[i - 3, j - 4] = 9;
                                     _tableRedPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
                                     if (_table.GetFieldValue(i, j) == 2)
                                     {
@@ -723,7 +731,7 @@ namespace ELTE.Robotok.Model
                 {
                     for (int j = 0; j < 20; j++)
                     {
-                        if(TableGreenPlayerOne.GetFieldValue(i,j) == 10 && TableGreenPlayerTwo.GetFieldValue(i,j) != 10)
+                        if(_greenTeamObservation[i, j] == 8)
                         {
                             TableGreenPlayerOne.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
                         }
@@ -738,7 +746,7 @@ namespace ELTE.Robotok.Model
                 {
                     for (int j = 0; j < 20; j++)
                     {
-                        if (TableGreenPlayerTwo.GetFieldValue(i, j) == 10 && TableGreenPlayerOne.GetFieldValue(i, j) != 10)
+                        if (_greenTeamObservation[i, j] == 1)
                         {
                             TableGreenPlayerTwo.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
                         }
@@ -752,7 +760,7 @@ namespace ELTE.Robotok.Model
                 {
                     for (int j = 0; j < 20; j++)
                     {
-                        if (TableRedPlayerOne.GetFieldValue(i, j) == 10 && TableRedPlayerTwo.GetFieldValue(i, j) != 10)
+                        if (_redTeamObservation[i, j] == 9)
                         {
                             TableRedPlayerOne.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
                         }
@@ -766,7 +774,7 @@ namespace ELTE.Robotok.Model
                 {
                     for (int j = 0; j < 20; j++)
                     {
-                        if (TableRedPlayerTwo.GetFieldValue(i, j) == 10 && TableRedPlayerOne.GetFieldValue(i, j) != 10)
+                        if (_redTeamObservation[i, j] == 2)
                         {
                             TableRedPlayerTwo.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
                         }
