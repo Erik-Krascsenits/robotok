@@ -357,6 +357,7 @@
             this.clearButton.Size = new System.Drawing.Size(50, 50);
             this.clearButton.TabIndex = 30;
             this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
             // operationParametersText
             // 

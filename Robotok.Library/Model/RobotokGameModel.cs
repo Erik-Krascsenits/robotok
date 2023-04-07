@@ -440,6 +440,134 @@ namespace ELTE.Robotok.Model
             }
         }
         /// <summary>
+        /// Tisztítás logikája
+        /// </summary>
+        public Boolean Clear(String direction, int playerNumber)
+        {
+            int num = 0;
+            Boolean success = false;
+            switch (playerNumber)
+            {
+                case 1:
+                    num = 1;
+                    break;
+                case 2:
+                    num = 8;
+                    break;
+                case 3:
+                    num = 2;
+                    break;
+
+                case 4:
+                    num = 9;
+                    break;
+            }
+
+
+            if (direction == "észak")
+            {
+                for (int i = 4; i < 13; i++)
+                {
+                    for (int j = 5; j < 23; j++)
+                    {
+                        if (_table.GetFieldValue(i, j) == num)
+                        {
+                            if (_table.GetFieldValue(i - 1, j) == 0 || _table.GetFieldValue(i - 1, j) == 3 || _table.GetFieldValue(i - 1, j) == 4 || _table.GetFieldValue(i - 1, j) == 5 || _table.GetFieldValue(i - 1, j) == 6)
+                            {
+                                if (_table.GetFieldRemainingCleaningOperations(i - 1, j) != 1)
+                                {
+                                    _table.SetValue(i - 1, j, _table.GetFieldValue(i - 1, j), _table.GetFieldRemainingCleaningOperations(i - 1, j) - 1);
+                                }
+                                else
+                                {
+                                    _table.SetValue(i - 1, j, 7, _cleaningOperations);
+                                }
+                                success = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (direction == "dél")
+            {
+                for (int i = 12; i > 3; i--)
+                {
+                    for (int j = 22; j > 4; j--) 
+                    { 
+                        if (_table.GetFieldValue(i, j) == num)
+                        {
+                            if (_table.GetFieldValue(i + 1, j) ==  0 || _table.GetFieldValue(i + 1, j) == 3 || _table.GetFieldValue(i + 1, j) == 4 || _table.GetFieldValue(i + 1, j) == 5 || _table.GetFieldValue(i + 1, j) == 6)
+                            {
+                                if (_table.GetFieldRemainingCleaningOperations(i + 1, j) != 1)
+                                {
+                                    _table.SetValue(i + 1, j, _table.GetFieldValue(i + 1, j), _table.GetFieldRemainingCleaningOperations(i + 1, j) - 1);
+                                }
+                                else
+                                {
+                                    _table.SetValue(i + 1, j, 7, _cleaningOperations);
+                                }
+                                success = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (direction == "nyugat")
+            {
+                for (int i = 4; i < 13; i++)
+                {
+                    for (int j = 5; j < 23; j++)
+                    {
+                        if (_table.GetFieldValue(i, j) == num)
+                        {
+                            if (_table.GetFieldValue(i, j - 1) == 0 || _table.GetFieldValue(i, j - 1) == 3 || _table.GetFieldValue(i, j - 1) == 4 || _table.GetFieldValue(i, j - 1) == 5 || _table.GetFieldValue(i, j - 1) == 6)
+                            {
+                                if (_table.GetFieldRemainingCleaningOperations(i, j - 1) != 1)
+                                {
+                                    _table.SetValue(i, j - 1, _table.GetFieldValue(i, j - 1), _table.GetFieldRemainingCleaningOperations(i, j - 1) - 1);
+                                }
+                                else
+                                {
+                                    _table.SetValue(i, j - 1, 7, _cleaningOperations);
+                                }
+                                success = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 12; i > 3; i--)
+                {
+                    for (int j = 22; j > 4; j--)
+                    {
+                        if (_table.GetFieldValue(i, j) == num)
+                        {
+                            if (_table.GetFieldValue(i, j + 1) == 0 || _table.GetFieldValue(i, j + 1) == 3 || _table.GetFieldValue(i, j + 1) == 4 || _table.GetFieldValue(i, j + 1) == 5 || _table.GetFieldValue(i, j + 1) == 6)
+                            {
+                                if (_table.GetFieldRemainingCleaningOperations(i, j + 1) != 1)
+                                {
+                                    _table.SetValue(i, j + 1, _table.GetFieldValue(i, j + 1), _table.GetFieldRemainingCleaningOperations(i, j + 1) - 1);
+                                }
+                                else
+                                {
+                                    _table.SetValue(i, j + 1, 7, _cleaningOperations);
+                                }
+                                success = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return success;
+        }
+
+        /// <summary>
         /// Várakozás logikája
         /// </summary>
         public void Wait()
@@ -449,8 +577,9 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Lépés logikája
         /// </summary>
-        public void Move(String direction, int playerNumber)
+        public Boolean Move(String direction, int playerNumber)
         {
+            Boolean success = false;
             int num = 0;
             switch (playerNumber)
             {
@@ -481,6 +610,7 @@ namespace ELTE.Robotok.Model
                             {
                                 _table.SetValue(i, j, 7, _cleaningOperations);
                                 _table.SetValue(i - 1, j, num, _cleaningOperations);
+                                success = true;
                                 break;
                             }
                         }
@@ -499,6 +629,7 @@ namespace ELTE.Robotok.Model
                             {
                                 _table.SetValue(i, j, 7, _cleaningOperations);
                                 _table.SetValue(i + 1, j, num, _cleaningOperations);
+                                success = true;
                                 break;
                             }
                         }
@@ -517,6 +648,7 @@ namespace ELTE.Robotok.Model
                             {
                                 _table.SetValue(i, j, 7, _cleaningOperations);
                                 _table.SetValue(i, j - 1, num, _cleaningOperations);
+                                success = true;
                                 break;
                             }
                         }
@@ -535,12 +667,14 @@ namespace ELTE.Robotok.Model
                             {
                                 _table.SetValue(i, j, 7, _cleaningOperations);
                                 _table.SetValue(i, j + 1, num, _cleaningOperations);
+                                success = true;
                                 break;
                             }
                         }
                     }
                 }
             }
+            return success;
         }
         #endregion
 
