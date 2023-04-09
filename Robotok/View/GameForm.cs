@@ -31,7 +31,7 @@ namespace ELTE.Robotok.View
             _activePlayer = activePlayer;
             _operationDone = false;
             // Játéktáblák inicializálása
-            GenerateTables(activePlayer);
+            GenerateTables();
 
         }
 
@@ -52,9 +52,15 @@ namespace ELTE.Robotok.View
         #region Private methods
         // Lejebb sokszor található lesz i - 3, illetve j - 4. Ez azért van, mert maga a játékpálya sokkal nagyobb mint a játékosak "játékpályai", ezért hogy ne legyen semmilyen túlindexelés vagy valami hasonló, ezt így oldottam meg
         // Létrehozza a gombokat, amiből a játékosnézet és a hirdektőtáblák felépülnek
-        private void GenerateTables(int active) 
+        private void GenerateTables() 
         {
             GameMenuForm.instance._model.ManhattanDistance(_difficulty, 1);
+            GameMenuForm.instance._model.ManhattanDistance(_difficulty, 8);
+            if (_teams == 2)
+            {
+                GameMenuForm.instance._model.ManhattanDistance(_difficulty, 2);
+                GameMenuForm.instance._model.ManhattanDistance(_difficulty, 9);
+            }
             // Játékos táblája
             _buttonGridPlayer = new Button[GameMenuForm.instance._model.TableGreenPlayerOne.SizeX, GameMenuForm.instance._model.TableGreenPlayerOne.SizeY]; // Mindegy hogy melyik játékos tábláját használjuk, mindegyik ugyanaz a méretű
             for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
@@ -119,9 +125,10 @@ namespace ELTE.Robotok.View
                         successfulText.Text = "Nincs művelet!";
                     }
                 }
-                
             }
-            
+
+            GameMenuForm.instance._model.ManhattanDistance(_difficulty, 1);
+
             // Hirdetőtábla 1
             _buttonGridNoticeBoardOne = new Button[GameMenuForm.instance._model.TableNoticeBoardOne.SizeX, GameMenuForm.instance._model.TableNoticeBoardOne.SizeY];
             for (Int32 i = 0; i < GameMenuForm.instance._model.TableNoticeBoardOne.SizeX; i++)
@@ -158,9 +165,6 @@ namespace ELTE.Robotok.View
 
                     Controls.Add(_buttonGridNoticeBoardOne[i, j]);
                     // felvesszük az ablakra a gombot
-
-                    GameMenuForm.instance._model.ManhattanDistance(_difficulty, active);
-                    //
                 }
             }
 
@@ -217,7 +221,7 @@ namespace ELTE.Robotok.View
             }
             else
             {
-                if(GameMenuForm.instance._model.Clear(operationParameter.Text, _activePlayer))
+                if (GameMenuForm.instance._model.Clear(operationParameter.Text, _activePlayer))
                 {
                     _successText = "Sikeres tisztítás!";
                 }
@@ -236,6 +240,27 @@ namespace ELTE.Robotok.View
             _successText = "Sikeres várakozás!";
             GameMenuForm.instance._model.Wait();
             stepsLeftValueText.Text = GameMenuForm.instance._model.GameStepCount.ToString();
+            _operationDone = true;
+            DisableButtons();
+        }
+
+        public void attachButton_Click(object sender, EventArgs e) {
+            if (String.IsNullOrEmpty(operationParameter.Text) || ((operationParameter.Text != "észak") && operationParameter.Text != "dél" && operationParameter.Text != "kelet" && operationParameter.Text != "nyugat"))
+            {
+                _successText = "Hibás paraméter!";
+            }
+            else
+            {
+
+                if (GameMenuForm.instance._model.Attach(operationParameter.Text, _activePlayer))
+                {
+                    _successText = "Sikeres mozgás!";
+                }
+                else
+                {
+                    _successText = "Sikertelen mozgás!";
+                }
+            }
             _operationDone = true;
             DisableButtons();
         }
@@ -513,6 +538,11 @@ namespace ELTE.Robotok.View
                     }
                 }
             }
+        }
+
+        public void GameForm_Load(object sender, EventArgs e)
+        {
+
         }
         
         // Letiltja a műveletek használatát

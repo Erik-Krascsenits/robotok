@@ -33,11 +33,11 @@ namespace Robotok.Library.Model
             {0, 0, 0, 0}
         };
 
-        private Int32[,] _lType = new Int32[4, 3] {
-            {6, 0, 0},
-            {6, 6, 6},
-            {0, 0, 0},
-            {0, 0, 0}
+        private Int32[,] _lType = new Int32[4, 4] {
+            {6, 0, 0, 0},
+            {6, 6, 6, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}
         };
 
         private Int32[,] _rhombus = new Int32[4, 4] {

@@ -3,10 +3,18 @@ using Robotok.Library.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+
+class Coordinates // az összekapcsolt kockáknak a struktúrája
+{
+    public Int32 x;
+    public Int32 y;
+    public Int32 color;
+}
 
 namespace ELTE.Robotok.Model
 {
@@ -39,12 +47,14 @@ namespace ELTE.Robotok.Model
         private Int32 _teams; // csapatok száma
         private Int32[,] _greenTeamObservation;
         private Int32[,] _redTeamObservation;
-
         private Boolean _SyncGreenPlayerOne; // zöld csapatban 1. játékos látta-e a zöld 2. játékost
         private Boolean _SyncGreenPlayerTwo; // zöld csapatban 2. játékos látta-e a zöld 1. játékost
         private Boolean _SyncRedPlayerOne; // piros csapatban 1. játékos látta-e a piros 2. játékost
         private Boolean _SyncRedPlayerTwo; // piros csapatban 2. játékos látta-e a piros 1. játékost
-
+        private List<Coordinates> _playerOneTeamGreenSpace; // 1. zöld játékosnak a kockai
+        private List<Coordinates> _playerTwoTeamGreenSpace; // 2. zöld játékosnak a kockai
+        private List<Coordinates> _playerOneTeamRedSpace; // 1. piros játékosnak a kockai
+        private List<Coordinates> _playerTwoTeamRedSpace; // 2. piros játékosnak a kockai
 
         #endregion
 
@@ -139,12 +149,35 @@ namespace ELTE.Robotok.Model
                     break;
 
             }
+            // Táblák létrehozása
+            _table = new RobotokTable(17, 28);
+            _tableGreenPlayerOne = new RobotokTable(11, 20);
+            _tableGreenPlayerTwo = new RobotokTable(11, 20);
+            _greenTeamObservation = new Int32[11, 20];
+            _redTeamObservation = new Int32[11, 20];
+            _playerOneTeamGreenSpace = new List<Coordinates>();
+            _playerTwoTeamGreenSpace = new List<Coordinates>();
+            if (_teams == 2)
+            {
+                _tableRedPlayerOne = new RobotokTable(11, 20);
+                _tableRedPlayerTwo = new RobotokTable(11, 20);
+                _playerOneTeamRedSpace = new List<Coordinates>();
+                _playerTwoTeamRedSpace = new List<Coordinates>();
+            }
+            _remainingSeconds = 5; // műveletek közötti gondolkodási idő
+            _gameStepCount = 300; // játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
+
+            _SyncGreenPlayerOne = false;
+            _SyncGreenPlayerTwo = false;
+            _SyncRedPlayerOne = false;
+            _SyncRedPlayerTwo = false;
 
             _teams = teams;
             _figure1 = new Shape();
             _figure2 = new Shape();
             _tableNoticeBoardOne = new RobotokTable(4, 4);
             _tableNoticeBoardTwo = new RobotokTable(4, 4);
+
             _dataAccess = dataAccess;
         }
 
@@ -156,23 +189,6 @@ namespace ELTE.Robotok.Model
         /// </summary>
         public void NewGame()
         {
-            // Táblák létrehozása
-            _table = new RobotokTable(17, 28);
-            _tableGreenPlayerOne = new RobotokTable(11, 20);
-            _tableGreenPlayerTwo = new RobotokTable(11, 20);
-            _greenTeamObservation = new Int32[11, 20];
-            _redTeamObservation = new Int32[11, 20];
-            if (_teams == 2) { 
-                _tableRedPlayerOne = new RobotokTable(11, 20);
-                _tableRedPlayerTwo = new RobotokTable(11, 20);
-            }
-            _remainingSeconds = 5; // műveletek közötti gondolkodási idő
-            _gameStepCount = 300; // játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
-
-            _SyncGreenPlayerOne = false;
-            _SyncGreenPlayerTwo = false;
-            _SyncRedPlayerOne = false;
-            _SyncRedPlayerTwo = false;
 
             for (int i = 0; i < 11; i++) // játékosok tábláját feltöltjük nem látható mezőkkel
             {
@@ -566,7 +582,199 @@ namespace ELTE.Robotok.Model
             }
             return success;
         }
+        /// <summary>
+        /// Rákapcsolás logikája
+        /// </summary>
+        public Boolean Attach(String direction, int playerNumber)
+        {
+            int num = 0;
+            Boolean success = false;
+            switch (playerNumber)
+            {
+                case 1:
+                    num = 1;
+                    break;
+                case 2:
+                    num = 8;
+                    break;
+                case 3:
+                    num = 2;
+                    break;
 
+                case 4:
+                    num = 9;
+                    break;
+            }
+
+            int tempCubeToConnectTo = num; // hogy ha robothoz már hozzá van kapcsóladva egy vagy több elem, akkor alábbi elágazással kiválusztjuk az utolsó hozzákapcsolódott kockát
+
+            if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
+            {
+                tempCubeToConnectTo = _playerOneTeamGreenSpace.Last().color;
+            } else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
+            {
+                tempCubeToConnectTo = _playerTwoTeamGreenSpace.Last().color;
+                
+            }
+
+            if (_teams == 2)
+            {
+                if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
+                {
+                    tempCubeToConnectTo = _playerOneTeamRedSpace.Last().color;
+                } else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
+                {
+                    tempCubeToConnectTo = _playerTwoTeamRedSpace.Last().color;
+                }
+            }
+
+            if (direction == "észak")
+            {
+                for (int i = 4; i < 13; i++)
+                {
+                    for (int j = 5; j < 23; j++)
+                    {
+                        if (_table.GetFieldValue(i, j) == tempCubeToConnectTo)
+                        {
+                            if (_table.GetFieldValue(i - 1, j) == 3 || _table.GetFieldValue(i - 1, j) == 4 || _table.GetFieldValue(i - 1, j) == 5 || _table.GetFieldValue(i - 1, j) == 6)
+                            {
+                                success = true;
+                                Coordinates temp = new Coordinates();
+                                temp.x = i - 1;
+                                temp.y = j;
+                                temp.color = _table.GetFieldValue(temp.x, temp.y);
+
+                                if (num == 1)
+                                {
+                                    _playerOneTeamGreenSpace.Add(temp);
+                                } else if (num == 8)
+                                {
+                                    _playerTwoTeamGreenSpace.Add(temp);
+                                } else if (num == 2)
+                                {
+                                    _playerOneTeamRedSpace.Add(temp);
+                                } else
+                                {
+                                    _playerTwoTeamRedSpace.Add(temp);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (direction == "dél")
+            {
+                for (int i = 12; i > 3; i--)
+                {
+                    for (int j = 22; j > 4; j--)
+                    {
+                        if (_table.GetFieldValue(i, j) == tempCubeToConnectTo)
+                        {
+                            if (_table.GetFieldValue(i + 1, j) == 3 || _table.GetFieldValue(i + 1, j) == 4 || _table.GetFieldValue(i + 1, j) == 5 || _table.GetFieldValue(i + 1, j) == 6)
+                            {
+                                success = true;
+                                Coordinates temp = new Coordinates();
+                                temp.x = i + 1;
+                                temp.y = j;
+                                temp.color = _table.GetFieldValue(temp.x, temp.y);
+
+                                if (num == 1)
+                                {
+                                    _playerOneTeamGreenSpace.Add(temp);
+                                }
+                                else if (num == 8)
+                                {
+                                    _playerTwoTeamGreenSpace.Add(temp);
+                                }
+                                else if (num == 2)
+                                {
+                                    _playerOneTeamRedSpace.Add(temp);
+                                }
+                                else
+                                {
+                                    _playerTwoTeamRedSpace.Add(temp);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (direction == "nyugat")
+            {
+                for (int i = 4; i < 13; i++)
+                {
+                    for (int j = 5; j < 23; j++)
+                    {
+                        if (_table.GetFieldValue(i, j) == tempCubeToConnectTo)
+                        {
+                            if (_table.GetFieldValue(i, j - 1) == 3 || _table.GetFieldValue(i, j - 1) == 4 || _table.GetFieldValue(i, j - 1) == 5 || _table.GetFieldValue(i, j - 1) == 6)
+                            {
+                                success = true;
+                                Coordinates temp = new Coordinates();
+                                temp.x = i;
+                                temp.y = j - 1;
+                                temp.color = _table.GetFieldValue(temp.x, temp.y);
+
+                                if (num == 1)
+                                {
+                                    _playerOneTeamGreenSpace.Add(temp);
+                                }
+                                else if (num == 8)
+                                {
+                                    _playerTwoTeamGreenSpace.Add(temp);
+                                }
+                                else if (num == 2)
+                                {
+                                    _playerOneTeamRedSpace.Add(temp);
+                                }
+                                else
+                                {
+                                    _playerTwoTeamRedSpace.Add(temp);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 12; i > 3; i--)
+                {
+                    for (int j = 22; j > 4; j--)
+                    {
+                        if (_table.GetFieldValue(i, j) == tempCubeToConnectTo)
+                        {
+                            if (_table.GetFieldValue(i, j + 1) == 3 || _table.GetFieldValue(i, j + 1) == 4 || _table.GetFieldValue(i, j + 1) == 5 || _table.GetFieldValue(i, j + 1) == 6)
+                            {
+                                success = true;
+                                Coordinates temp = new Coordinates();
+                                temp.x = i;
+                                temp.y = j + 1;
+                                temp.color = _table.GetFieldValue(temp.x, temp.y);
+
+                                if (num == 1)
+                                {
+                                    _playerOneTeamGreenSpace.Add(temp);
+                                }
+                                else if (num == 8)
+                                {
+                                    _playerTwoTeamGreenSpace.Add(temp);
+                                }
+                                else if (num == 2)
+                                {
+                                    _playerOneTeamRedSpace.Add(temp);
+                                }
+                                else
+                                {
+                                    _playerTwoTeamRedSpace.Add(temp);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return success;
+        }
         /// <summary>
         /// Várakozás logikája
         /// </summary>
@@ -577,7 +785,7 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Lépés logikája
         /// </summary>
-        public Boolean Move(String direction, int playerNumber)
+        public Boolean Move(String direction, int playerNumber) // még nem csináltam meg végig
         {
             Boolean success = false;
             int num = 0;
@@ -608,9 +816,75 @@ namespace ELTE.Robotok.Model
                         {
                             if (_table.GetFieldValue(i - 1, j) == 7)
                             {
-                                _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i - 1, j, num, _cleaningOperations);
+                                if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
+                                {
+                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
+                                    {
+                                        if (_table.GetFieldValue(coord.x - 1, coord.y) != 7 && _table.GetFieldValue(coord.x - 1, coord.y) != 1)
+                                        {
+                                            return success;
+                                        }
+                                    }
+                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
+                                    {
+                                        _table.SetValue(coord.x, coord.y, 7, -1);
+                                        _table.SetValue(coord.x - 1, coord.y, coord.color, -1);
+                                        coord.x = coord.x - 1;
+                                    }
+                                } else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1) { 
+                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
+                                    {
+                                        if (_table.GetFieldValue(coord.x - 1, coord.y) != 7 && _table.GetFieldValue(coord.x - 1, coord.y) != 8)
+                                        {
+                                            return success;
+                                        }
+                                    }
+                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
+                                    {
+                                        _table.SetValue(coord.x, coord.y, 7, -1);
+                                        _table.SetValue(coord.x - 1, coord.y, coord.color, -1);
+                                        coord.x = coord.x - 1;
+                                    }
+                                } 
+                                if (_teams == 2)
+                                {
+                                    if (num == 2 && _playerOneTeamRedSpace.Count() >= 1) {
+                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
+                                        {
+                                            if (_table.GetFieldValue(coord.x - 1, coord.y) != 7 && _table.GetFieldValue(coord.x - 1, coord.y) != 2)
+                                            {
+                                                return success;
+                                            }
+                                        }
+                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
+                                        {
+                                            _table.SetValue(coord.x, coord.y, 7, -1);
+                                            _table.SetValue(coord.x - 1, coord.y, coord.color, -1);
+                                            coord.x = coord.x - 1;
+
+                                        }
+                                    } else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1) {
+                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
+                                        {
+                                            if (_table.GetFieldValue(coord.x - 1, coord.y) != 7 && _table.GetFieldValue(coord.x - 1, coord.y) != 9)
+                                            {
+                                                return success;
+                                            }
+                                        }
+                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
+                                        {
+                                            _table.SetValue(coord.x, coord.y, 7, -1);
+                                            _table.SetValue(coord.x - 1, coord.y, coord.color, -1);
+                                            coord.x = coord.x - 1;
+                                        }
+                                    }
+                                }
+                                if (_table.GetFieldValue(i, j) != 3 && _table.GetFieldValue(i, j) != 4 && _table.GetFieldValue(i, j) != 5 && _table.GetFieldValue(i, j) != 6)
+                                {
+                                    _table.SetValue(i, j, 7, -1);
+                                }
                                 success = true;
+                                _table.SetValue(i - 1, j, num, -1);
                                 break;
                             }
                         }
@@ -627,9 +901,81 @@ namespace ELTE.Robotok.Model
                         {
                             if (_table.GetFieldValue(i + 1, j) == 7)
                             {
-                                _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i + 1, j, num, _cleaningOperations);
+                                if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
+                                {
+                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
+                                    {
+                                        if (_table.GetFieldValue(coord.x + 1, coord.y) != 7 && _table.GetFieldValue(coord.x + 1, coord.y) != 1)
+                                        {
+                                            return success;
+                                        }
+                                    }
+                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
+                                    {
+                                        _table.SetValue(coord.x, coord.y, 7, -1);
+                                        _table.SetValue(coord.x + 1, coord.y, coord.color, -1);
+                                        coord.x = coord.x + 1;
+                                    }
+                                }
+                                else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
+                                {
+                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
+                                    {
+                                        if (_table.GetFieldValue(coord.x + 1, coord.y) != 7 && _table.GetFieldValue(coord.x + 1, coord.y) != 8)
+                                        {
+                                            return success;
+                                        }
+                                    }
+                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
+                                    {
+                                        _table.SetValue(coord.x, coord.y, 7, -1);
+                                        _table.SetValue(coord.x + 1, coord.y, coord.color, -1);
+                                        coord.x = coord.x + 1;
+                                    }
+                                }
+                                
+                                if (_teams == 2)
+                                {
+                                    if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
+                                    {
+                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
+                                        {
+                                            if (_table.GetFieldValue(coord.x + 1, coord.y) != 7 && _table.GetFieldValue(coord.x + 1, coord.y) != 2)
+                                            {
+                                                return success;
+                                            }
+                                        }
+                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
+                                        {
+                                            _table.SetValue(coord.x, coord.y, 7, -1);
+                                            _table.SetValue(coord.x + 1, coord.y, coord.color, -1);
+                                            coord.x = coord.x + 1;
+                                        }
+                                    }
+                                    else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
+                                    {
+                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
+                                        {
+                                            if (_table.GetFieldValue(coord.x + 1, coord.y) != 7 && _table.GetFieldValue(coord.x + 1, coord.y) != 9)
+                                            {
+                                                return success;
+                                            }
+                                        }
+                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
+                                        {
+                                            _table.SetValue(coord.x, coord.y, 7, -1);
+                                            _table.SetValue(coord.x + 1, coord.y, coord.color, -1);
+                                            coord.x = coord.x + 1;
+                                        }
+                                    }
+                                }
+
+                                if (_table.GetFieldValue(i, j) != 3 && _table.GetFieldValue(i, j) != 4 && _table.GetFieldValue(i, j) != 5 && _table.GetFieldValue(i, j) != 6)
+                                {
+                                    _table.SetValue(i, j, 7, -1);
+                                }
                                 success = true;
+                                _table.SetValue(i + 1, j, num, -1);
                                 break;
                             }
                         }
@@ -646,9 +992,80 @@ namespace ELTE.Robotok.Model
                         {
                             if (_table.GetFieldValue(i, j - 1) == 7)
                             {
-                                _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i, j - 1, num, _cleaningOperations);
+                                if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
+                                {
+                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
+                                    {
+                                        if (_table.GetFieldValue(coord.x, coord.y - 1) != 7 && _table.GetFieldValue(coord.x, coord.y - 1) != 1)
+                                        {
+                                            return success;
+                                        }
+                                    }
+                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
+                                    {
+                                        _table.SetValue(coord.x, coord.y, 7, -1);
+                                        _table.SetValue(coord.x, coord.y - 1, coord.color, -1);
+                                        coord.y = coord.y - 1;
+                                    }
+                                }
+                                else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
+                                {
+                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
+                                    {
+                                        if (_table.GetFieldValue(coord.x, coord.y - 1) != 7 && _table.GetFieldValue(coord.x, coord.y - 1) != 8)
+                                        {
+                                            return success;
+                                        }
+                                    }
+                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
+                                    {
+                                        _table.SetValue(coord.x, coord.y, 7, -1);
+                                        _table.SetValue(coord.x, coord.y - 1, coord.color, -1);
+                                        coord.y = coord.y - 1;
+                                    }
+                                }
+
+                                if (_teams == 2)
+                                {
+                                    if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
+                                    {
+                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
+                                        {
+                                            if (_table.GetFieldValue(coord.x, coord.y - 1) != 7 && _table.GetFieldValue(coord.x, coord.y - 1) != 2)
+                                            {
+                                                return success;
+                                            }
+                                        }
+                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
+                                        {
+                                            _table.SetValue(coord.x, coord.y, 7, -1);
+                                            _table.SetValue(coord.x, coord.y - 1, coord.color, -1);
+                                            coord.y = coord.y - 1;
+                                        }
+                                    }
+                                    else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
+                                    {
+                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
+                                        {
+                                            if (_table.GetFieldValue(coord.x, coord.y - 1) != 7 && _table.GetFieldValue(coord.x, coord.y - 1) != 9)
+                                            {
+                                                return success;
+                                            }
+                                        }
+                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
+                                        {
+                                            _table.SetValue(coord.x, coord.y, 7, -1);
+                                            _table.SetValue(coord.x, coord.y - 1, coord.color, -1);
+                                            coord.y = coord.y - 1;
+                                        }
+                                    }
+                                }
+                                if (_table.GetFieldValue(i, j) != 3 && _table.GetFieldValue(i, j) != 4 && _table.GetFieldValue(i, j) != 5 && _table.GetFieldValue(i, j) != 6)
+                                {
+                                    _table.SetValue(i, j, 7, -1);
+                                }
                                 success = true;
+                                _table.SetValue(i, j - 1, num, -1);
                                 break;
                             }
                         }
@@ -665,9 +1082,80 @@ namespace ELTE.Robotok.Model
                         {
                             if (_table.GetFieldValue(i, j + 1) == 7)
                             {
-                                _table.SetValue(i, j, 7, _cleaningOperations);
-                                _table.SetValue(i, j + 1, num, _cleaningOperations);
+                                if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
+                                {
+                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
+                                    {
+                                        if (_table.GetFieldValue(coord.x, coord.y + 1) != 7 && _table.GetFieldValue(coord.x, coord.y + 1) != 1)
+                                        {
+                                            return success;
+                                        }
+                                    }
+                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
+                                    {
+                                        _table.SetValue(coord.x, coord.y, 7, -1);
+                                        _table.SetValue(coord.x, coord.y + 1, coord.color, -1);
+                                        coord.y = coord.y + 1;
+                                    }
+                                }
+                                else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
+                                {
+                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
+                                    {
+                                        if (_table.GetFieldValue(coord.x, coord.y + 1) != 7 && _table.GetFieldValue(coord.x, coord.y + 1) != 8)
+                                        {
+                                            return success;
+                                        }
+                                    }
+                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
+                                    {
+                                        _table.SetValue(coord.x, coord.y, 7, -1);
+                                        _table.SetValue(coord.x, coord.y + 1, coord.color, -1);
+                                        coord.y = coord.y + 1;
+                                    }
+                                }
+                                
+                                if (_teams == 2)
+                                {
+                                    if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
+                                    {
+                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
+                                        {
+                                            if (_table.GetFieldValue(coord.x, coord.y + 1) != 7 && _table.GetFieldValue(coord.x, coord.y + 1) != 2)
+                                            {
+                                                return success;
+                                            }
+                                        }
+                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
+                                        {
+                                            _table.SetValue(coord.x, coord.y, 7, -1);
+                                            _table.SetValue(coord.x, coord.y + 1, coord.color, -1);
+                                            coord.y = coord.y + 1;
+                                        }
+                                    }
+                                    else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
+                                    {
+                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
+                                        {
+                                            if (_table.GetFieldValue(coord.x, coord.y + 1) != 7 && _table.GetFieldValue(coord.x, coord.y + 1) != 9)
+                                            {
+                                                return success;
+                                            }
+                                        }
+                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
+                                        {
+                                            _table.SetValue(coord.x, coord.y, 7, -1);
+                                            _table.SetValue(coord.x, coord.y + 1, coord.color, -1);
+                                            coord.y = coord.y + 1;
+                                        }
+                                    }
+                                }
+                                if (_table.GetFieldValue(i, j) != 3 && _table.GetFieldValue(i, j) != 4 && _table.GetFieldValue(i, j) != 5 && _table.GetFieldValue(i, j) != 6)
+                                {
+                                    _table.SetValue(i, j, 7, -1);
+                                }
                                 success = true;
+                                _table.SetValue(i, j + 1, num, -1);
                                 break;
                             }
                         }
@@ -795,8 +1283,6 @@ namespace ELTE.Robotok.Model
                 }
             }
         }
-
-
         /// <summary>
         /// Észlelés.
         /// </summary>
