@@ -170,13 +170,13 @@
             // 
             // stepsLeftText
             // 
-            this.stepsLeftText.AutoSize = true;
-            this.stepsLeftText.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.stepsLeftText.Location = new System.Drawing.Point(599, 43);
-            this.stepsLeftText.Name = "stepsLeftText";
-            this.stepsLeftText.Size = new System.Drawing.Size(283, 31);
-            this.stepsLeftText.TabIndex = 12;
-            this.stepsLeftText.Text = "Hátralevő lépések száma:";
+            stepsLeftText.AutoSize = true;
+            stepsLeftText.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            stepsLeftText.Location = new Point(599, 43);
+            stepsLeftText.Name = "stepsLeftText";
+            stepsLeftText.Size = new Size(283, 31);
+            stepsLeftText.TabIndex = 12;
+            stepsLeftText.Text = "Hátralevő lépések száma:";
             // 
             // stepsLeftValueText
             // 
@@ -200,13 +200,13 @@
             // 
             // greenGroupPointsValueText
             // 
-            this.greenGroupPointsValueText.AutoSize = true;
-            this.greenGroupPointsValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.greenGroupPointsValueText.Location = new System.Drawing.Point(848, 215);
-            this.greenGroupPointsValueText.Name = "greenGroupPointsValueText";
-            this.greenGroupPointsValueText.Size = new System.Drawing.Size(22, 25);
-            this.greenGroupPointsValueText.TabIndex = 16;
-            this.greenGroupPointsValueText.Text = "0";
+            greenGroupPointsValueText.AutoSize = true;
+            greenGroupPointsValueText.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
+            greenGroupPointsValueText.Location = new Point(848, 215);
+            greenGroupPointsValueText.Name = "greenGroupPointsValueText";
+            greenGroupPointsValueText.Size = new Size(22, 25);
+            greenGroupPointsValueText.TabIndex = 16;
+            greenGroupPointsValueText.Text = "0";
             // 
             // redGroupPointsText
             // 
