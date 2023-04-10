@@ -130,7 +130,7 @@ namespace ELTE.Robotok.Model
 
         public RobotokGameModel(IRobotokDataAccess dataAccess, int selectedDifficulty, int teams)
         {
-            switch(selectedDifficulty)
+            switch (selectedDifficulty)
             {
                 case 1:
                     _gameDifficulty = GameDifficulty.Easy;
@@ -195,8 +195,8 @@ namespace ELTE.Robotok.Model
                 for (int j = 0; j < 20; j++)
                 {
                     _greenTeamObservation[i, j] = 0;
-                    _tableGreenPlayerOne.SetValue(i , j , 10, _cleaningOperations);
-                    _tableGreenPlayerTwo.SetValue(i , j , 10, _cleaningOperations);
+                    _tableGreenPlayerOne.SetValue(i, j, 10, _cleaningOperations);
+                    _tableGreenPlayerTwo.SetValue(i, j, 10, _cleaningOperations);
                     if (_teams == 2)
                     {
                         _redTeamObservation[i, j] = 0;
@@ -208,17 +208,17 @@ namespace ELTE.Robotok.Model
 
             // Kezdeti értékek generálása a mezőknek
             GenerateFields();
-            
+
 
             // Beállítjuk a hirdetőtáblákon lévő alakzatoknak a színét
             for (int i = 0; i < _figure1.Figure.GetLength(0); ++i)
             {
                 for (int j = 0; j < _figure1.Figure.GetLength(1); ++j)
                 {
-                    if (_figure1.GetFieldValue(i,j) != 0)
+                    if (_figure1.GetFieldValue(i, j) != 0)
                     {
                         _tableNoticeBoardOne.SetValue(i, j, _figure1.GetColor(), _cleaningOperations);
-                    } 
+                    }
                     else
                     {
                         _tableNoticeBoardOne.SetValue(i, j, 7, _cleaningOperations);
@@ -275,11 +275,11 @@ namespace ELTE.Robotok.Model
                     tempDistance = _ManhattanDistanceHard;
                     break;
             }
-           
-         
-            
-            
-            Boolean toMerge = false;   
+
+
+
+
+            Boolean toMerge = false;
 
             for (int i = 0; i < _table.SizeX; i++)
             {
@@ -295,7 +295,7 @@ namespace ELTE.Robotok.Model
                                 _tableGreenPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j)); // minden játékosnak külön van egy saját "pálya", amin megjelenítjük a Manhattan távolságot
                                 if (_table.GetFieldValue(i, j) == 8) // Ha a csapattárs benne van a manhattan távolságban, akkor a két játékos nézetét egyesíteni kell 
                                 {
-                                    toMerge = true; 
+                                    toMerge = true;
                                 }
                             }
 
@@ -320,7 +320,7 @@ namespace ELTE.Robotok.Model
                                         toMerge = true;
                                     }
                                 }
-                                    
+
                                 if (player == 9)
                                 {
                                     _redTeamObservation[i - 3, j - 4] = 9;
@@ -432,7 +432,7 @@ namespace ELTE.Robotok.Model
                 return;
             }
 
-            _remainingSeconds--; 
+            _remainingSeconds--;
 
             if (_remainingSeconds == -1) // ha lejárt a lépések közötti idő, újraindítjuk a visszaszámlálást, majd végrehajtuk a megadott játékműveletet
             {
@@ -509,11 +509,11 @@ namespace ELTE.Robotok.Model
             {
                 for (int i = 12; i > 3; i--)
                 {
-                    for (int j = 22; j > 4; j--) 
-                    { 
+                    for (int j = 22; j > 4; j--)
+                    {
                         if (_table.GetFieldValue(i, j) == num)
                         {
-                            if (_table.GetFieldValue(i + 1, j) ==  0 || _table.GetFieldValue(i + 1, j) == 3 || _table.GetFieldValue(i + 1, j) == 4 || _table.GetFieldValue(i + 1, j) == 5 || _table.GetFieldValue(i + 1, j) == 6)
+                            if (_table.GetFieldValue(i + 1, j) == 0 || _table.GetFieldValue(i + 1, j) == 3 || _table.GetFieldValue(i + 1, j) == 4 || _table.GetFieldValue(i + 1, j) == 5 || _table.GetFieldValue(i + 1, j) == 6)
                             {
                                 if (_table.GetFieldRemainingCleaningOperations(i + 1, j) != 1)
                                 {
@@ -582,6 +582,189 @@ namespace ELTE.Robotok.Model
             }
             return success;
         }
+
+        /// <summary>
+        /// Lekapcsolás logikája
+        /// </summary>
+        public Boolean Dettach(String direction, int playerNumber)
+        {
+            int num = 0;
+            Boolean success = false;
+            switch (playerNumber)
+            {
+                case 1:
+                    num = 1;
+                    break;
+                case 2:
+                    num = 8;
+                    break;
+                case 3:
+                    num = 2;
+                    break;
+
+                case 4:
+                    num = 9;
+                    break;
+            }
+
+            Coordinates tempCubeToDettach = new Coordinates();
+
+            if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
+            {
+                tempCubeToDettach.color = _playerOneTeamGreenSpace.Last().color;
+                tempCubeToDettach.x = _playerOneTeamGreenSpace.Last().x;
+                tempCubeToDettach.y = _playerOneTeamGreenSpace.Last().y;
+            }
+            else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
+            {
+                tempCubeToDettach.color = _playerTwoTeamGreenSpace.Last().color;
+                tempCubeToDettach.x = _playerTwoTeamGreenSpace.Last().x;
+                tempCubeToDettach.y = _playerTwoTeamGreenSpace.Last().y;
+            }
+
+            if (_teams == 2)
+            {
+                if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
+                {
+                    tempCubeToDettach.color = _playerOneTeamRedSpace.Last().color;
+                    tempCubeToDettach.x = _playerOneTeamRedSpace.Last().x;
+                    tempCubeToDettach.y = _playerOneTeamRedSpace.Last().y;
+                }
+                else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
+                {
+                    tempCubeToDettach.color = _playerTwoTeamRedSpace.Last().color;
+                    tempCubeToDettach.x = _playerTwoTeamRedSpace.Last().x;
+                    tempCubeToDettach.y = _playerTwoTeamRedSpace.Last().y;
+                }
+            }
+
+            if (direction == "észak")
+            {
+                for (int i = 4; i < 13; i++)
+                {
+                    for (int j = 5; j < 23; j++)
+                    {
+                        if (i == tempCubeToDettach.x && j == tempCubeToDettach.y)
+                        {
+                            success = true;
+                            _table.SetValue(i, j, tempCubeToDettach.color, _cleaningOperations);
+
+                            if (num == 1)
+                            {
+                                _playerOneTeamGreenSpace.RemoveAt(_playerOneTeamGreenSpace.Count() - 1);
+                            }
+                            else if (num == 8)
+                            {
+                                _playerTwoTeamGreenSpace.RemoveAt(_playerTwoTeamGreenSpace.Count() - 1);
+                            }
+                            else if (num == 2)
+                            {
+                                _playerOneTeamRedSpace.RemoveAt(_playerOneTeamRedSpace.Count() - 1);
+                            }
+                            else
+                            {
+                                _playerTwoTeamRedSpace.RemoveAt(_playerTwoTeamRedSpace.Count() - 1);
+                            }
+                        }
+                    }
+                }
+            }
+            else if (direction == "dél")
+            {
+                for (int i = 12; i > 3; i--)
+                {
+                    for (int j = 22; j > 4; j--)
+                    {
+                        if (i == tempCubeToDettach.x && j == tempCubeToDettach.y)
+                        {
+                            success = true;
+                            _table.SetValue(i, j, tempCubeToDettach.color, _cleaningOperations);
+
+                            if (num == 1)
+                            {
+                                _playerOneTeamGreenSpace.RemoveAt(_playerOneTeamGreenSpace.Count() - 1);
+                            }
+                            else if (num == 8)
+                            {
+                                _playerTwoTeamGreenSpace.RemoveAt(_playerTwoTeamGreenSpace.Count() - 1);
+                            }
+                            else if (num == 2)
+                            {
+                                _playerOneTeamRedSpace.RemoveAt(_playerOneTeamRedSpace.Count() - 1);
+                            }
+                            else
+                            {
+                                _playerTwoTeamRedSpace.RemoveAt(_playerTwoTeamRedSpace.Count() - 1);
+                            }
+                        }
+                    }
+                }
+            }
+            else if (direction == "nyugat")
+            {
+                for (int i = 4; i < 13; i++)
+                {
+                    for (int j = 5; j < 23; j++)
+                    {
+                        if (i == tempCubeToDettach.x && j == tempCubeToDettach.y)
+                        {
+                            success = true;
+                            _table.SetValue(i, j, tempCubeToDettach.color, _cleaningOperations);
+
+                            if (num == 1)
+                            {
+                                _playerOneTeamGreenSpace.RemoveAt(_playerOneTeamGreenSpace.Count() - 1);
+                            }
+                            else if (num == 8)
+                            {
+                                _playerTwoTeamGreenSpace.RemoveAt(_playerTwoTeamGreenSpace.Count() - 1);
+                            }
+                            else if (num == 2)
+                            {
+                                _playerOneTeamRedSpace.RemoveAt(_playerOneTeamRedSpace.Count() - 1);
+                            }
+                            else
+                            {
+                                _playerTwoTeamRedSpace.RemoveAt(_playerTwoTeamRedSpace.Count() - 1);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 12; i > 3; i--)
+                {
+                    for (int j = 22; j > 4; j--)
+                    {
+                        if (i == tempCubeToDettach.x && j == tempCubeToDettach.y)
+                        {
+                            success = true;
+                            _table.SetValue(i, j, tempCubeToDettach.color, _cleaningOperations);
+
+                            if (num == 1)
+                            {
+                                _playerOneTeamGreenSpace.RemoveAt(_playerOneTeamGreenSpace.Count() - 1);
+                            }
+                            else if (num == 8)
+                            {
+                                _playerTwoTeamGreenSpace.RemoveAt(_playerTwoTeamGreenSpace.Count() - 1);
+                            }
+                            else if (num == 2)
+                            {
+                                _playerOneTeamRedSpace.RemoveAt(_playerOneTeamRedSpace.Count() - 1);
+                            }
+                            else
+                            {
+                                _playerTwoTeamRedSpace.RemoveAt(_playerTwoTeamRedSpace.Count() - 1);
+                            }
+                        }
+                    }
+                }
+            }
+            return success;
+        }
+
         /// <summary>
         /// Rákapcsolás logikája
         /// </summary>
@@ -606,25 +789,46 @@ namespace ELTE.Robotok.Model
                     break;
             }
 
-            int tempCubeToConnectTo = num; // hogy ha robothoz már hozzá van kapcsóladva egy vagy több elem, akkor alábbi elágazással kiválusztjuk az utolsó hozzákapcsolódott kockát
+            Coordinates tempCubeToConnectTo = new Coordinates();
+            tempCubeToConnectTo.color = num;
+            for (int i = 4; i < 13; i++)
+            {
+                for (int j = 5; j < 23; j++)
+                {
+                    if (_table.GetFieldValue(i,j) == num)
+                    {
+                        tempCubeToConnectTo.x = i;
+                        tempCubeToConnectTo.y = j;
+                    }
+                }
+            }
 
             if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
             {
-                tempCubeToConnectTo = _playerOneTeamGreenSpace.Last().color;
-            } else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
+                tempCubeToConnectTo.color = _playerOneTeamGreenSpace.Last().color;
+                tempCubeToConnectTo.x = _playerOneTeamGreenSpace.Last().x;
+                tempCubeToConnectTo.y = _playerOneTeamGreenSpace.Last().y;
+            }
+            else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
             {
-                tempCubeToConnectTo = _playerTwoTeamGreenSpace.Last().color;
-                
+                tempCubeToConnectTo.color = _playerTwoTeamGreenSpace.Last().color;
+                tempCubeToConnectTo.x = _playerTwoTeamGreenSpace.Last().x;
+                tempCubeToConnectTo.y = _playerTwoTeamGreenSpace.Last().y;
             }
 
             if (_teams == 2)
             {
                 if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
                 {
-                    tempCubeToConnectTo = _playerOneTeamRedSpace.Last().color;
-                } else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
+                    tempCubeToConnectTo.color = _playerOneTeamRedSpace.Last().color;
+                    tempCubeToConnectTo.x = _playerOneTeamRedSpace.Last().x;
+                    tempCubeToConnectTo.y = _playerOneTeamRedSpace.Last().y;
+                }
+                else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
                 {
-                    tempCubeToConnectTo = _playerTwoTeamRedSpace.Last().color;
+                    tempCubeToConnectTo.color = _playerTwoTeamRedSpace.Last().color;
+                    tempCubeToConnectTo.x = _playerTwoTeamRedSpace.Last().x;
+                    tempCubeToConnectTo.y = _playerTwoTeamRedSpace.Last().y;
                 }
             }
 
@@ -634,7 +838,7 @@ namespace ELTE.Robotok.Model
                 {
                     for (int j = 5; j < 23; j++)
                     {
-                        if (_table.GetFieldValue(i, j) == tempCubeToConnectTo)
+                        if (i == tempCubeToConnectTo.x && j == tempCubeToConnectTo.y)
                         {
                             if (_table.GetFieldValue(i - 1, j) == 3 || _table.GetFieldValue(i - 1, j) == 4 || _table.GetFieldValue(i - 1, j) == 5 || _table.GetFieldValue(i - 1, j) == 6)
                             {
@@ -647,13 +851,16 @@ namespace ELTE.Robotok.Model
                                 if (num == 1)
                                 {
                                     _playerOneTeamGreenSpace.Add(temp);
-                                } else if (num == 8)
+                                }
+                                else if (num == 8)
                                 {
                                     _playerTwoTeamGreenSpace.Add(temp);
-                                } else if (num == 2)
+                                }
+                                else if (num == 2)
                                 {
                                     _playerOneTeamRedSpace.Add(temp);
-                                } else
+                                }
+                                else
                                 {
                                     _playerTwoTeamRedSpace.Add(temp);
                                 }
@@ -668,7 +875,7 @@ namespace ELTE.Robotok.Model
                 {
                     for (int j = 22; j > 4; j--)
                     {
-                        if (_table.GetFieldValue(i, j) == tempCubeToConnectTo)
+                        if (i == tempCubeToConnectTo.x && j == tempCubeToConnectTo.y)
                         {
                             if (_table.GetFieldValue(i + 1, j) == 3 || _table.GetFieldValue(i + 1, j) == 4 || _table.GetFieldValue(i + 1, j) == 5 || _table.GetFieldValue(i + 1, j) == 6)
                             {
@@ -705,7 +912,7 @@ namespace ELTE.Robotok.Model
                 {
                     for (int j = 5; j < 23; j++)
                     {
-                        if (_table.GetFieldValue(i, j) == tempCubeToConnectTo)
+                        if (i == tempCubeToConnectTo.x && j == tempCubeToConnectTo.y)
                         {
                             if (_table.GetFieldValue(i, j - 1) == 3 || _table.GetFieldValue(i, j - 1) == 4 || _table.GetFieldValue(i, j - 1) == 5 || _table.GetFieldValue(i, j - 1) == 6)
                             {
@@ -742,7 +949,7 @@ namespace ELTE.Robotok.Model
                 {
                     for (int j = 22; j > 4; j--)
                     {
-                        if (_table.GetFieldValue(i, j) == tempCubeToConnectTo)
+                        if (i == tempCubeToConnectTo.x && j == tempCubeToConnectTo.y)
                         {
                             if (_table.GetFieldValue(i, j + 1) == 3 || _table.GetFieldValue(i, j + 1) == 4 || _table.GetFieldValue(i, j + 1) == 5 || _table.GetFieldValue(i, j + 1) == 6)
                             {
@@ -831,7 +1038,9 @@ namespace ELTE.Robotok.Model
                                         _table.SetValue(coord.x - 1, coord.y, coord.color, -1);
                                         coord.x = coord.x - 1;
                                     }
-                                } else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1) { 
+                                }
+                                else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
+                                {
                                     foreach (Coordinates coord in _playerTwoTeamGreenSpace)
                                     {
                                         if (_table.GetFieldValue(coord.x - 1, coord.y) != 7 && _table.GetFieldValue(coord.x - 1, coord.y) != 8)
@@ -845,10 +1054,11 @@ namespace ELTE.Robotok.Model
                                         _table.SetValue(coord.x - 1, coord.y, coord.color, -1);
                                         coord.x = coord.x - 1;
                                     }
-                                } 
+                                }
                                 if (_teams == 2)
                                 {
-                                    if (num == 2 && _playerOneTeamRedSpace.Count() >= 1) {
+                                    if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
+                                    {
                                         foreach (Coordinates coord in _playerOneTeamRedSpace)
                                         {
                                             if (_table.GetFieldValue(coord.x - 1, coord.y) != 7 && _table.GetFieldValue(coord.x - 1, coord.y) != 2)
@@ -863,7 +1073,9 @@ namespace ELTE.Robotok.Model
                                             coord.x = coord.x - 1;
 
                                         }
-                                    } else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1) {
+                                    }
+                                    else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
+                                    {
                                         foreach (Coordinates coord in _playerTwoTeamRedSpace)
                                         {
                                             if (_table.GetFieldValue(coord.x - 1, coord.y) != 7 && _table.GetFieldValue(coord.x - 1, coord.y) != 9)
@@ -933,7 +1145,7 @@ namespace ELTE.Robotok.Model
                                         coord.x = coord.x + 1;
                                     }
                                 }
-                                
+
                                 if (_teams == 2)
                                 {
                                     if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
@@ -1114,7 +1326,7 @@ namespace ELTE.Robotok.Model
                                         coord.y = coord.y + 1;
                                     }
                                 }
-                                
+
                                 if (_teams == 2)
                                 {
                                     if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
@@ -1217,9 +1429,9 @@ namespace ELTE.Robotok.Model
                 redPlayerOne_j = random.Next(5, 23);
                 redPlayerTwo_i = random.Next(4, 13);
                 redPlayerTwo_j = random.Next(5, 23);
-                
 
-                while (_table.GetFieldValue(redPlayerOne_i ,redPlayerOne_j) != 7) // megnézzük, hogy a táblán a véletlenszerűen kiválasztott mezőnek mi az értéke, ha nem(7), azaz üres mező, akkor tovább generálunk egy új értéket
+
+                while (_table.GetFieldValue(redPlayerOne_i, redPlayerOne_j) != 7) // megnézzük, hogy a táblán a véletlenszerűen kiválasztott mezőnek mi az értéke, ha nem(7), azaz üres mező, akkor tovább generálunk egy új értéket
                 {
                     redPlayerOne_i = random.Next(4, 13);
                     redPlayerOne_j = random.Next(5, 23);
@@ -1308,10 +1520,10 @@ namespace ELTE.Robotok.Model
                 for (int j = 0; j < _table.SizeY; j++)
                 {
                     if (i > 3 && i < 13 && j > 4 && j < 23) // játék pályán vagyunk-e
-                    {                                                                                                  
-                        if (Math.Abs(i - playerTwoPosX) + Math.Abs(j - playerTwoPosY) < distance ) // ha igen, akkor megnézzük, hogy benne van-e a mező a Manhattan távolságban.
+                    {
+                        if (Math.Abs(i - playerTwoPosX) + Math.Abs(j - playerTwoPosY) < distance) // ha igen, akkor megnézzük, hogy benne van-e a mező a Manhattan távolságban.
                         {
-                            if(player == 1) //frissítjük az egyes játékosok látómezőjét a csapattárs aktuális látómezőjével
+                            if (player == 1) //frissítjük az egyes játékosok látómezőjét a csapattárs aktuális látómezőjével
                             {
                                 _tableGreenPlayerOne.SetValue(i - 3, j - 4, _tableGreenPlayerTwo.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
                             }
@@ -1343,7 +1555,7 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Első találkozás során a pálya frissítése
         /// </summary>
-        private void Merge(int player) 
+        private void Merge(int player)
         {
             if (player == 1) // Megnézzük, hogy melyik játékos észlelte a másikat, és az ő területét frissítjük
             {
@@ -1351,7 +1563,7 @@ namespace ELTE.Robotok.Model
                 {
                     for (int j = 0; j < 20; j++)
                     {
-                        if(_greenTeamObservation[i, j] == 8)
+                        if (_greenTeamObservation[i, j] == 8)
                         {
                             TableGreenPlayerOne.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
                         }
@@ -1360,7 +1572,7 @@ namespace ELTE.Robotok.Model
                 _SyncGreenPlayerOne = true;  // Innentől kezdve folyamatosan szinkronizálják majd a térképeket
 
             }
-            else if(player == 8)
+            else if (player == 8)
             {
                 for (int i = 0; i < 11; i++)
                 {
@@ -1404,7 +1616,7 @@ namespace ELTE.Robotok.Model
             }
 
 
-           
+
 
         }
 

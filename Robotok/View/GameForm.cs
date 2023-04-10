@@ -243,7 +243,27 @@ namespace ELTE.Robotok.View
             _operationDone = true;
             DisableButtons();
         }
+        public void dettachButton_Click(object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(operationParameter.Text) || ((operationParameter.Text != "észak") && operationParameter.Text != "dél" && operationParameter.Text != "kelet" && operationParameter.Text != "nyugat"))
+            {
+                _successText = "Hibás paraméter!";
+            }
+            else
+            {
 
+                if (GameMenuForm.instance._model.Dettach(operationParameter.Text, _activePlayer))
+                {
+                    _successText = "Sikeres mozgás!";
+                }
+                else
+                {
+                    _successText = "Sikertelen mozgás!";
+                }
+            }
+            _operationDone = true;
+            DisableButtons();
+        }
         public void attachButton_Click(object sender, EventArgs e) {
             if (String.IsNullOrEmpty(operationParameter.Text) || ((operationParameter.Text != "észak") && operationParameter.Text != "dél" && operationParameter.Text != "kelet" && operationParameter.Text != "nyugat"))
             {

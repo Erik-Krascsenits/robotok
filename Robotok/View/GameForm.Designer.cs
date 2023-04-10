@@ -328,6 +328,7 @@
             this.detachButton.Size = new System.Drawing.Size(50, 50);
             this.detachButton.TabIndex = 27;
             this.detachButton.UseVisualStyleBackColor = true;
+            this.detachButton.Click += new System.EventHandler(dettachButton_Click);
             // 
             // attachCubesButton
             // 
