@@ -149,6 +149,25 @@ namespace ELTE.Robotok.Model
                     break;
 
             }
+            
+
+            _teams = teams;
+            _figure1 = new Shape();
+            _figure2 = new Shape();
+            _tableNoticeBoardOne = new RobotokTable(4, 4);
+            _tableNoticeBoardTwo = new RobotokTable(4, 4);
+
+            _dataAccess = dataAccess;
+        }
+
+        #endregion
+
+        #region Public game methods
+        /// <summary>
+        /// Új játék kezdése.
+        /// </summary>
+        public void NewGame()
+        {
             // Táblák létrehozása
             _table = new RobotokTable(17, 28);
             _tableGreenPlayerOne = new RobotokTable(11, 20);
@@ -171,25 +190,6 @@ namespace ELTE.Robotok.Model
             _SyncGreenPlayerTwo = false;
             _SyncRedPlayerOne = false;
             _SyncRedPlayerTwo = false;
-
-            _teams = teams;
-            _figure1 = new Shape();
-            _figure2 = new Shape();
-            _tableNoticeBoardOne = new RobotokTable(4, 4);
-            _tableNoticeBoardTwo = new RobotokTable(4, 4);
-
-            _dataAccess = dataAccess;
-        }
-
-        #endregion
-
-        #region Public game methods
-        /// <summary>
-        /// Új játék kezdése.
-        /// </summary>
-        public void NewGame()
-        {
-
             for (int i = 0; i < 11; i++) // játékosok tábláját feltöltjük nem látható mezőkkel
             {
                 for (int j = 0; j < 20; j++)
@@ -840,7 +840,8 @@ namespace ELTE.Robotok.Model
                     {
                         if (i == tempCubeToConnectTo.x && j == tempCubeToConnectTo.y)
                         {
-                            if (_table.GetFieldValue(i - 1, j) == 3 || _table.GetFieldValue(i - 1, j) == 4 || _table.GetFieldValue(i - 1, j) == 5 || _table.GetFieldValue(i - 1, j) == 6)
+                            if (_table.GetFieldValue(i - 1, j) == 3 || _table.GetFieldValue(i - 1, j) == 4 || _table.GetFieldValue(i - 1, j) == 5 
+                                || _table.GetFieldValue(i - 1, j) == 6)
                             {
                                 success = true;
                                 Coordinates temp = new Coordinates();
