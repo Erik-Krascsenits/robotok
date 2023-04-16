@@ -9,11 +9,29 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-class Coordinates // az összekapcsolt kockáknak a struktúrája
+// Azoknak a kockáknak a struktúrája, amiket léptetni kell
+struct CubeToMove
 {
-    public Int32 x;
-    public Int32 y;
-    public Int32 color;
+    public int x;
+    public int y;
+    public int value;
+    public bool northAttachment;
+    public bool southAttachment;
+    public bool eastAttachment;
+    public bool westAttachment;
+    public string direction;
+
+    public CubeToMove(int x, int y, int value, bool n, bool s, bool e, bool w, string direction)
+    {
+        this.x = x;
+        this.y = y;
+        this.northAttachment = n;
+        this.southAttachment = s;
+        this.eastAttachment = e;
+        this.westAttachment = w;
+        this.value = value;
+        this.direction = direction;
+    }
 }
 
 namespace ELTE.Robotok.Model
@@ -51,10 +69,8 @@ namespace ELTE.Robotok.Model
         private Boolean _SyncGreenPlayerTwo; // zöld csapatban 2. játékos látta-e a zöld 1. játékost
         private Boolean _SyncRedPlayerOne; // piros csapatban 1. játékos látta-e a piros 2. játékost
         private Boolean _SyncRedPlayerTwo; // piros csapatban 2. játékos látta-e a piros 1. játékost
-        private List<Coordinates> _playerOneTeamGreenSpace; // 1. zöld játékosnak a kockai
-        private List<Coordinates> _playerTwoTeamGreenSpace; // 2. zöld játékosnak a kockai
-        private List<Coordinates> _playerOneTeamRedSpace; // 1. piros játékosnak a kockai
-        private List<Coordinates> _playerTwoTeamRedSpace; // 2. piros játékosnak a kockai
+        private List<CubeToMove> _cubesOldPosition = new List<CubeToMove>(); // lépés végrehajtásakor a régi helyek eltárolása
+        private List<CubeToMove> _cubesNewPosition = new List<CubeToMove>(); // lépés végrehajtásakor az új helyek eltárolása
 
         #endregion
 
@@ -174,14 +190,10 @@ namespace ELTE.Robotok.Model
             _tableGreenPlayerTwo = new RobotokTable(11, 20);
             _greenTeamObservation = new Int32[11, 20];
             _redTeamObservation = new Int32[11, 20];
-            _playerOneTeamGreenSpace = new List<Coordinates>();
-            _playerTwoTeamGreenSpace = new List<Coordinates>();
             if (_teams == 2)
             {
                 _tableRedPlayerOne = new RobotokTable(11, 20);
                 _tableRedPlayerTwo = new RobotokTable(11, 20);
-                _playerOneTeamRedSpace = new List<Coordinates>();
-                _playerTwoTeamRedSpace = new List<Coordinates>();
             }
             _remainingSeconds = 5; // műveletek közötti gondolkodási idő
             _gameStepCount = 300; // játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
@@ -588,400 +600,202 @@ namespace ELTE.Robotok.Model
         /// </summary>
         public Boolean Dettach(String direction, int playerNumber)
         {
-            int num = 0;
-            Boolean success = false;
+            // Attach műveletnek az inverze, részletesebb leírás ott
+            int playerFieldValue = 0;
+
             switch (playerNumber)
             {
                 case 1:
-                    num = 1;
+                    playerFieldValue = 1;
                     break;
                 case 2:
-                    num = 8;
+                    playerFieldValue = 8;
                     break;
                 case 3:
-                    num = 2;
+                    playerFieldValue = 2;
                     break;
-
                 case 4:
-                    num = 9;
+                    playerFieldValue = 9;
                     break;
             }
 
-            Coordinates tempCubeToDettach = new Coordinates();
+            int playerCoordinateX = 0, playerCoordinateY = 0;
 
-            if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
+            for (int i = 4; i < 13; i++)
             {
-                tempCubeToDettach.color = _playerOneTeamGreenSpace.Last().color;
-                tempCubeToDettach.x = _playerOneTeamGreenSpace.Last().x;
-                tempCubeToDettach.y = _playerOneTeamGreenSpace.Last().y;
-            }
-            else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
-            {
-                tempCubeToDettach.color = _playerTwoTeamGreenSpace.Last().color;
-                tempCubeToDettach.x = _playerTwoTeamGreenSpace.Last().x;
-                tempCubeToDettach.y = _playerTwoTeamGreenSpace.Last().y;
-            }
-
-            if (_teams == 2)
-            {
-                if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
+                for (int j = 5; j < 23; j++)
                 {
-                    tempCubeToDettach.color = _playerOneTeamRedSpace.Last().color;
-                    tempCubeToDettach.x = _playerOneTeamRedSpace.Last().x;
-                    tempCubeToDettach.y = _playerOneTeamRedSpace.Last().y;
-                }
-                else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
-                {
-                    tempCubeToDettach.color = _playerTwoTeamRedSpace.Last().color;
-                    tempCubeToDettach.x = _playerTwoTeamRedSpace.Last().x;
-                    tempCubeToDettach.y = _playerTwoTeamRedSpace.Last().y;
+                    if (_table.GetFieldValue(i, j) == playerFieldValue)
+                    {
+                        playerCoordinateX = i;
+                        playerCoordinateY = j;
+                    }
                 }
             }
 
             if (direction == "észak")
             {
-                for (int i = 4; i < 13; i++)
+                if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 6)
                 {
-                    for (int j = 5; j < 23; j++)
-                    {
-                        if (i == tempCubeToDettach.x && j == tempCubeToDettach.y)
-                        {
-                            success = true;
-                            _table.SetValue(i, j, tempCubeToDettach.color, _cleaningOperations);
-
-                            if (num == 1)
-                            {
-                                _playerOneTeamGreenSpace.RemoveAt(_playerOneTeamGreenSpace.Count() - 1);
-                            }
-                            else if (num == 8)
-                            {
-                                _playerTwoTeamGreenSpace.RemoveAt(_playerTwoTeamGreenSpace.Count() - 1);
-                            }
-                            else if (num == 2)
-                            {
-                                _playerOneTeamRedSpace.RemoveAt(_playerOneTeamRedSpace.Count() - 1);
-                            }
-                            else
-                            {
-                                _playerTwoTeamRedSpace.RemoveAt(_playerTwoTeamRedSpace.Count() - 1);
-                            }
-                        }
-                    }
+                    _table.SetAttachmentNorth(playerCoordinateX, playerCoordinateY, false);
+                    _table.SetAttachmentSouth(playerCoordinateX - 1, playerCoordinateY, false);
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
             else if (direction == "dél")
             {
-                for (int i = 12; i > 3; i--)
+                if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 6)
                 {
-                    for (int j = 22; j > 4; j--)
-                    {
-                        if (i == tempCubeToDettach.x && j == tempCubeToDettach.y)
-                        {
-                            success = true;
-                            _table.SetValue(i, j, tempCubeToDettach.color, _cleaningOperations);
-
-                            if (num == 1)
-                            {
-                                _playerOneTeamGreenSpace.RemoveAt(_playerOneTeamGreenSpace.Count() - 1);
-                            }
-                            else if (num == 8)
-                            {
-                                _playerTwoTeamGreenSpace.RemoveAt(_playerTwoTeamGreenSpace.Count() - 1);
-                            }
-                            else if (num == 2)
-                            {
-                                _playerOneTeamRedSpace.RemoveAt(_playerOneTeamRedSpace.Count() - 1);
-                            }
-                            else
-                            {
-                                _playerTwoTeamRedSpace.RemoveAt(_playerTwoTeamRedSpace.Count() - 1);
-                            }
-                        }
-                    }
+                    _table.SetAttachmentSouth(playerCoordinateX, playerCoordinateY, false);
+                    _table.SetAttachmentNorth(playerCoordinateX + 1, playerCoordinateY, false);
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-            else if (direction == "nyugat")
+
+            else if (direction == "kelet")
             {
-                for (int i = 4; i < 13; i++)
+                if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 6)
                 {
-                    for (int j = 5; j < 23; j++)
-                    {
-                        if (i == tempCubeToDettach.x && j == tempCubeToDettach.y)
-                        {
-                            success = true;
-                            _table.SetValue(i, j, tempCubeToDettach.color, _cleaningOperations);
-
-                            if (num == 1)
-                            {
-                                _playerOneTeamGreenSpace.RemoveAt(_playerOneTeamGreenSpace.Count() - 1);
-                            }
-                            else if (num == 8)
-                            {
-                                _playerTwoTeamGreenSpace.RemoveAt(_playerTwoTeamGreenSpace.Count() - 1);
-                            }
-                            else if (num == 2)
-                            {
-                                _playerOneTeamRedSpace.RemoveAt(_playerOneTeamRedSpace.Count() - 1);
-                            }
-                            else
-                            {
-                                _playerTwoTeamRedSpace.RemoveAt(_playerTwoTeamRedSpace.Count() - 1);
-                            }
-                        }
-                    }
+                    _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY, false);
+                    _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY + 1, false);
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
+
             else
             {
-                for (int i = 12; i > 3; i--)
+                if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 6)
                 {
-                    for (int j = 22; j > 4; j--)
-                    {
-                        if (i == tempCubeToDettach.x && j == tempCubeToDettach.y)
-                        {
-                            success = true;
-                            _table.SetValue(i, j, tempCubeToDettach.color, _cleaningOperations);
-
-                            if (num == 1)
-                            {
-                                _playerOneTeamGreenSpace.RemoveAt(_playerOneTeamGreenSpace.Count() - 1);
-                            }
-                            else if (num == 8)
-                            {
-                                _playerTwoTeamGreenSpace.RemoveAt(_playerTwoTeamGreenSpace.Count() - 1);
-                            }
-                            else if (num == 2)
-                            {
-                                _playerOneTeamRedSpace.RemoveAt(_playerOneTeamRedSpace.Count() - 1);
-                            }
-                            else
-                            {
-                                _playerTwoTeamRedSpace.RemoveAt(_playerTwoTeamRedSpace.Count() - 1);
-                            }
-                        }
-                    }
+                    _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY, false);
+                    _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY - 1, false);
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-            return success;
+
         }
 
         /// <summary>
         /// Rákapcsolás logikája
         /// </summary>
-        public Boolean Attach(String direction, int playerNumber)
+        public bool Attach(String direction, int playerNumber)
         {
-            int num = 0;
-            Boolean success = false;
+            /* Először a kapott játékosszámot át kell alakítani a játékos színértékévé, majd meg kell keresni a pályán, hogy tudjuk
+            kihez kell kapcsolni a kockát 
+            */
+            int playerFieldValue = 0;
+
             switch (playerNumber)
             {
                 case 1:
-                    num = 1;
+                    playerFieldValue = 1;
                     break;
                 case 2:
-                    num = 8;
+                    playerFieldValue = 8;
                     break;
                 case 3:
-                    num = 2;
+                    playerFieldValue = 2;
                     break;
-
                 case 4:
-                    num = 9;
+                    playerFieldValue = 9;
                     break;
             }
 
-            Coordinates tempCubeToConnectTo = new Coordinates();
-            tempCubeToConnectTo.color = num;
+            // Megkeressük a játékos koordinátáit a térképen (meghatározásához a színét használjuk)
+
+            int playerCoordinateX = 0, playerCoordinateY = 0; // 0-val van inicializálva, de a keresés után biztosan helyes értéket kap
+
             for (int i = 4; i < 13; i++)
             {
                 for (int j = 5; j < 23; j++)
                 {
-                    if (_table.GetFieldValue(i,j) == num)
+                    if (_table.GetFieldValue(i, j) == playerFieldValue)
                     {
-                        tempCubeToConnectTo.x = i;
-                        tempCubeToConnectTo.y = j;
+                        playerCoordinateX = i;
+                        playerCoordinateY = j;
                     }
                 }
             }
 
-            if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
+            // Megnézzük, hogy a játékoshoz már van-e valami kapcsolva (ha igen, akkor a művelet sikertelen, hiszen egy játékoshoz nem lehet több irányból több kockát csatolni, csak egy irányból egyet)
+
+            if (_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY) || _table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY) || _table.GetAttachmentEast(playerCoordinateX, playerCoordinateY) || _table.GetAttachmentWest(playerCoordinateX, playerCoordinateY))
             {
-                tempCubeToConnectTo.color = _playerOneTeamGreenSpace.Last().color;
-                tempCubeToConnectTo.x = _playerOneTeamGreenSpace.Last().x;
-                tempCubeToConnectTo.y = _playerOneTeamGreenSpace.Last().y;
-            }
-            else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
-            {
-                tempCubeToConnectTo.color = _playerTwoTeamGreenSpace.Last().color;
-                tempCubeToConnectTo.x = _playerTwoTeamGreenSpace.Last().x;
-                tempCubeToConnectTo.y = _playerTwoTeamGreenSpace.Last().y;
+                return false;
             }
 
-            if (_teams == 2)
-            {
-                if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
-                {
-                    tempCubeToConnectTo.color = _playerOneTeamRedSpace.Last().color;
-                    tempCubeToConnectTo.x = _playerOneTeamRedSpace.Last().x;
-                    tempCubeToConnectTo.y = _playerOneTeamRedSpace.Last().y;
-                }
-                else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
-                {
-                    tempCubeToConnectTo.color = _playerTwoTeamRedSpace.Last().color;
-                    tempCubeToConnectTo.x = _playerTwoTeamRedSpace.Last().x;
-                    tempCubeToConnectTo.y = _playerTwoTeamRedSpace.Last().y;
-                }
-            }
-
+            // Irányparamétertől függően megpróbáljuk csatlakoztatni a játékost a kockához (ami csak építőkocka lehet)
             if (direction == "észak")
             {
-                for (int i = 4; i < 13; i++)
+                if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 6)
                 {
-                    for (int j = 5; j < 23; j++)
-                    {
-                        if (i == tempCubeToConnectTo.x && j == tempCubeToConnectTo.y)
-                        {
-                            if (_table.GetFieldValue(i - 1, j) == 3 || _table.GetFieldValue(i - 1, j) == 4 || _table.GetFieldValue(i - 1, j) == 5 
-                                || _table.GetFieldValue(i - 1, j) == 6)
-                            {
-                                success = true;
-                                Coordinates temp = new Coordinates();
-                                temp.x = i - 1;
-                                temp.y = j;
-                                temp.color = _table.GetFieldValue(temp.x, temp.y);
-
-                                if (num == 1)
-                                {
-                                    _playerOneTeamGreenSpace.Add(temp);
-                                }
-                                else if (num == 8)
-                                {
-                                    _playerTwoTeamGreenSpace.Add(temp);
-                                }
-                                else if (num == 2)
-                                {
-                                    _playerOneTeamRedSpace.Add(temp);
-                                }
-                                else
-                                {
-                                    _playerTwoTeamRedSpace.Add(temp);
-                                }
-                            }
-                        }
-                    }
+                    // Itt a csatolás kicsit redundáns, hiszen pl. északi csatoláskor a játékos északi csatoló részét is át kell állítani, továbbá annak a déli részét is, amelyik kockához akarunk csatlakozni
+                    _table.SetAttachmentNorth(playerCoordinateX, playerCoordinateY, true);
+                    _table.SetAttachmentSouth(playerCoordinateX - 1, playerCoordinateY, true);
+                    return true; // Sikeres csatolás után igaz értékkel térünk vissza
+                }
+                else
+                {
+                    return false; // Sikertelen csatolás esetén hamis értékkel térünk vissza
                 }
             }
             else if (direction == "dél")
             {
-                for (int i = 12; i > 3; i--)
+                if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 6)
                 {
-                    for (int j = 22; j > 4; j--)
-                    {
-                        if (i == tempCubeToConnectTo.x && j == tempCubeToConnectTo.y)
-                        {
-                            if (_table.GetFieldValue(i + 1, j) == 3 || _table.GetFieldValue(i + 1, j) == 4 || _table.GetFieldValue(i + 1, j) == 5 || _table.GetFieldValue(i + 1, j) == 6)
-                            {
-                                success = true;
-                                Coordinates temp = new Coordinates();
-                                temp.x = i + 1;
-                                temp.y = j;
-                                temp.color = _table.GetFieldValue(temp.x, temp.y);
-
-                                if (num == 1)
-                                {
-                                    _playerOneTeamGreenSpace.Add(temp);
-                                }
-                                else if (num == 8)
-                                {
-                                    _playerTwoTeamGreenSpace.Add(temp);
-                                }
-                                else if (num == 2)
-                                {
-                                    _playerOneTeamRedSpace.Add(temp);
-                                }
-                                else
-                                {
-                                    _playerTwoTeamRedSpace.Add(temp);
-                                }
-                            }
-                        }
-                    }
+                    _table.SetAttachmentSouth(playerCoordinateX, playerCoordinateY, true);
+                    _table.SetAttachmentNorth(playerCoordinateX + 1, playerCoordinateY, true);
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-            else if (direction == "nyugat")
+
+            else if (direction == "kelet")
             {
-                for (int i = 4; i < 13; i++)
+                if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 6)
                 {
-                    for (int j = 5; j < 23; j++)
-                    {
-                        if (i == tempCubeToConnectTo.x && j == tempCubeToConnectTo.y)
-                        {
-                            if (_table.GetFieldValue(i, j - 1) == 3 || _table.GetFieldValue(i, j - 1) == 4 || _table.GetFieldValue(i, j - 1) == 5 || _table.GetFieldValue(i, j - 1) == 6)
-                            {
-                                success = true;
-                                Coordinates temp = new Coordinates();
-                                temp.x = i;
-                                temp.y = j - 1;
-                                temp.color = _table.GetFieldValue(temp.x, temp.y);
-
-                                if (num == 1)
-                                {
-                                    _playerOneTeamGreenSpace.Add(temp);
-                                }
-                                else if (num == 8)
-                                {
-                                    _playerTwoTeamGreenSpace.Add(temp);
-                                }
-                                else if (num == 2)
-                                {
-                                    _playerOneTeamRedSpace.Add(temp);
-                                }
-                                else
-                                {
-                                    _playerTwoTeamRedSpace.Add(temp);
-                                }
-                            }
-                        }
-                    }
+                    _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY, true);
+                    _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY + 1, true);
+                    return true;
                 }
+                else
+                {
+                    return false;
+                }    
             }
-            else
+
+            else // Biztosan a nyugati irány, hiszen a direction változó értéke azelőtt ellenőrzésre kerül, mielőtt meghívodna a metódus
             {
-                for (int i = 12; i > 3; i--)
+                if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 6)
                 {
-                    for (int j = 22; j > 4; j--)
-                    {
-                        if (i == tempCubeToConnectTo.x && j == tempCubeToConnectTo.y)
-                        {
-                            if (_table.GetFieldValue(i, j + 1) == 3 || _table.GetFieldValue(i, j + 1) == 4 || _table.GetFieldValue(i, j + 1) == 5 || _table.GetFieldValue(i, j + 1) == 6)
-                            {
-                                success = true;
-                                Coordinates temp = new Coordinates();
-                                temp.x = i;
-                                temp.y = j + 1;
-                                temp.color = _table.GetFieldValue(temp.x, temp.y);
-
-                                if (num == 1)
-                                {
-                                    _playerOneTeamGreenSpace.Add(temp);
-                                }
-                                else if (num == 8)
-                                {
-                                    _playerTwoTeamGreenSpace.Add(temp);
-                                }
-                                else if (num == 2)
-                                {
-                                    _playerOneTeamRedSpace.Add(temp);
-                                }
-                                else
-                                {
-                                    _playerTwoTeamRedSpace.Add(temp);
-                                }
-                            }
-                        }
-                    }
+                    _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY, true);
+                    _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY - 1, true);
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-            return success;
+
         }
         /// <summary>
         /// Várakozás logikája
@@ -993,390 +807,270 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Lépés logikája
         /// </summary>
-        public Boolean Move(String direction, int playerNumber) // még nem csináltam meg végig
+        public bool Move(String direction, int playerNumber)
         {
-            Boolean success = false;
-            int num = 0;
+            /* Először a kapott játékosszámot át kell alakítani a játékos színértékévé, majd meg kell keresni a pályán, hogy tudjuk
+            kit kell léptetni 
+            A mozgásnál 2 fő típust fogunk megkülönböztetni, az első, amikor még nincs a játékoshoz csatolva kocka, a másik esetben pedig van
+            */
+            int playerFieldValue = 0;
+
             switch (playerNumber)
             {
                 case 1:
-                    num = 1;
+                    playerFieldValue = 1;
                     break;
                 case 2:
-                    num = 8;
+                    playerFieldValue = 8;
                     break;
                 case 3:
-                    num = 2;
+                    playerFieldValue = 2;
                     break;
-
                 case 4:
-                    num = 9;
+                    playerFieldValue = 9;
                     break;
             }
 
+            // Megkeressük a játékos koordinátáit a térképen (meghatározásához a színét használjuk)
+
+            int playerCoordinateX = 0, playerCoordinateY = 0; // 0-val van inicializálva, de a keresés után biztosan helyes értéket kap
+
+            for (int i = 4; i < 13; i++)
+            {
+                for (int j = 5; j < 23; j++)
+                {
+                    if (_table.GetFieldValue(i, j) == playerFieldValue)
+                    {
+                        playerCoordinateX = i;
+                        playerCoordinateY = j;
+                    }
+                }
+            }
+
+            // Megnézzük, hogy csak a játékost kell léptetnünk, vagy vele együtt más kockákat is
+            //Először az az eset következik, ha a játékoshoz nincs csatolva semmi
+            if (!_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentEast(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentWest(playerCoordinateX, playerCoordinateY))
+            {
+                if (direction == "észak")
+                {
+                    if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 7) // Mehnézi, hogy üres kockára lép-e
+                    {
+                        _table.SetValue(playerCoordinateX - 1, playerCoordinateY, playerFieldValue, -1); // új helyre ráléptetjük
+                        _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1); // régi helyről letöröljük
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else if (direction == "dél")
+                {
+                    if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 7)
+                    {
+                        _table.SetValue(playerCoordinateX + 1, playerCoordinateY, playerFieldValue, -1);
+                        _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else if (direction == "kelet")
+                {
+                    if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 7)
+                    {
+                        _table.SetValue(playerCoordinateX, playerCoordinateY + 1, playerFieldValue, -1);
+                        _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 7)
+                    {
+                        _table.SetValue(playerCoordinateX, playerCoordinateY - 1, playerFieldValue, -1);
+                        _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            else // Az az eset, amikor a játékoshoz van 1 vagy több kocka csatolva
+            {
+                // A játékos kockáját eltároljuk a régi pozíciókban
+                _cubesOldPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, playerFieldValue, _table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY), _table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY), _table.GetAttachmentEast(playerCoordinateX, playerCoordinateY), _table.GetAttachmentWest(playerCoordinateX, playerCoordinateY), direction));
+
+                // Először le kell ellenőriznünk, hogy egyáltalán végrehajtható-e a művelet
+                // A játékos kockájával kezdjük
+                bool validStep = true;
+                if (direction == "észak")
+                {
+                    // Akkor biztosan érvénytelen a művelet, ha felette nem üres kocka van és nincs is felette csatolmánya
+                    if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) != 7 && !_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY))
+                    {
+                        validStep = false;
+                    }
+                }
+                else if (direction == "dél")
+                {
+                    if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) != 7 && !_table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
+                    {
+                        validStep = false;
+                    }
+                }
+                else if (direction == "kelet")
+                {
+                    if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) != 7 && !_table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
+                    {
+                        validStep = false;
+                    }
+                }
+                else
+                {
+                    if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) != 7 && !_table.GetAttachmentWest(playerCoordinateX, playerCoordinateY))
+                    {
+                        validStep = false;
+                    }
+                }
+
+                // Ha a játékos kockájával tudnánk lépni, folytatjuk az ellenőrzést a csatolt kockákkal
+                // Megnézzük hol van szomszédja és meghívjuk rá a ValidateStep rekurzív függvényt
+
+                if (Table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY))
+                {
+                    validStep = validStep && ValidateStep(playerCoordinateX - 1, playerCoordinateY, _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY), direction, "dél"); // Meghívja a csatolt kockájára is az ellenőrzést
+                }
+                else if (Table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
+                {
+                    validStep = validStep && ValidateStep(playerCoordinateX + 1, playerCoordinateY, _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY), direction, "észak");
+                }
+                else if (Table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
+                {
+                    validStep = validStep && ValidateStep(playerCoordinateX, playerCoordinateY + 1, _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1), direction, "nyugat");
+                }
+                else if (Table.GetAttachmentWest(playerCoordinateX, playerCoordinateY))
+                {
+                    validStep = validStep && ValidateStep(playerCoordinateX, playerCoordinateY - 1, _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1), direction, "kelet");
+                }
+
+                if (validStep) // Ha sikeres a lépés ellenőrzése, végrehajtjuk
+                {
+                    ExecuteSafeSteps();
+                }
+
+                // Sikerességtől függetlenül a lépés után kitisztítjuk a listákat (hiszen pl. a játékos kockája minden esetben szerepel a régi pozíciókban)
+                _cubesOldPosition.Clear();
+                _cubesNewPosition.Clear();
+
+                return validStep;
+            }
+        }
+
+        public bool ValidateStep(int x, int y, int value, string direction, string parentSide)
+        {
+            bool validStep = true; // Először azt feltételezzük a lépésről, hogy helyes
+
             if (direction == "észak")
             {
-                for (int i = 4; i < 13; i++)
+                if (_table.GetFieldValue(x - 1, y) != 7) // Ha a kívánt lépés irányában nem üres hely van
                 {
-                    for (int j = 5; j < 23; j++)
+                    // Ilyenkor még abban a két esetben lehet érvényes a lépés, ha a szülő kocka van az adott irányban, vagy egy gyerek kocka
+                    if (!(parentSide == "észak" || _table.GetAttachmentNorth(x,y)))
                     {
-                        if (_table.GetFieldValue(i, j) == num)
-                        {
-                            if (_table.GetFieldValue(i - 1, j) == 7)
-                            {
-                                if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
-                                {
-                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
-                                    {
-                                        if (_table.GetFieldValue(coord.x - 1, coord.y) != 7 && _table.GetFieldValue(coord.x - 1, coord.y) != 1)
-                                        {
-                                            return success;
-                                        }
-                                    }
-                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
-                                    {
-                                        _table.SetValue(coord.x, coord.y, 7, -1);
-                                        _table.SetValue(coord.x - 1, coord.y, coord.color, -1);
-                                        coord.x = coord.x - 1;
-                                    }
-                                }
-                                else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
-                                {
-                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
-                                    {
-                                        if (_table.GetFieldValue(coord.x - 1, coord.y) != 7 && _table.GetFieldValue(coord.x - 1, coord.y) != 8)
-                                        {
-                                            return success;
-                                        }
-                                    }
-                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
-                                    {
-                                        _table.SetValue(coord.x, coord.y, 7, -1);
-                                        _table.SetValue(coord.x - 1, coord.y, coord.color, -1);
-                                        coord.x = coord.x - 1;
-                                    }
-                                }
-                                if (_teams == 2)
-                                {
-                                    if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
-                                    {
-                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
-                                        {
-                                            if (_table.GetFieldValue(coord.x - 1, coord.y) != 7 && _table.GetFieldValue(coord.x - 1, coord.y) != 2)
-                                            {
-                                                return success;
-                                            }
-                                        }
-                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
-                                        {
-                                            _table.SetValue(coord.x, coord.y, 7, -1);
-                                            _table.SetValue(coord.x - 1, coord.y, coord.color, -1);
-                                            coord.x = coord.x - 1;
-
-                                        }
-                                    }
-                                    else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
-                                    {
-                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
-                                        {
-                                            if (_table.GetFieldValue(coord.x - 1, coord.y) != 7 && _table.GetFieldValue(coord.x - 1, coord.y) != 9)
-                                            {
-                                                return success;
-                                            }
-                                        }
-                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
-                                        {
-                                            _table.SetValue(coord.x, coord.y, 7, -1);
-                                            _table.SetValue(coord.x - 1, coord.y, coord.color, -1);
-                                            coord.x = coord.x - 1;
-                                        }
-                                    }
-                                }
-                                if (_table.GetFieldValue(i, j) != 3 && _table.GetFieldValue(i, j) != 4 && _table.GetFieldValue(i, j) != 5 && _table.GetFieldValue(i, j) != 6)
-                                {
-                                    _table.SetValue(i, j, 7, -1);
-                                }
-                                success = true;
-                                _table.SetValue(i - 1, j, num, -1);
-                                break;
-                            }
-                        }
+                        validStep = false;
                     }
                 }
             }
             else if (direction == "dél")
             {
-                for (int i = 12; i > 3; i--)
+                if (_table.GetFieldValue(x + 1, y) != 7)
                 {
-                    for (int j = 22; j > 4; j--)
+                    if (!(parentSide == "dél" || _table.GetAttachmentSouth(x, y)))
                     {
-                        if (_table.GetFieldValue(i, j) == num)
-                        {
-                            if (_table.GetFieldValue(i + 1, j) == 7)
-                            {
-                                if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
-                                {
-                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
-                                    {
-                                        if (_table.GetFieldValue(coord.x + 1, coord.y) != 7 && _table.GetFieldValue(coord.x + 1, coord.y) != 1)
-                                        {
-                                            return success;
-                                        }
-                                    }
-                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
-                                    {
-                                        _table.SetValue(coord.x, coord.y, 7, -1);
-                                        _table.SetValue(coord.x + 1, coord.y, coord.color, -1);
-                                        coord.x = coord.x + 1;
-                                    }
-                                }
-                                else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
-                                {
-                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
-                                    {
-                                        if (_table.GetFieldValue(coord.x + 1, coord.y) != 7 && _table.GetFieldValue(coord.x + 1, coord.y) != 8)
-                                        {
-                                            return success;
-                                        }
-                                    }
-                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
-                                    {
-                                        _table.SetValue(coord.x, coord.y, 7, -1);
-                                        _table.SetValue(coord.x + 1, coord.y, coord.color, -1);
-                                        coord.x = coord.x + 1;
-                                    }
-                                }
-
-                                if (_teams == 2)
-                                {
-                                    if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
-                                    {
-                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
-                                        {
-                                            if (_table.GetFieldValue(coord.x + 1, coord.y) != 7 && _table.GetFieldValue(coord.x + 1, coord.y) != 2)
-                                            {
-                                                return success;
-                                            }
-                                        }
-                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
-                                        {
-                                            _table.SetValue(coord.x, coord.y, 7, -1);
-                                            _table.SetValue(coord.x + 1, coord.y, coord.color, -1);
-                                            coord.x = coord.x + 1;
-                                        }
-                                    }
-                                    else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
-                                    {
-                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
-                                        {
-                                            if (_table.GetFieldValue(coord.x + 1, coord.y) != 7 && _table.GetFieldValue(coord.x + 1, coord.y) != 9)
-                                            {
-                                                return success;
-                                            }
-                                        }
-                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
-                                        {
-                                            _table.SetValue(coord.x, coord.y, 7, -1);
-                                            _table.SetValue(coord.x + 1, coord.y, coord.color, -1);
-                                            coord.x = coord.x + 1;
-                                        }
-                                    }
-                                }
-
-                                if (_table.GetFieldValue(i, j) != 3 && _table.GetFieldValue(i, j) != 4 && _table.GetFieldValue(i, j) != 5 && _table.GetFieldValue(i, j) != 6)
-                                {
-                                    _table.SetValue(i, j, 7, -1);
-                                }
-                                success = true;
-                                _table.SetValue(i + 1, j, num, -1);
-                                break;
-                            }
-                        }
+                        validStep = false;
                     }
                 }
             }
-            else if (direction == "nyugat")
+            else if (direction == "kelet")
             {
-                for (int i = 4; i < 13; i++)
+                if (_table.GetFieldValue(x, y + 1) != 7)
                 {
-                    for (int j = 5; j < 23; j++)
+                    if (!(parentSide == "kelet" || _table.GetAttachmentEast(x, y)))
                     {
-                        if (_table.GetFieldValue(i, j) == num)
-                        {
-                            if (_table.GetFieldValue(i, j - 1) == 7)
-                            {
-                                if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
-                                {
-                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
-                                    {
-                                        if (_table.GetFieldValue(coord.x, coord.y - 1) != 7 && _table.GetFieldValue(coord.x, coord.y - 1) != 1)
-                                        {
-                                            return success;
-                                        }
-                                    }
-                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
-                                    {
-                                        _table.SetValue(coord.x, coord.y, 7, -1);
-                                        _table.SetValue(coord.x, coord.y - 1, coord.color, -1);
-                                        coord.y = coord.y - 1;
-                                    }
-                                }
-                                else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
-                                {
-                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
-                                    {
-                                        if (_table.GetFieldValue(coord.x, coord.y - 1) != 7 && _table.GetFieldValue(coord.x, coord.y - 1) != 8)
-                                        {
-                                            return success;
-                                        }
-                                    }
-                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
-                                    {
-                                        _table.SetValue(coord.x, coord.y, 7, -1);
-                                        _table.SetValue(coord.x, coord.y - 1, coord.color, -1);
-                                        coord.y = coord.y - 1;
-                                    }
-                                }
-
-                                if (_teams == 2)
-                                {
-                                    if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
-                                    {
-                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
-                                        {
-                                            if (_table.GetFieldValue(coord.x, coord.y - 1) != 7 && _table.GetFieldValue(coord.x, coord.y - 1) != 2)
-                                            {
-                                                return success;
-                                            }
-                                        }
-                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
-                                        {
-                                            _table.SetValue(coord.x, coord.y, 7, -1);
-                                            _table.SetValue(coord.x, coord.y - 1, coord.color, -1);
-                                            coord.y = coord.y - 1;
-                                        }
-                                    }
-                                    else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
-                                    {
-                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
-                                        {
-                                            if (_table.GetFieldValue(coord.x, coord.y - 1) != 7 && _table.GetFieldValue(coord.x, coord.y - 1) != 9)
-                                            {
-                                                return success;
-                                            }
-                                        }
-                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
-                                        {
-                                            _table.SetValue(coord.x, coord.y, 7, -1);
-                                            _table.SetValue(coord.x, coord.y - 1, coord.color, -1);
-                                            coord.y = coord.y - 1;
-                                        }
-                                    }
-                                }
-                                if (_table.GetFieldValue(i, j) != 3 && _table.GetFieldValue(i, j) != 4 && _table.GetFieldValue(i, j) != 5 && _table.GetFieldValue(i, j) != 6)
-                                {
-                                    _table.SetValue(i, j, 7, -1);
-                                }
-                                success = true;
-                                _table.SetValue(i, j - 1, num, -1);
-                                break;
-                            }
-                        }
+                        validStep = false;
                     }
                 }
             }
             else
             {
-                for (int i = 12; i > 3; i--)
+                if (_table.GetFieldValue(x, y - 1) != 7)
                 {
-                    for (int j = 22; j > 4; j--)
+                    if (!(parentSide == "nyugat" || _table.GetAttachmentWest(x, y)))
                     {
-                        if (_table.GetFieldValue(i, j) == num)
-                        {
-                            if (_table.GetFieldValue(i, j + 1) == 7)
-                            {
-                                if (num == 1 && _playerOneTeamGreenSpace.Count() >= 1)
-                                {
-                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
-                                    {
-                                        if (_table.GetFieldValue(coord.x, coord.y + 1) != 7 && _table.GetFieldValue(coord.x, coord.y + 1) != 1)
-                                        {
-                                            return success;
-                                        }
-                                    }
-                                    foreach (Coordinates coord in _playerOneTeamGreenSpace)
-                                    {
-                                        _table.SetValue(coord.x, coord.y, 7, -1);
-                                        _table.SetValue(coord.x, coord.y + 1, coord.color, -1);
-                                        coord.y = coord.y + 1;
-                                    }
-                                }
-                                else if (num == 8 && _playerTwoTeamGreenSpace.Count() >= 1)
-                                {
-                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
-                                    {
-                                        if (_table.GetFieldValue(coord.x, coord.y + 1) != 7 && _table.GetFieldValue(coord.x, coord.y + 1) != 8)
-                                        {
-                                            return success;
-                                        }
-                                    }
-                                    foreach (Coordinates coord in _playerTwoTeamGreenSpace)
-                                    {
-                                        _table.SetValue(coord.x, coord.y, 7, -1);
-                                        _table.SetValue(coord.x, coord.y + 1, coord.color, -1);
-                                        coord.y = coord.y + 1;
-                                    }
-                                }
-
-                                if (_teams == 2)
-                                {
-                                    if (num == 2 && _playerOneTeamRedSpace.Count() >= 1)
-                                    {
-                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
-                                        {
-                                            if (_table.GetFieldValue(coord.x, coord.y + 1) != 7 && _table.GetFieldValue(coord.x, coord.y + 1) != 2)
-                                            {
-                                                return success;
-                                            }
-                                        }
-                                        foreach (Coordinates coord in _playerOneTeamRedSpace)
-                                        {
-                                            _table.SetValue(coord.x, coord.y, 7, -1);
-                                            _table.SetValue(coord.x, coord.y + 1, coord.color, -1);
-                                            coord.y = coord.y + 1;
-                                        }
-                                    }
-                                    else if (num == 9 && _playerTwoTeamRedSpace.Count() >= 1)
-                                    {
-                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
-                                        {
-                                            if (_table.GetFieldValue(coord.x, coord.y + 1) != 7 && _table.GetFieldValue(coord.x, coord.y + 1) != 9)
-                                            {
-                                                return success;
-                                            }
-                                        }
-                                        foreach (Coordinates coord in _playerTwoTeamRedSpace)
-                                        {
-                                            _table.SetValue(coord.x, coord.y, 7, -1);
-                                            _table.SetValue(coord.x, coord.y + 1, coord.color, -1);
-                                            coord.y = coord.y + 1;
-                                        }
-                                    }
-                                }
-                                if (_table.GetFieldValue(i, j) != 3 && _table.GetFieldValue(i, j) != 4 && _table.GetFieldValue(i, j) != 5 && _table.GetFieldValue(i, j) != 6)
-                                {
-                                    _table.SetValue(i, j, 7, -1);
-                                }
-                                success = true;
-                                _table.SetValue(i, j + 1, num, -1);
-                                break;
-                            }
-                        }
+                        validStep = false;
                     }
                 }
             }
-            return success;
+
+            // Ha itt rekurzívan meghívjuk a ValidateStep függvényt, akkor minden kockát ellenőriz az alakzatban
+
+            // Hozzáadjuk a feldolgozott kockák a régi pozíciókhoz
+            _cubesOldPosition.Add(new CubeToMove(x, y, value, _table.GetAttachmentNorth(x, y), _table.GetAttachmentSouth(x, y), _table.GetAttachmentEast(x, y), _table.GetAttachmentWest(x, y), direction)); // Elmentjük a mozgatni kívánt kockák mozgatás előtti pozícióját
+
+            return validStep;
         }
+
+        void ExecuteSafeSteps()
+        {
+            string direction = _cubesOldPosition[0].direction; // Lekérdezzük, hogy melyik irányba lesz a lépés, majd egy új listába bepakoljuk az új adatokat
+
+            for (int i = 0; i < _cubesOldPosition.Count; i++)
+            {
+                if (direction == "észak")
+                {
+                    _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y, _cubesOldPosition[i].value, _table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction));
+                }
+                else if (direction == "dél")
+                {
+                    _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y, _cubesOldPosition[i].value, _table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction));
+                }
+                else if (direction == "kelet")
+                {
+                    _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1, _cubesOldPosition[i].value, _table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction));
+                }
+                else
+                {
+                    _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1, _cubesOldPosition[i].value, _table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction)); ;
+                }
+            }
+
+            // Először letöröljük a tábláról a régi pozíciós kockákat
+
+            for (int i = 0; i < _cubesOldPosition.Count; i++)
+            {
+                _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, -1);
+                _table.SetAttachmentValues(_cubesOldPosition[i].x, _cubesOldPosition[i].y, false, false, false, false);
+            }
+
+
+            // A kockákat újrarajzoljuk a táblán az új pozíciókat tartalmazó lista szerint
+
+            for (int i = 0; i < _cubesNewPosition.Count; i++)
+            {
+                _table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, -1);
+                _table.SetAttachmentValues(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment);
+            }
+        }
+
         #endregion
 
         #region Private game methods
@@ -1391,6 +1085,9 @@ namespace ELTE.Robotok.Model
             {
                 for (Int32 j = 0; j < _table.SizeY; j++)
                 {
+                    // Beállítjuk a csatolmányokat (kezdetben egyetlen cellának sincs csatolmánya)
+                    _table.SetAttachmentValues(i, j, false, false, false, false);
+
                     // Azoknak a mezőknek az esete, amelyek a pálya határán túl helyezkednek el
                     if (i < 3 || i > 13 || j < 4 || j > 23)
                     {

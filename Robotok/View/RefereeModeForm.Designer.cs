@@ -35,7 +35,7 @@
             // 
             this.stepsLeftText.AutoSize = true;
             this.stepsLeftText.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.stepsLeftText.Location = new System.Drawing.Point(261, 23);
+            this.stepsLeftText.Location = new System.Drawing.Point(308, 27);
             this.stepsLeftText.Name = "stepsLeftText";
             this.stepsLeftText.Size = new System.Drawing.Size(217, 31);
             this.stepsLeftText.TabIndex = 13;
@@ -45,7 +45,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(770, 450);
+            this.ClientSize = new System.Drawing.Size(859, 505);
             this.Controls.Add(this.stepsLeftText);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
