@@ -220,6 +220,7 @@ namespace ELTE.Robotok.Model
 
             // Kezdeti értékek generálása a mezőknek
             GenerateFields();
+            GenerateWalls();
 
 
             // Beállítjuk a hirdetőtáblákon lévő alakzatoknak a színét
@@ -593,6 +594,32 @@ namespace ELTE.Robotok.Model
                 }
             }
             return success;
+        }
+
+        /// <summary>
+        /// Akadályok generálása.
+        /// </summary>
+        private void GenerateWalls()
+        {
+            Random random = new Random();
+            int rnd = random.Next(5, 7);
+
+            Random coordinates_x = new Random();
+            Random coordinates_y = new Random();
+
+            int x = coordinates_x.Next(4, 13);
+            int y = coordinates_y.Next(5, 23);
+
+            for (int i = 0; i < rnd; ++i)
+            {
+                while (_table.GetFieldValue(x, y) != 7)
+                {
+                    x = coordinates_x.Next(4, 13);
+                    y = coordinates_y.Next(5, 23);
+                }
+
+                _table.SetValue(x, y, 0, _cleaningOperations);
+            }
         }
 
         /// <summary>
