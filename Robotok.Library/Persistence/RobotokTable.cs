@@ -11,12 +11,12 @@ namespace ELTE.Robotok.Persistence
     /// </summary>
     public class RobotokTable
     {
-        // Field struktúra, elterálja a mezőről az értékét, a szükséges tisztítási műveletek számát (törhetetlen esetén -1), és a kapcsolatokat a különböző irányokba
+        // Field struktúra, eltárolja a mezőről az értékét, a szükséges tisztítási műveletek számát (törhetetlen esetén -1), és a kapcsolatokat a különböző irányokba
         struct Field
         {
             public Int32 _fieldValue;
             public Int32 _remainingCleaningOperations;
-            public bool _attachmentOnTop, _attachmentOnBottom, _attachmentOnLeft, _attachmentOnRight;
+            public bool _attachmentNorth, _attachmentSouth, _attachmentEast, _attachmentWest;
         }
 
         #region Fields
@@ -79,6 +79,112 @@ namespace ELTE.Robotok.Persistence
         }
 
         /// <summary>
+        /// Mező csatolási értékeinek beállítása.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <param name="north">Érték.</param>
+        /// /// <param name="south">Érték.</param>
+        /// /// <param name="east">Érték.</param>
+        /// /// <param name="west">Érték.</param>
+        public void SetAttachmentValues(Int32 x, Int32 y, bool north, bool south, bool east, bool west)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _fields[x, y]._attachmentNorth = north;
+            _fields[x, y]._attachmentSouth = south;
+            _fields[x, y]._attachmentEast = east;
+            _fields[x, y]._attachmentWest = west;
+        }
+
+        /// <summary>
+        /// Mező északi csatolási értékének beállítása.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <param name="north">Érték.</param>
+        public void SetAttachmentNorth(Int32 x, Int32 y, bool north)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _fields[x, y]._attachmentNorth = north;
+        }
+
+        /// <summary>
+        /// Mező déli csatolási értékének beállítása.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <param name="south">Érték.</param>
+        public void SetAttachmentSouth(Int32 x, Int32 y, bool south)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _fields[x, y]._attachmentSouth = south;
+        }
+
+        /// <summary>
+        /// Mező keleti csatolási értékének beállítása.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <param name="east">Érték.</param>
+        public void SetAttachmentEast(Int32 x, Int32 y, bool east)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _fields[x, y]._attachmentEast = east;
+        }
+
+        /// <summary>
+        /// Mező nyugati csatolási értékének beállítása.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <param name="west">Érték.</param>
+        public void SetAttachmentWest(Int32 x, Int32 y, bool west)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _fields[x, y]._attachmentWest = west;
+        }
+
+        /// <summary>
         /// Mező értékének lekérdezése.
         /// </summary>
         /// <param name="x">Vízszintes koordináta.</param>
@@ -88,11 +194,11 @@ namespace ELTE.Robotok.Persistence
         {
             if (x < 0 || x >= _fields.GetLength(0))
             {
-                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range: " + x);
             }
             if (y < 0 || y >= _fields.GetLength(1))
             {
-                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range: " + y);
             }
 
             return _fields[x, y]._fieldValue;
@@ -116,6 +222,86 @@ namespace ELTE.Robotok.Persistence
             }
 
             return _fields[x, y]._remainingCleaningOperations;
+        }
+
+        /// <summary>
+        /// Visszaadja egy mező északi csatolási részéről, hogy van-e valami hozzá csatolva
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <returns>A mező értéke.</returns>
+        public bool GetAttachmentNorth(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            return _fields[x, y]._attachmentNorth;
+        }
+
+        /// <summary>
+        /// Visszaadja egy mező déli csatolási részéről, hogy van-e valami hozzá csatolva
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <returns>A mező értéke.</returns>
+        public bool GetAttachmentSouth(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            return _fields[x, y]._attachmentSouth;
+        }
+
+        /// <summary>
+        /// Visszaadja egy mező keleti csatolási részéről, hogy van-e valami hozzá csatolva
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <returns>A mező értéke.</returns>
+        public bool GetAttachmentEast(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            return _fields[x, y]._attachmentEast;
+        }
+
+        /// <summary>
+        /// Visszaadja egy mező keleti csatolási részéről, hogy van-e valami hozzá csatolva
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <returns>A mező értéke.</returns>
+        public bool GetAttachmentWest(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            return _fields[x, y]._attachmentWest;
         }
 
         #endregion

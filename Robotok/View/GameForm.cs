@@ -271,14 +271,13 @@ namespace ELTE.Robotok.View
             }
             else
             {
-
                 if (GameMenuForm.instance._model.Attach(operationParameter.Text, _activePlayer))
                 {
-                    _successText = "Sikeres mozgás!";
+                    _successText = "Sikeres kapcsolódás!";
                 }
                 else
                 {
-                    _successText = "Sikertelen mozgás!";
+                    _successText = "Sikertelen kapcsolódás!";
                 }
             }
             _operationDone = true;
@@ -295,14 +294,14 @@ namespace ELTE.Robotok.View
             else
             {
                 
-                if(GameMenuForm.instance._model.Move(operationParameter.Text, _activePlayer))
+                if (GameMenuForm.instance._model.Move(operationParameter.Text, _activePlayer))
                 {
                     _successText = "Sikeres mozgás!";
                 }
                 else
                 {
                     _successText = "Sikertelen mozgás!";
-                } 
+                }
             }
             _operationDone = true;
             DisableButtons();
