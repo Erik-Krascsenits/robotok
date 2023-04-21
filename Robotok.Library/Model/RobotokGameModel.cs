@@ -221,6 +221,7 @@ namespace ELTE.Robotok.Model
             // Kezdeti értékek generálása a mezőknek
             GenerateFields();
             GenerateWalls();
+            GenerateExits();
 
 
             // Beállítjuk a hirdetőtáblákon lévő alakzatoknak a színét
@@ -377,24 +378,24 @@ namespace ELTE.Robotok.Model
                     {
                         if (player == 1)
                         {
-                            _tableGreenPlayerOne.SetValue(i - 3, j - 4, -1, -1);
+                            _tableGreenPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), -1);
                         }
 
                         if (player == 8)
                         {
-                            _tableGreenPlayerTwo.SetValue(i - 3, j - 4, -1, -1);
+                            _tableGreenPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), -1);
                         }
 
                         if (_teams == 2)
                         {
                             if (player == 2)
                             {
-                                _tableRedPlayerOne.SetValue(i - 3, j - 4, -1, -1);
+                                _tableRedPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), -1);
                             }
 
                             if (player == 9)
                             {
-                                _tableRedPlayerTwo.SetValue(i - 3, j - 4, -1, -1);
+                                _tableRedPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), -1);
                             }
                         }
                     }
@@ -595,33 +596,7 @@ namespace ELTE.Robotok.Model
             }
             return success;
         }
-
-        /// <summary>
-        /// Akadályok generálása.
-        /// </summary>
-        private void GenerateWalls()
-        {
-            Random random = new Random();
-            int rnd = random.Next(5, 7);
-
-            Random coordinates_x = new Random();
-            Random coordinates_y = new Random();
-
-            int x = coordinates_x.Next(4, 13);
-            int y = coordinates_y.Next(5, 23);
-
-            for (int i = 0; i < rnd; ++i)
-            {
-                while (_table.GetFieldValue(x, y) != 7)
-                {
-                    x = coordinates_x.Next(4, 13);
-                    y = coordinates_y.Next(5, 23);
-                }
-
-                _table.SetValue(x, y, 0, _cleaningOperations);
-            }
-        }
-
+        
         /// <summary>
         /// Lekapcsolás logikája
         /// </summary>
@@ -1101,6 +1076,85 @@ namespace ELTE.Robotok.Model
         #endregion
 
         #region Private game methods
+        /// <summary>
+        /// Kijáratok generálása.
+        /// </summary>
+        private void GenerateExits()
+        {
+            Random coord_i = new Random();
+            Random coord_j = new Random();
+
+            for (int walls = 0; walls < 4; walls++)
+            {
+                if (walls == 0 || walls == 2)
+                {
+                    int temp_i = coord_i.Next(4, 8);
+
+                    if (walls == 0)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            _table.SetValue(temp_i + i, 4, 7, -1);
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            _table.SetValue(temp_i + i, 23, 7, -1);
+                        }
+                    }
+                }
+                else
+                {
+                    int temp_j = coord_j.Next(5, 18);
+
+                    if (walls == 1)
+                    {
+                        for (int j = 0; j < 4; j++)
+                        {
+                            _table.SetValue(3, temp_j + j, 7, -1);
+                        }
+                    }
+                    else
+                    {
+                        for (int j = 0; j < 4; j++)
+                        {
+                            _table.SetValue(13, temp_j + j, 7, -1);
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+
+        /// <summary>
+        /// Akadályok generálása.
+        /// </summary>
+        private void GenerateWalls()
+        {
+            Random random = new Random();
+            int rnd = random.Next(5, 7);
+
+            Random coordinates_x = new Random();
+            Random coordinates_y = new Random();
+
+            int x = coordinates_x.Next(4, 13);
+            int y = coordinates_y.Next(5, 23);
+
+            for (int i = 0; i < rnd; ++i)
+            {
+                while (_table.GetFieldValue(x, y) != 7)
+                {
+                    x = coordinates_x.Next(4, 13);
+                    y = coordinates_y.Next(5, 23);
+                }
+
+                _table.SetValue(x, y, 0, _cleaningOperations);
+            }
+        }
         /// <summary>
         /// Mezők generálása.
         /// </summary>
