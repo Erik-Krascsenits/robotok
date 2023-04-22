@@ -311,6 +311,11 @@ namespace ELTE.Robotok.Persistence
             return _fields[x, y]._attachmentWest;
         }
 
+        /// <summary>
+        /// Északra nézés beállítása.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
         public void SetFaceNorth(Int32 x, Int32 y)
         {
             if (x < 0 || x >= _fields.GetLength(0))
@@ -328,6 +333,11 @@ namespace ELTE.Robotok.Persistence
             _fields[x, y]._faceWest = false;
         }
 
+        /// <summary>
+        /// Délre nézés beállítása.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
         public void SetFaceSouth(Int32 x, Int32 y)
         {
             if (x < 0 || x >= _fields.GetLength(0))
@@ -346,6 +356,11 @@ namespace ELTE.Robotok.Persistence
             
         }
 
+        /// <summary>
+        /// Keletre nézés beállítása.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
         public void SetFaceEast(Int32 x, Int32 y)
         {
             if (x < 0 || x >= _fields.GetLength(0))
@@ -363,6 +378,11 @@ namespace ELTE.Robotok.Persistence
             _fields[x, y]._faceWest = false;
         }
 
+        /// <summary>
+        /// Nyugatra nézés beállítása.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
         public void SetFaceWest(Int32 x, Int32 y)
         {
             if (x < 0 || x >= _fields.GetLength(0))
@@ -380,6 +400,12 @@ namespace ELTE.Robotok.Persistence
             _fields[x, y]._faceWest = true;
         }
 
+        /// <summary>
+        /// Visszaadja, hogy északra néz-e a játékos (bármilyen más mező esetén false)
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <returns>A mező értéke.</returns>
         public bool GetFaceNorth(Int32 x, Int32 y)
         {
             if (x < 0 || x >= _fields.GetLength(0))
@@ -394,6 +420,12 @@ namespace ELTE.Robotok.Persistence
             return _fields[x, y]._faceNorth;
         }
 
+        /// <summary>
+        /// Visszaadja, hogy délre néz-e a játékos (bármilyen más mező esetén false)
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <returns>A mező értéke.</returns>
         public bool GetFaceSouth(Int32 x, Int32 y)
         {
             if (x < 0 || x >= _fields.GetLength(0))
@@ -408,6 +440,12 @@ namespace ELTE.Robotok.Persistence
             return _fields[x, y]._faceSouth;
         }
 
+        /// <summary>
+        /// Visszaadja, hogy keletre néz-e a játékos (bármilyen más mező esetén false)
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <returns>A mező értéke.</returns>
         public bool GetFaceEast(Int32 x, Int32 y)
         {
             if (x < 0 || x >= _fields.GetLength(0))
@@ -422,6 +460,12 @@ namespace ELTE.Robotok.Persistence
             return _fields[x, y]._faceEast;
         }
 
+        /// <summary>
+        /// Visszaadja, hogy nyugatra néz-e a játékos (bármilyen más mező esetén false)
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <returns>A mező értéke.</returns>
         public bool GetFaceWest(Int32 x, Int32 y)
         {
             if (x < 0 || x >= _fields.GetLength(0))
@@ -436,6 +480,15 @@ namespace ELTE.Robotok.Persistence
             return _fields[x, y]._faceWest;
         }
 
+        /// <summary>
+        /// Mező irányának beállítása.
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <param name="north">Érték.</param>
+        /// <param name="south">Érték.</param>
+        /// <param name="east">Érték.</param>
+        /// <param name="west">Érték.</param>
         public void SetFaceDirection(Int32 x, Int32 y, Boolean north, Boolean south, Boolean east, Boolean west)
         {
             if (x < 0 || x >= _fields.GetLength(0))

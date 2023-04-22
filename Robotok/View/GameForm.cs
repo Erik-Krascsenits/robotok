@@ -236,6 +236,7 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen tisztítás!";
                 }
             }
+            GameMenuForm.instance._model.Wait();
             _operationDone = true;
             DisableButtons();
         }
@@ -267,6 +268,7 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen lekapcsolódás!";
                 }
             }
+            GameMenuForm.instance._model.Wait();
             _operationDone = true;
             DisableButtons();
         }
@@ -286,6 +288,7 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen kapcsolódás!";
                 }
             }
+            GameMenuForm.instance._model.Wait();
             _operationDone = true;
             DisableButtons();
         }
@@ -309,6 +312,7 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen mozgás!";
                 }
             }
+            GameMenuForm.instance._model.Wait();
             _operationDone = true;
             DisableButtons();
         }
@@ -331,6 +335,7 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen forgás!";
                 }
             }
+            GameMenuForm.instance._model.Wait();
             _operationDone = true;
             DisableButtons();
         }
