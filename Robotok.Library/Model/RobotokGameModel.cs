@@ -596,6 +596,104 @@ namespace ELTE.Robotok.Model
         }
 
         /// <summary>
+        /// Forgás logikája
+        /// </summary>
+        public Boolean Rotate(String direction, int playerNumber)
+        {
+            int playerFieldValue = 0;
+            switch (playerNumber)
+            {
+                case 1:
+                    playerFieldValue = 1;
+                    break;
+                case 2:
+                    playerFieldValue = 8;
+                    break;
+                case 3:
+                    playerFieldValue = 2;
+                    break;
+
+                case 4:
+                    playerFieldValue = 9;
+                    break;
+            }
+
+            int playerCoordinateX = 0, playerCoordinateY = 0; // 0-val van inicializálva, de a keresés után biztosan helyes értéket kap
+
+            for (int i = 4; i < 13; i++)
+            {
+                for (int j = 5; j < 23; j++)
+                {
+                    if (_table.GetFieldValue(i, j) == playerFieldValue)
+                    {
+                        playerCoordinateX = i;
+                        playerCoordinateY = j;
+                    }
+                }
+            }
+
+            // Megnézzük, hogy a játékoshoz már van-e valami kapcsolva, ha nem, akkor csak a játékos irányát kell megváltoztatni
+
+            if (!_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentEast(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentWest(playerCoordinateX, playerCoordinateY))
+            {
+                if (_table.GetFaceNorth(playerCoordinateX, playerCoordinateY))   // A játékos északra néz 
+                {
+                    if (direction == "óramutatóval megegyező")
+                    {
+                        _table.SetFaceEast(playerCoordinateX, playerCoordinateY);
+                    }
+                    else
+                    {
+                        _table.SetFaceWest(playerCoordinateX, playerCoordinateY);
+                    }
+                }
+                else if (_table.GetFaceSouth(playerCoordinateX, playerCoordinateY)) // A játékos délre néz 
+                {
+                    if (direction == "óramutatóval megegyező")
+                    {
+                        _table.SetFaceWest(playerCoordinateX, playerCoordinateY);
+                    }
+                    else
+                    {
+                        _table.SetFaceEast(playerCoordinateX, playerCoordinateY);
+                    }
+                }
+                else if (_table.GetFaceEast(playerCoordinateX, playerCoordinateY)) { // A játékos keletre néz 
+                    if (direction == "óramutatóval megegyező")
+                    {
+                        _table.SetFaceSouth(playerCoordinateX, playerCoordinateY);
+                    }
+                    else
+                    {
+                        _table.SetFaceNorth(playerCoordinateX, playerCoordinateY);
+                    }
+                }
+                else                                                                // A játékos nyugatra néz 
+                {
+                    if (direction == "óramutatóval megegyező")
+                    {
+                        _table.SetFaceNorth(playerCoordinateX, playerCoordinateY);
+                    }
+                    else
+                    {
+                        _table.SetFaceSouth(playerCoordinateX, playerCoordinateY);
+                    }
+                }
+            }
+
+            else   // Ha a játékosra már vannak csatolva blokkok (In progress...)
+            {
+
+            }
+
+
+
+                return true;
+            }
+
+           
+
+        /// <summary>
         /// Lekapcsolás logikája
         /// </summary>
         public Boolean Dettach(String direction, int playerNumber)
@@ -856,7 +954,9 @@ namespace ELTE.Robotok.Model
                     if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 7) // Mehnézi, hogy üres kockára lép-e
                     {
                         _table.SetValue(playerCoordinateX - 1, playerCoordinateY, playerFieldValue, -1); // új helyre ráléptetjük
+                        _table.SetFaceDirection(playerCoordinateX - 1, playerCoordinateY, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY));
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1); // régi helyről letöröljük
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false);
                         return true;
                     }
                     else
@@ -869,7 +969,9 @@ namespace ELTE.Robotok.Model
                     if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 7)
                     {
                         _table.SetValue(playerCoordinateX + 1, playerCoordinateY, playerFieldValue, -1);
+                        _table.SetFaceDirection(playerCoordinateX + 1, playerCoordinateY, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY));
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false);
                         return true;
                     }
                     else
@@ -882,7 +984,9 @@ namespace ELTE.Robotok.Model
                     if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 7)
                     {
                         _table.SetValue(playerCoordinateX, playerCoordinateY + 1, playerFieldValue, -1);
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY + 1, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY));
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false);
                         return true;
                     }
                     else
@@ -895,7 +999,9 @@ namespace ELTE.Robotok.Model
                     if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 7)
                     {
                         _table.SetValue(playerCoordinateX, playerCoordinateY - 1, playerFieldValue, -1);
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY - 1, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY));
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false);
                         return true;
                     }
                     else
@@ -1067,7 +1173,9 @@ namespace ELTE.Robotok.Model
             for (int i = 0; i < _cubesNewPosition.Count; i++)
             {
                 _table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, -1);
+                _table.SetFaceDirection(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _table.GetFaceNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y));
                 _table.SetAttachmentValues(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment);
+                _table.SetFaceDirection(_cubesOldPosition[i].x, _cubesOldPosition[i].x, false, false, false, false);
             }
         }
 

@@ -17,6 +17,7 @@ namespace ELTE.Robotok.Persistence
             public Int32 _fieldValue;
             public Int32 _remainingCleaningOperations;
             public bool _attachmentNorth, _attachmentSouth, _attachmentEast, _attachmentWest;
+            public bool _faceNorth, _faceSouth, _faceEast, _faceWest;
         }
 
         #region Fields
@@ -76,6 +77,12 @@ namespace ELTE.Robotok.Persistence
 
             _fields[x, y]._fieldValue = value;
             _fields[x, y]._remainingCleaningOperations = cleaningOperations;
+
+            if ((value == 1 || value == 2 || value == 8 || value == 9) && (!_fields[x, y]._faceNorth && !_fields[x, y]._faceSouth && !_fields[x, y]._faceEast && !_fields[x, y]._faceWest))
+            {
+                SetFaceSouth(x, y);
+
+            }
         }
 
         /// <summary>
@@ -302,6 +309,148 @@ namespace ELTE.Robotok.Persistence
             }
 
             return _fields[x, y]._attachmentWest;
+        }
+
+        public void SetFaceNorth(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _fields[x, y]._faceNorth = true;
+            _fields[x, y]._faceSouth = false;
+            _fields[x, y]._faceEast = false;
+            _fields[x, y]._faceWest = false;
+        }
+
+        public void SetFaceSouth(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _fields[x, y]._faceNorth = false;
+            _fields[x, y]._faceSouth = true;
+            _fields[x, y]._faceEast = false;
+            _fields[x, y]._faceWest = false;
+            
+        }
+
+        public void SetFaceEast(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _fields[x, y]._faceNorth = false;
+            _fields[x, y]._faceSouth = false;
+            _fields[x, y]._faceEast = true;
+            _fields[x, y]._faceWest = false;
+        }
+
+        public void SetFaceWest(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _fields[x, y]._faceNorth = false;
+            _fields[x, y]._faceSouth = false;
+            _fields[x, y]._faceEast = false;
+            _fields[x, y]._faceWest = true;
+        }
+
+        public bool GetFaceNorth(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            return _fields[x, y]._faceNorth;
+        }
+
+        public bool GetFaceSouth(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            return _fields[x, y]._faceSouth;
+        }
+
+        public bool GetFaceEast(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            return _fields[x, y]._faceEast;
+        }
+
+        public bool GetFaceWest(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            return _fields[x, y]._faceWest;
+        }
+
+        public void SetFaceDirection(Int32 x, Int32 y, Boolean north, Boolean south, Boolean east, Boolean west)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _fields[x, y]._faceNorth = north;
+            _fields[x, y]._faceSouth = south;
+            _fields[x, y]._faceEast = east;
+            _fields[x, y]._faceWest = west;
         }
 
         #endregion

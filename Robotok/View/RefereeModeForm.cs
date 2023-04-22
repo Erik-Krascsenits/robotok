@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Robotok.WinForms.Properties;
 
 namespace Robotok.WinForms.View
 {
@@ -50,6 +51,7 @@ namespace Robotok.WinForms.View
                     _buttonGrid[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
                     _buttonGrid[i, j].Enabled = false; // kikapcsolt állapot
                     _buttonGrid[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
+                    _buttonGrid[i, j].BackgroundImageLayout = ImageLayout.Stretch; // kép cella méretéhez igazítása
 
                     if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == -2)
                     {
@@ -62,10 +64,12 @@ namespace Robotok.WinForms.View
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 1)
                     {
                         _buttonGrid[i, j].BackColor = Color.Green;
+                        _buttonGrid[i, j].BackgroundImage = Resources.robot;
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 2)
                     {
                         _buttonGrid[i, j].BackColor = Color.Red;
+                        _buttonGrid[i, j].BackgroundImage = Resources.robot;
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 3)
                     {
@@ -90,10 +94,12 @@ namespace Robotok.WinForms.View
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 8)
                     {
                         _buttonGrid[i, j].BackColor = Color.DarkGreen;
+                        _buttonGrid[i, j].BackgroundImage = Resources.robot;
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 9)
                     {
                         _buttonGrid[i, j].BackColor = Color.DarkRed;
+                        _buttonGrid[i, j].BackgroundImage = Resources.robot;
                     }
 
 
@@ -148,6 +154,7 @@ namespace Robotok.WinForms.View
             {
                 for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
                 {
+                    _buttonGrid[i, j].BackgroundImage = null;
                     if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == -2)
                     {
                         _buttonGrid[i, j].BackColor = Color.Gray;
@@ -159,10 +166,14 @@ namespace Robotok.WinForms.View
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 1)
                     {
                         _buttonGrid[i, j].BackColor = Color.Green;
+                        _buttonGrid[i, j].BackgroundImage = Resources.robot;
+                        RotateRefereeImage(i, j);
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 2)
                     {
                         _buttonGrid[i, j].BackColor = Color.Red;
+                        _buttonGrid[i, j].BackgroundImage = Resources.robot;
+                        RotateRefereeImage(i, j);
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 3)
                     {
@@ -187,10 +198,14 @@ namespace Robotok.WinForms.View
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 8)
                     {
                         _buttonGrid[i, j].BackColor = Color.DarkGreen;
+                        _buttonGrid[i, j].BackgroundImage = Resources.robot;
+                        RotateRefereeImage(i, j);
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 9)
                     {
                         _buttonGrid[i, j].BackColor = Color.DarkRed;
+                        _buttonGrid[i, j].BackgroundImage = Resources.robot;
+                        RotateRefereeImage(i, j);
                     }
 
                     // Kapcsolatok megjelenítésének frissítése
@@ -222,6 +237,23 @@ namespace Robotok.WinForms.View
                         _horizontalPanels[i + 1, j].Visible = true;
                     }
                 }
+            }
+        }
+
+        // Robotok képeinek forgatása 
+        public void RotateRefereeImage(int i, int j)
+        {
+            if (GameMenuForm.instance._model.Table.GetFaceNorth(i, j))            // Megnézzük, hogy a robot melyik irányba néz          
+            {
+                _buttonGrid[i , j].BackgroundImage.RotateFlip(RotateFlipType.Rotate180FlipX);    // Abba az irányba forgatjuk a képet, amerre a robot néz
+            }
+            else if (GameMenuForm.instance._model.Table.GetFaceWest(i, j))
+            {
+                _buttonGrid[i ,j].BackgroundImage.RotateFlip(RotateFlipType.Rotate270FlipXY);
+            }
+            else if (GameMenuForm.instance._model.Table.GetFaceEast(i, j))
+            {
+                _buttonGrid[i, j].BackgroundImage.RotateFlip(RotateFlipType.Rotate90FlipXY);
             }
         }
         #endregion

@@ -171,7 +171,7 @@
             // stepsLeftText
             // 
             this.stepsLeftText.AutoSize = true;
-            this.stepsLeftText.Font = new System.Drawing.Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point);
+            this.stepsLeftText.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.stepsLeftText.Location = new System.Drawing.Point(599, 43);
             this.stepsLeftText.Name = "stepsLeftText";
             this.stepsLeftText.Size = new System.Drawing.Size(283, 31);
@@ -201,7 +201,7 @@
             // greenGroupPointsValueText
             // 
             this.greenGroupPointsValueText.AutoSize = true;
-            this.greenGroupPointsValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
+            this.greenGroupPointsValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.greenGroupPointsValueText.Location = new System.Drawing.Point(848, 215);
             this.greenGroupPointsValueText.Name = "greenGroupPointsValueText";
             this.greenGroupPointsValueText.Size = new System.Drawing.Size(22, 25);
@@ -307,6 +307,7 @@
             this.turnButton.Size = new System.Drawing.Size(50, 50);
             this.turnButton.TabIndex = 25;
             this.turnButton.UseVisualStyleBackColor = true;
+            this.turnButton.Click += new System.EventHandler(this.turnButton_Click);
             // 
             // attachButton
             // 
@@ -317,7 +318,7 @@
             this.attachButton.Size = new System.Drawing.Size(50, 50);
             this.attachButton.TabIndex = 26;
             this.attachButton.UseVisualStyleBackColor = true;
-            this.attachButton.Click += new System.EventHandler(attachButton_Click);
+            this.attachButton.Click += new System.EventHandler(this.attachButton_Click);
             // 
             // detachButton
             // 
@@ -328,7 +329,7 @@
             this.detachButton.Size = new System.Drawing.Size(50, 50);
             this.detachButton.TabIndex = 27;
             this.detachButton.UseVisualStyleBackColor = true;
-            this.detachButton.Click += new System.EventHandler(dettachButton_Click);
+            this.detachButton.Click += new System.EventHandler(this.dettachButton_Click);
             // 
             // attachCubesButton
             // 
