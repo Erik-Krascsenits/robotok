@@ -631,6 +631,389 @@ namespace ELTE.Robotok.Model
         }
         
         /// <summary>
+        /// Forgás logikája
+        /// </summary>
+        public Boolean Rotate(String direction, int playerNumber)
+        {
+            int playerFieldValue = 0;
+            switch (playerNumber)
+            {
+                case 1:
+                    playerFieldValue = 1;
+                    break;
+                case 2:
+                    playerFieldValue = 8;
+                    break;
+                case 3:
+                    playerFieldValue = 2;
+                    break;
+
+                case 4:
+                    playerFieldValue = 9;
+                    break;
+            }
+
+            int playerCoordinateX = 0, playerCoordinateY = 0; // 0-val van inicializálva, de a keresés után biztosan helyes értéket kap
+
+            for (int i = 4; i < 13; i++)
+            {
+                for (int j = 5; j < 23; j++)
+                {
+                    if (_table.GetFieldValue(i, j) == playerFieldValue)
+                    {
+                        playerCoordinateX = i;
+                        playerCoordinateY = j;
+                    }
+                }
+            }
+
+            // Megnézzük, hogy a játékoshoz már van-e valami kapcsolva, ha nem, akkor csak a játékos irányát kell megváltoztatni
+
+            if (!_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentEast(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentWest(playerCoordinateX, playerCoordinateY))
+            {
+                if (_table.GetFaceNorth(playerCoordinateX, playerCoordinateY))   // A játékos északra néz 
+                {
+                    if (direction == "óramutatóval megegyező")
+                    {
+                        _table.SetFaceEast(playerCoordinateX, playerCoordinateY);
+                    }
+                    else
+                    {
+                        _table.SetFaceWest(playerCoordinateX, playerCoordinateY);
+                    }
+                }
+                else if (_table.GetFaceSouth(playerCoordinateX, playerCoordinateY)) // A játékos délre néz 
+                {
+                    if (direction == "óramutatóval megegyező")
+                    {
+                        _table.SetFaceWest(playerCoordinateX, playerCoordinateY);
+                    }
+                    else
+                    {
+                        _table.SetFaceEast(playerCoordinateX, playerCoordinateY);
+                    }
+                }
+                else if (_table.GetFaceEast(playerCoordinateX, playerCoordinateY)) { // A játékos keletre néz 
+                    if (direction == "óramutatóval megegyező")
+                    {
+                        _table.SetFaceSouth(playerCoordinateX, playerCoordinateY);
+                    }
+                    else
+                    {
+                        _table.SetFaceNorth(playerCoordinateX, playerCoordinateY);
+                    }
+                }
+                else                                                                // A játékos nyugatra néz 
+                {
+                    if (direction == "óramutatóval megegyező")
+                    {
+                        _table.SetFaceNorth(playerCoordinateX, playerCoordinateY);
+                    }
+                    else
+                    {
+                        _table.SetFaceSouth(playerCoordinateX, playerCoordinateY);
+                    }
+                }
+            }
+
+            else   // Ha a játékosra már vannak csatolva blokkok (In progress...)
+            {
+                // A játékos kockáját eltároljuk a régi pozíciókban
+
+                if (_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY))
+                {
+                    AddCubesToRotate(playerCoordinateX, playerCoordinateY, playerFieldValue, "észak");
+                }
+                else if (_table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
+                {
+                    AddCubesToRotate(playerCoordinateX, playerCoordinateY, playerFieldValue, "dél");
+                }
+                else if (_table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
+                {
+                    AddCubesToRotate(playerCoordinateX, playerCoordinateY, playerFieldValue, "kelet");
+                }
+                else
+                {
+                    AddCubesToRotate(playerCoordinateX, playerCoordinateY, playerFieldValue, "nyugat");
+                }
+               
+
+               
+                bool validStep;
+                if (direction == "óramutatóval megegyező")
+                {
+                    validStep = RotateRight(playerCoordinateX, playerCoordinateY, playerNumber);
+
+                }
+                else
+                {
+                   validStep = RotateLeft(playerCoordinateX, playerCoordinateY, playerNumber);
+                }
+
+                // Ha a játékos kockájával tudnánk lépni, folytatjuk az ellenőrzést a csatolt kockákkal
+                // Megnézzük hol van szomszédja és meghívjuk rá a ValidateStep rekurzív függvényt
+
+
+                
+
+                // Sikerességtől függetlenül a lépés után kitisztítjuk a listákat (hiszen pl. a játékos kockája minden esetben szerepel a régi pozíciókban)
+                _cubesOldPosition.Clear();
+                _cubesNewPosition.Clear();
+               
+                if (validStep)    // Ha sikerült a forgatás, akkor a játékos irányát is megváltoztatjuk
+                {
+                    if (_table.GetFaceNorth(playerCoordinateX, playerCoordinateY))   // A játékos északra néz 
+                    {
+                        if (direction == "óramutatóval megegyező")
+                        {
+                            _table.SetFaceEast(playerCoordinateX, playerCoordinateY);
+                        }
+                        else
+                        {
+                            _table.SetFaceWest(playerCoordinateX, playerCoordinateY);
+                        }
+                    }
+                    else if (_table.GetFaceSouth(playerCoordinateX, playerCoordinateY)) // A játékos délre néz 
+                    {
+                        if (direction == "óramutatóval megegyező")
+                        {
+                            _table.SetFaceWest(playerCoordinateX, playerCoordinateY);
+                        }
+                        else
+                        {
+                            _table.SetFaceEast(playerCoordinateX, playerCoordinateY);
+                        }
+                    }
+                    else if (_table.GetFaceEast(playerCoordinateX, playerCoordinateY)) // A játékos keletre néz 
+                    { 
+                        if (direction == "óramutatóval megegyező")
+                        {
+                            _table.SetFaceSouth(playerCoordinateX, playerCoordinateY);
+                        }
+                        else
+                        {
+                            _table.SetFaceNorth(playerCoordinateX, playerCoordinateY);
+                        }
+                    }
+                    else                                                                // A játékos nyugatra néz 
+                    {
+                        if (direction == "óramutatóval megegyező")
+                        {
+                            _table.SetFaceNorth(playerCoordinateX, playerCoordinateY);
+                        }
+                        else
+                        {
+                            _table.SetFaceSouth(playerCoordinateX, playerCoordinateY);
+                        }
+                    }
+                }
+
+                return validStep;
+            }
+            
+
+
+
+                return true;
+        }
+
+        public void AddCubesToRotate(int playerCoordinateX, int playerCoordinateY, int playerFieldValue, String direction)
+        {
+            _cubesOldPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, playerFieldValue, _table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY), _table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY), _table.GetAttachmentEast(playerCoordinateX, playerCoordinateY), _table.GetAttachmentWest(playerCoordinateX, playerCoordinateY), direction));
+            
+            int i = 0;
+            bool contains = false;
+            while (i < _cubesOldPosition.Count)
+            {
+                contains = false;
+                for(int j=0; j<_cubesOldPosition.Count; j++)
+                {
+                    if(i != j && _cubesOldPosition[j].x == _cubesOldPosition[i].x && _cubesOldPosition[j].y == _cubesOldPosition[i].y)
+                    {
+                        contains = true;
+                    }
+                }
+                if (!contains)
+                {
+                    if (_table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y) && _cubesOldPosition[i].direction != "dél")
+                    {
+                        _cubesOldPosition.Add(new CubeToMove(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y, _table.GetFieldValue(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y), _table.GetAttachmentNorth(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y), _table.GetAttachmentSouth(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y), _table.GetAttachmentEast(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y), _table.GetAttachmentWest(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y), "észak"));
+                    }
+                    if (_table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y) && _cubesOldPosition[i].direction != "észak")
+                    {
+                        _cubesOldPosition.Add(new CubeToMove(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y, _table.GetFieldValue(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y), _table.GetAttachmentNorth(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y), _table.GetAttachmentSouth(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y), _table.GetAttachmentEast(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y), _table.GetAttachmentWest(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y), "dél"));
+                    }
+                    if (_table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y) && _cubesOldPosition[i].direction != "nyugat")
+                    {
+                        _cubesOldPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1, _table.GetFieldValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1), _table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1), _table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1), _table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1), _table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1), "kelet"));
+                    }
+                    if (_table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y) && _cubesOldPosition[i].direction != "kelet")
+                    {
+                        _cubesOldPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1, _table.GetFieldValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1), _table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1), _table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1), _table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1), _table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1), "nyugat"));
+                    }
+                }
+                i++;
+            }
+        }
+
+        public Boolean RotateLeft(int playerCoordinateX, int playerCoordinateY, int playerNumber)
+        {
+            if(_cubesOldPosition[0].direction == "észak")
+            {
+                _cubesNewPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, _cubesOldPosition[0].value, _cubesOldPosition[0].eastAttachment, _cubesOldPosition[0].westAttachment, _cubesOldPosition[0].southAttachment, _cubesOldPosition[0].northAttachment, "nyugat"));
+            }
+            else if(_cubesOldPosition[0].direction == "dél")
+            {
+                _cubesNewPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, _cubesOldPosition[0].value, _cubesOldPosition[0].eastAttachment, _cubesOldPosition[0].westAttachment, _cubesOldPosition[0].southAttachment, _cubesOldPosition[0].northAttachment, "kelet"));
+            }
+            else if (_cubesOldPosition[0].direction == "kelet")
+            {
+                _cubesNewPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, _cubesOldPosition[0].value, _cubesOldPosition[0].eastAttachment, _cubesOldPosition[0].westAttachment, _cubesOldPosition[0].southAttachment, _cubesOldPosition[0].northAttachment, "észak"));
+            }
+            else
+            {
+                _cubesNewPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, _cubesOldPosition[0].value, _cubesOldPosition[0].eastAttachment, _cubesOldPosition[0].westAttachment, _cubesOldPosition[0].southAttachment, _cubesOldPosition[0].northAttachment, "dél"));
+            }
+
+            int i = 1;
+            // Minden régi mezőnek eltároljuk az elforgatott állapotát 
+            while(i < _cubesOldPosition.Count)
+            {
+                int x = _cubesOldPosition[0].x - (_cubesOldPosition[i].y - _cubesOldPosition[0].y);
+                int y = _cubesOldPosition[0].y + (_cubesOldPosition[i].x - _cubesOldPosition[0].x);
+                
+                _cubesNewPosition.Add(new CubeToMove(x, y, _table.GetFieldValue(x, y), _cubesOldPosition[i].eastAttachment, _cubesOldPosition[i].westAttachment, _cubesOldPosition[i].southAttachment, _cubesOldPosition[i].northAttachment, ""));
+
+                i++;
+            }
+
+            i = 1;    
+            // Megnézzük az összes már elforgatott mezőre, hogy a forgatás után rossz helyre kerülne-e
+            while(i < _cubesNewPosition.Count)
+            {
+                if(_table.GetFieldValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y) != 7)
+                {
+                    int j = 1;
+                    bool found = false;
+                    while(j < _cubesOldPosition.Count)
+                    {
+                        if(_cubesNewPosition[i].x == _cubesOldPosition[j].x && _cubesNewPosition[i].y == _cubesOldPosition[j].y)
+                        {
+                            found = true;
+                        }
+                        j++;
+                    }
+                    if (!found)
+                    {
+                        return false;
+                    }
+
+                }
+                i++;
+            }
+
+            // Ha idáig elértünk, akkor minden rendben volt a forgatás során, már csak el kell tárolni a táblán az új kapcsolatokkal együtt
+            // (Ha már meg lesz a kocka - kocka kapcsolat akkor ha minden igaz, már csak a kapcsolatokat kell eltárolni)
+            i = 1;
+            while(i < _cubesNewPosition.Count)
+            {
+                if (i == 1)
+                {
+                    Dettach(_cubesOldPosition[0].direction, playerNumber);
+                }
+                _table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _table.GetFieldValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFieldRemainingCleaningOperations(_cubesOldPosition[i].x, _cubesOldPosition[i].y));
+                _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, _table.GetFieldRemainingCleaningOperations(_cubesOldPosition[i].x, _cubesOldPosition[i].y));
+                if (i == 1)
+                {
+                    Attach(_cubesNewPosition[0].direction, playerNumber);
+                }
+                i++;
+            }
+
+            return true;
+
+        }
+
+        public Boolean RotateRight(int playerCoordinateX, int playerCoordinateY, int playerNumber)
+        {
+            //eltároljuk, hogy a játékos melyik oldalon van kockához csatlakozva
+            if (_cubesOldPosition[0].direction == "észak")
+            {
+                _cubesNewPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, _cubesOldPosition[0].value, _cubesOldPosition[0].westAttachment, _cubesOldPosition[0].northAttachment, _cubesOldPosition[0].eastAttachment, _cubesOldPosition[0].southAttachment, "kelet"));
+            }
+            else if (_cubesOldPosition[0].direction == "dél")
+            {
+                _cubesNewPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, _cubesOldPosition[0].value, _cubesOldPosition[0].westAttachment, _cubesOldPosition[0].northAttachment, _cubesOldPosition[0].eastAttachment, _cubesOldPosition[0].southAttachment, "nyugat"));
+            }
+            else if (_cubesOldPosition[0].direction == "kelet")
+            {
+                _cubesNewPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, _cubesOldPosition[0].value, _cubesOldPosition[0].westAttachment, _cubesOldPosition[0].northAttachment, _cubesOldPosition[0].eastAttachment, _cubesOldPosition[0].southAttachment, "dél"));
+            }
+            else
+            {
+                _cubesNewPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, _cubesOldPosition[0].value, _cubesOldPosition[0].westAttachment, _cubesOldPosition[0].northAttachment, _cubesOldPosition[0].eastAttachment, _cubesOldPosition[0].southAttachment, "észak"));
+            }
+
+            int i = 1;
+            // Minden régi mezőnek eltároljuk az elforgatott állapotát 
+            while (i < _cubesOldPosition.Count)
+            {
+                int x = _cubesOldPosition[0].x - (_cubesOldPosition[0].y - _cubesOldPosition[i].y);
+                int y = _cubesOldPosition[0].y + (_cubesOldPosition[0].x - _cubesOldPosition[i].x);
+
+                _cubesNewPosition.Add(new CubeToMove(x, y, _table.GetFieldValue(x, y), _cubesOldPosition[i].eastAttachment, _cubesOldPosition[i].westAttachment, _cubesOldPosition[i].southAttachment, _cubesOldPosition[i].northAttachment, ""));
+
+                i++;
+            }
+
+            i = 1;
+            // Megnézzük az összes már elforgatott mezőre, hogy a forgatás után rossz helyre kerülne-e
+            while (i < _cubesNewPosition.Count)
+            {
+                if (_table.GetFieldValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y) != 7)
+                {
+                    int j = 1;
+                    bool found = false;
+                    while (j < _cubesOldPosition.Count)
+                    {
+                        if (_cubesNewPosition[i].x == _cubesOldPosition[j].x && _cubesNewPosition[i].y == _cubesOldPosition[j].y)
+                        {
+                            found = true;
+                        }
+                        j++;
+                    }
+                    if (!found)
+                    {
+                        return false;
+                    }
+
+                }
+                i++;
+            }
+
+            // Ha idáig elértünk, akkor minden rendben volt a forgatás során, már csak el kell tárolni a táblán az új kapcsolatokkal együtt
+            //  (Ha már meg lesz a kocka - kocka kapcsolat akkor ha minden igaz, már csak a kapcsolatokat kell eltárolni)
+            i = 1;
+            while (i < _cubesNewPosition.Count)
+            {
+                if (i == 1)
+                {
+                    Dettach(_cubesOldPosition[0].direction, playerNumber);
+                }
+                _table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _table.GetFieldValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFieldRemainingCleaningOperations(_cubesOldPosition[i].x, _cubesOldPosition[i].y));
+                _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, _table.GetFieldRemainingCleaningOperations(_cubesOldPosition[i].x, _cubesOldPosition[i].y));
+                if (i == 1)
+                {
+                    Attach(_cubesNewPosition[0].direction, playerNumber);
+                }
+                i++;
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
         /// Lekapcsolás logikája
         /// </summary>
         public Boolean Dettach(String direction, int playerNumber)
@@ -936,7 +1319,9 @@ namespace ELTE.Robotok.Model
                     if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 7) // Mehnézi, hogy üres kockára lép-e
                     {
                         _table.SetValue(playerCoordinateX - 1, playerCoordinateY, playerFieldValue, -1); // új helyre ráléptetjük
+                        _table.SetFaceDirection(playerCoordinateX - 1, playerCoordinateY, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY)); //az új helyreátadjuk hogy merre nézett a játékos
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1); // régi helyről letöröljük
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false); //a régi helyről töröljük hogy merre nézett a játékos
                         return true;
                     }
                     else
@@ -949,7 +1334,9 @@ namespace ELTE.Robotok.Model
                     if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 7)
                     {
                         _table.SetValue(playerCoordinateX + 1, playerCoordinateY, playerFieldValue, -1);
+                        _table.SetFaceDirection(playerCoordinateX + 1, playerCoordinateY, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY));
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false);
                         return true;
                     }
                     else
@@ -962,7 +1349,9 @@ namespace ELTE.Robotok.Model
                     if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 7)
                     {
                         _table.SetValue(playerCoordinateX, playerCoordinateY + 1, playerFieldValue, -1);
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY + 1, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY));
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false);
                         return true;
                     }
                     else
@@ -975,7 +1364,9 @@ namespace ELTE.Robotok.Model
                     if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 7)
                     {
                         _table.SetValue(playerCoordinateX, playerCoordinateY - 1, playerFieldValue, -1);
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY - 1, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY));
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
+                        _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false);
                         return true;
                     }
                     else
@@ -1163,7 +1554,9 @@ namespace ELTE.Robotok.Model
             for (int i = 0; i < _cubesNewPosition.Count; i++)
             {
                 _table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, -1);
+                _table.SetFaceDirection(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _table.GetFaceNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y));
                 _table.SetAttachmentValues(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment);
+                _table.SetFaceDirection(_cubesOldPosition[i].x, _cubesOldPosition[i].x, false, false, false, false);
             }
         }
 

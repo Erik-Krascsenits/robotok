@@ -1,5 +1,6 @@
-﻿using ELTE.Robotok.Model;
+using ELTE.Robotok.Model;
 using ELTE.Robotok.Persistence;
+using Robotok.WinForms.Properties; 
 
 namespace ELTE.Robotok.View
 {
@@ -13,7 +14,7 @@ namespace ELTE.Robotok.View
         private int _difficulty; // játék nehézsége
         private int _teams = 0; // csapatok száma
         private int _activePlayer; // játékos azonosítója
-        private string _successText; // a végrehajtott művelet sikeressége
+        private string? _successText; // a végrehajtott művelet sikeressége
         private bool _operationDone; // végzett-e valamilyen műveletet a játékos
         private int _activeCoordinateBox = 1; // 1 - első összekapcsolandó kocka koorinátáinak doboza 2 - második összekapcsolandó kocka koordinátáinak doboza
         #endregion
@@ -92,8 +93,10 @@ namespace ELTE.Robotok.View
                         _buttonGridPlayer[i - 3, j - 4].Enabled = true;
                         _buttonGridPlayer[i - 3, j - 4].Visible = true;
                         _buttonGridPlayer[i - 3, j - 4].FlatStyle = FlatStyle.Flat; // lapított stípus
+                        _buttonGridPlayer[i - 3, j - 4].BackgroundImageLayout = ImageLayout.Stretch; // Kép mezőhöz méretezése
                         _buttonGridPlayer[i - 3, j - 4].Name = i.ToString() + "," + j.ToString();
                         _buttonGridPlayer[i - 3, j - 4].Click += ButtonGrid_Click;
+
                         if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i-3, j-4) == -1) // minden mezőnek megadjuk a színét
                         {
                             _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
@@ -105,10 +108,12 @@ namespace ELTE.Robotok.View
                         else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 1)
                         {
                             _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
+                            _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
                         }
                         else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 2)
                         {
                             _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
+                            _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
                         }
                         else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 3)
                         {
@@ -133,10 +138,12 @@ namespace ELTE.Robotok.View
                         else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 8)
                         {
                             _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
+                            _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
                         }
                         else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 9)
                         {
                             _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
+                            _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
                         }
                         else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 10) // Manhattan távolságon belül nem látható mezők
                         {
@@ -252,6 +259,7 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen tisztítás!";
                 }
             }
+            GameMenuForm.instance._model.Wait();
             _operationDone = true;
             if (_activePlayer == 1)
             {
@@ -292,13 +300,14 @@ namespace ELTE.Robotok.View
 
                 if (GameMenuForm.instance._model.Dettach(operationParameter.Text, _activePlayer))
                 {
-                    _successText = "Sikeres mozgás!";
+                    _successText = "Sikeres lekapcsolódás!";
                 }
                 else
                 {
-                    _successText = "Sikertelen mozgás!";
+                    _successText = "Sikertelen lekapcsolódás!";
                 }
             }
+            GameMenuForm.instance._model.Wait();
             _operationDone = true;
             if (_activePlayer == 1)
             {
@@ -326,6 +335,7 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen kapcsolódás!";
                 }
             }
+            GameMenuForm.instance._model.Wait();
             _operationDone = true;
             if (_activePlayer == 1)
             {
@@ -357,6 +367,30 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen mozgás!";
                 }
             }
+            GameMenuForm.instance._model.Wait();
+            _operationDone = true;
+            DisableButtons();
+        }
+
+        // Elküldi az irány paraméterét a játékos számával a modelnek, és végrehajtja a forgást
+        public void turnButton_Click(object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(operationParameter.Text) || ((operationParameter.Text != "óramutatóval megegyező") && operationParameter.Text != "óramutatóval ellenkező"))
+            {
+                _successText = "Hibás paraméter!";
+            }
+            else
+            {
+                if (GameMenuForm.instance._model.Rotate(operationParameter.Text, _activePlayer))
+                {
+                    _successText = "Sikeres forgás!";
+                }          
+                else
+                {
+                    _successText = "Sikertelen forgás!";
+                }
+            }
+            GameMenuForm.instance._model.Wait();
             _operationDone = true;
             if (_activePlayer == 1)
             {
@@ -368,6 +402,7 @@ namespace ELTE.Robotok.View
             }
             DisableButtons();
         }
+
         //Lejebb egy nagy függvény van. Igazából jobb lene, hogy ha lenne valami eszköz a tömörítéséhez, de szerintem ez itt lehetetlen, hoszen minden jétákosnak van egy saját táblája, és így külön mindegyiket kell frissíteni.
         public void RefreshTable(int active)
         {
@@ -391,6 +426,7 @@ namespace ELTE.Robotok.View
                     {
                         if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                         {
+                            _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                             if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == -1)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
@@ -402,10 +438,14 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 1)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                RotateImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 2)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                RotateImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 3)
                             {
@@ -430,10 +470,14 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 8)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                RotateImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 9)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                RotateImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
                             {
@@ -453,6 +497,7 @@ namespace ELTE.Robotok.View
                     {
                         if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                         {
+                            _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                             if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == -1)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
@@ -464,10 +509,14 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 1)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                RotateImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 2)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                RotateImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 3)
                             {
@@ -492,10 +541,14 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 8)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                RotateImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 9)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                RotateImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
                             {
@@ -518,6 +571,7 @@ namespace ELTE.Robotok.View
                         {
                             if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                             {
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                                 if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == -1)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
@@ -529,10 +583,14 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 1)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
+                                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                    RotateImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 2)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
+                                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                    RotateImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 3)
                                 {
@@ -557,10 +615,14 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 8)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
+                                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                    RotateImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 9)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
+                                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                    RotateImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
                                 {
@@ -581,6 +643,7 @@ namespace ELTE.Robotok.View
                         {
                             if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                             {
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                                 if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == -1)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
@@ -592,10 +655,14 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 1)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
+                                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                    RotateImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 2)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
+                                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                    RotateImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 3)
                                 {
@@ -620,10 +687,14 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 8)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
+                                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                    RotateImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 9)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
+                                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
+                                    RotateImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
                                 {
@@ -647,6 +718,23 @@ namespace ELTE.Robotok.View
 
         }
         
+        // Robotok képeinek forgatása 
+        public void RotateImage(int i, int j)
+        {
+            if (GameMenuForm.instance._model.Table.GetFaceNorth(i, j))            // Megnézzük, hogy a robot melyik irányba néz          
+            {
+                _buttonGridPlayer[i - 3, j - 4].BackgroundImage.RotateFlip(RotateFlipType.Rotate180FlipX);    // Abba az irányba forgatjuk a képet, amerre a robot néz
+            }
+            else if (GameMenuForm.instance._model.Table.GetFaceWest(i, j))
+            {
+                _buttonGridPlayer[i - 3, j - 4].BackgroundImage.RotateFlip(RotateFlipType.Rotate270FlipXY);
+            }
+            else if (GameMenuForm.instance._model.Table.GetFaceEast(i, j))
+            {
+                _buttonGridPlayer[i - 3, j - 4].BackgroundImage.RotateFlip(RotateFlipType.Rotate90FlipXY);
+            }
+        }
+
         // Letiltja a műveletek használatát
         public void DisableButtons()
         {

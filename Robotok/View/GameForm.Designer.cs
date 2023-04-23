@@ -307,6 +307,7 @@
             this.turnButton.Size = new System.Drawing.Size(50, 50);
             this.turnButton.TabIndex = 25;
             this.turnButton.UseVisualStyleBackColor = true;
+            this.turnButton.Click += new System.EventHandler(this.turnButton_Click);
             // 
             // attachButton
             // 
