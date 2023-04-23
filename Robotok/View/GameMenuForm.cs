@@ -27,7 +27,7 @@ public partial class GameMenuForm : Form
     4 - piros csapat 2. játékos
     Így változik az értéke: 1 csapat esetén: 1 -> 2 -> 1 -> ... 2 csapat esetén: 1 -> 2 -> 3 -> 4 -> 1 -> ...
     */
-    int actualPlayer;
+    public int actualPlayer;
 
     // Formok a különbözõ nézetek megjelenítéségez (a piros csapat nézetei és a játékvezetõi nézet csak opcionálisan van példányosítva) 
 
