@@ -61,11 +61,11 @@
             this.operationParametersText = new System.Windows.Forms.Label();
             this.operationParameter = new System.Windows.Forms.ComboBox();
             this.coordinate1 = new System.Windows.Forms.TextBox();
-            this.coordinate2 = new System.Windows.Forms.TextBox();
             this.nextRoundValueText = new System.Windows.Forms.Label();
             this.nextRoundText = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.isSuccessful = new System.Windows.Forms.Label();
             this.successfulText = new System.Windows.Forms.Label();
+            this.coordinate2 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // playerViewText
@@ -252,7 +252,7 @@
             // 
             this.communicationWindowText.AutoSize = true;
             this.communicationWindowText.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.communicationWindowText.Location = new System.Drawing.Point(628, 396);
+            this.communicationWindowText.Location = new System.Drawing.Point(662, 396);
             this.communicationWindowText.Name = "communicationWindowText";
             this.communicationWindowText.Size = new System.Drawing.Size(258, 31);
             this.communicationWindowText.TabIndex = 20;
@@ -260,7 +260,7 @@
             // 
             // communicationWindow
             // 
-            this.communicationWindow.Location = new System.Drawing.Point(556, 439);
+            this.communicationWindow.Location = new System.Drawing.Point(595, 439);
             this.communicationWindow.Multiline = true;
             this.communicationWindow.Name = "communicationWindow";
             this.communicationWindow.Size = new System.Drawing.Size(383, 96);
@@ -340,6 +340,7 @@
             this.attachCubesButton.Size = new System.Drawing.Size(50, 50);
             this.attachCubesButton.TabIndex = 28;
             this.attachCubesButton.UseVisualStyleBackColor = true;
+            this.attachCubesButton.Click += new System.EventHandler(this.attachCubesButton_Click);
             // 
             // detachCubesButton
             // 
@@ -350,6 +351,7 @@
             this.detachCubesButton.Size = new System.Drawing.Size(50, 50);
             this.detachCubesButton.TabIndex = 29;
             this.detachCubesButton.UseVisualStyleBackColor = true;
+            this.detachCubesButton.Click += new System.EventHandler(this.detachCubesButton_Click);
             // 
             // clearButton
             // 
@@ -389,17 +391,13 @@
             // 
             // coordinate1
             // 
+            this.coordinate1.BackColor = System.Drawing.Color.White;
+            this.coordinate1.Enabled = false;
             this.coordinate1.Location = new System.Drawing.Point(556, 632);
             this.coordinate1.Name = "coordinate1";
-            this.coordinate1.Size = new System.Drawing.Size(125, 27);
+            this.coordinate1.PlaceholderText = "1. kocka koordinátája";
+            this.coordinate1.Size = new System.Drawing.Size(149, 27);
             this.coordinate1.TabIndex = 33;
-            // 
-            // coordinate2
-            // 
-            this.coordinate2.Location = new System.Drawing.Point(702, 632);
-            this.coordinate2.Name = "coordinate2";
-            this.coordinate2.Size = new System.Drawing.Size(125, 27);
-            this.coordinate2.TabIndex = 34;
             // 
             // nextRoundValueText
             // 
@@ -421,15 +419,15 @@
             this.nextRoundText.TabIndex = 35;
             this.nextRoundText.Text = "Következő kör:";
             // 
-            // label1
+            // isSuccessful
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(603, 356);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(239, 25);
-            this.label1.TabIndex = 37;
-            this.label1.Text = "Előző művelet sikeressége:";
+            this.isSuccessful.AutoSize = true;
+            this.isSuccessful.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.isSuccessful.Location = new System.Drawing.Point(603, 356);
+            this.isSuccessful.Name = "isSuccessful";
+            this.isSuccessful.Size = new System.Drawing.Size(239, 25);
+            this.isSuccessful.TabIndex = 37;
+            this.isSuccessful.Text = "Előző művelet sikeressége:";
             // 
             // successfulText
             // 
@@ -441,16 +439,26 @@
             this.successfulText.TabIndex = 38;
             this.successfulText.Text = "sikeres";
             // 
+            // coordinate2
+            // 
+            this.coordinate2.BackColor = System.Drawing.Color.White;
+            this.coordinate2.Enabled = false;
+            this.coordinate2.Location = new System.Drawing.Point(733, 632);
+            this.coordinate2.Name = "coordinate2";
+            this.coordinate2.PlaceholderText = "2. kocka koordinátája";
+            this.coordinate2.Size = new System.Drawing.Size(149, 27);
+            this.coordinate2.TabIndex = 39;
+            // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(992, 671);
+            this.ClientSize = new System.Drawing.Size(1046, 671);
+            this.Controls.Add(this.coordinate2);
             this.Controls.Add(this.successfulText);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.isSuccessful);
             this.Controls.Add(this.nextRoundValueText);
             this.Controls.Add(this.nextRoundText);
-            this.Controls.Add(this.coordinate2);
             this.Controls.Add(this.coordinate1);
             this.Controls.Add(this.operationParameter);
             this.Controls.Add(this.operationParametersText);
@@ -527,10 +535,10 @@
         public Label operationParametersText;
         public ComboBox operationParameter;
         public TextBox coordinate1;
-        public TextBox coordinate2;
         public Label nextRoundValueText;
         public Label nextRoundText;
-        public Label label1;
+        public Label isSuccessful;
         public Label successfulText;
+        public TextBox coordinate2;
     }
 }
