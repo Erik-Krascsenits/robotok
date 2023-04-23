@@ -190,6 +190,7 @@ namespace ELTE.Robotok.Model
             _dataAccess = dataAccess;
 
             greenTeamCubeAttachState = 0;
+            redTeamCubeAttachState = 0;
         }
 
         #endregion
