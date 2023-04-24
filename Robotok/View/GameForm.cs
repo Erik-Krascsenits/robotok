@@ -152,6 +152,7 @@ namespace ELTE.Robotok.View
                         Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
                         // felvesszük az ablakra a gombot
                         successfulText.Text = "Nincs művelet!";
+                        nextRoundValueText.Text = "Zöld csapat 2. játékos";
                     }
                 }
             }
@@ -419,6 +420,7 @@ namespace ELTE.Robotok.View
 
             if (active == 1) //első játékos zöld csapat esetén
             {
+                nextRoundValueText.Text = "Zöld csapat 2. játékos";
                 GameMenuForm.instance._model.ManhattanDistance(_difficulty, 1);
                 for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
                 {
@@ -490,6 +492,14 @@ namespace ELTE.Robotok.View
             }
             if (active == 2) //másik játékos zöld csapat esetén
             {
+                if (_teams == 1)
+                {
+                    nextRoundValueText.Text = "Zöld csapat 1. játékos";
+                }
+                else
+                {
+                    nextRoundValueText.Text = "Piros csapat 1. játékos";
+                }
                 GameMenuForm.instance._model.ManhattanDistance(_difficulty, 8);
                 for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
                 {
@@ -563,6 +573,7 @@ namespace ELTE.Robotok.View
             {
                 if (active == 3) //első játékos piros csapat esetén
                 {
+                    nextRoundValueText.Text = "Piros csapat 2. játékos";
                     GameMenuForm.instance._model.ManhattanDistance(_difficulty, 2);
 
                     for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
@@ -635,6 +646,7 @@ namespace ELTE.Robotok.View
                 } 
                 else if (active == 4) //másik játékos piros csapat esetén
                 {
+                    nextRoundValueText.Text = "Zöld csapat 1. játékos";
                     GameMenuForm.instance._model.ManhattanDistance(_difficulty, 9);
 
                     for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
@@ -847,6 +859,8 @@ namespace ELTE.Robotok.View
                 _successText = "Sikertelen összekapcsolás!";
             }
             _operationDone = true;
+            GameMenuForm.instance._model.Wait(); 
+            DisableButtons();
         }
 
         private void detachCubesButton_Click(object sender, EventArgs e)
@@ -872,6 +886,8 @@ namespace ELTE.Robotok.View
                 _successText = "Sikertelen szétkapcsolás!";
             }
             _operationDone = true;
+            GameMenuForm.instance._model.Wait(); 
+            DisableButtons();
         }
 
         #endregion

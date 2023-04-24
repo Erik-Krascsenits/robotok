@@ -131,13 +131,13 @@ namespace Robotok.WinForms.View
                     _verticalPanels[i, j] = new Panel();
                     _verticalPanels[i, j].Location = new Point(113 + 22 * j, 85 + 22 * i); // elhelyezkedés
                     _verticalPanels[i, j].Size = new Size(5, 22); // méret
-                    _verticalPanels[i, j].BackColor = Color.Black; // debuggolás miatt piros, hogy a határoknál ne olvadjon bele a fekete színbe, később át lehet írni
+                    _verticalPanels[i, j].BackColor = Color.Red; // debuggolás miatt piros, hogy a határoknál ne olvadjon bele a fekete színbe, később át lehet írni
                     _verticalPanels[i, j].Visible = false;
 
                     _horizontalPanels[i, j] = new Panel();
                     _horizontalPanels[i, j].Location = new Point(115 + 22 * j, 83 + 22 * i);
                     _horizontalPanels[i, j].Size = new Size(22, 5);
-                    _horizontalPanels[i, j].BackColor = Color.Black;
+                    _horizontalPanels[i, j].BackColor = Color.Red;
                     _horizontalPanels[i, j].Visible = false;
 
                     Controls.Add(_verticalPanels[i, j]); // Felvesszük őket az ablakra
