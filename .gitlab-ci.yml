@@ -1,0 +1,9 @@
+image: mcr.microsoft.com/dotnet/sdk:6.0
+
+stages:
+  - build
+  - test
+  - deploy
+
+before_script:
+  - dotnet --version
