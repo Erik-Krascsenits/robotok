@@ -2,10 +2,10 @@ using ELTE.Robotok.Model;
 using ELTE.Robotok.Persistence;
 using Moq;
 using System.Security.Cryptography;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Robotok.Test
 {
-    [TestClass]
     public class Tests
     {
         private RobotokGameModel _model = null!;
