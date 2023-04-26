@@ -11,7 +11,7 @@ build_model:
   stage: build
   script:
     - dotnet build Robotok.Library
-    - dotnet build Robotok.WinForms
+    - dotnet build Robotok.Robotok.View
 
 
 
