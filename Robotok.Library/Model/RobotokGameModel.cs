@@ -143,7 +143,6 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Játék végének lekérdezése.
         /// </summary>
-
         public Boolean IsGameOver { get { return (_gameStepCount == 0); } }
 
         /// <summary>
@@ -1916,7 +1915,7 @@ namespace ELTE.Robotok.Model
                 }
 
                 _table.SetValue(redPlayerOne_i, redPlayerOne_j, 2, -1);
-                _table.SetValue(redPlayerTwo_i, greenPlayerTwo_j, 9, -1);
+                _table.SetValue(redPlayerTwo_i, redPlayerTwo_j, 9, -1);
             }
 
             //Alakzatoknak az építőkockainek generálása
