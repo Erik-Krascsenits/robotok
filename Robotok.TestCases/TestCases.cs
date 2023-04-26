@@ -1,12 +1,11 @@
 using ELTE.Robotok.Model;
 using ELTE.Robotok.Persistence;
 using Moq;
-using System.Security.Cryptography;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Robotok.Test
+namespace Robotok.TestCases
 {
-    public class Tests
+    [TestClass]
+    public class TestCases
     {
         private RobotokGameModel _model = null!;
         private RobotokTable _mockedTable = null!;
@@ -26,7 +25,7 @@ namespace Robotok.Test
         public void GeneratedFieldsAmount()
         {
             int playingField = 0;
-            for(int i = 0; i < _model.Table.SizeX; ++i)
+            for (int i = 0; i < _model.Table.SizeX; ++i)
             {
                 for (int j = 0; j < _model.Table.SizeY; ++j)
                 {
@@ -36,5 +35,6 @@ namespace Robotok.Test
 
             Assert.AreEqual(476, playingField);
         }
+
     }
 }

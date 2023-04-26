@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Robotok.WinForms", "Robotok
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Robotok.Library", "..\Robotok.Library\Robotok.Library.csproj", "{BBFC2249-A55C-4B52-95DB-F0A6917C1409}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robotok.Test", "..\Robotok.Test\Robotok.Test.csproj", "{137A1A69-2F79-4C7C-B679-D21E74EABB4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robotok.TestCases", "..\Robotok.TestCases\Robotok.TestCases.csproj", "{3E6E7224-870B-493C-ADE6-23920838EFF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{BBFC2249-A55C-4B52-95DB-F0A6917C1409}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBFC2249-A55C-4B52-95DB-F0A6917C1409}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBFC2249-A55C-4B52-95DB-F0A6917C1409}.Release|Any CPU.Build.0 = Release|Any CPU
-		{137A1A69-2F79-4C7C-B679-D21E74EABB4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{137A1A69-2F79-4C7C-B679-D21E74EABB4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{137A1A69-2F79-4C7C-B679-D21E74EABB4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{137A1A69-2F79-4C7C-B679-D21E74EABB4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E6E7224-870B-493C-ADE6-23920838EFF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E6E7224-870B-493C-ADE6-23920838EFF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E6E7224-870B-493C-ADE6-23920838EFF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E6E7224-870B-493C-ADE6-23920838EFF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
