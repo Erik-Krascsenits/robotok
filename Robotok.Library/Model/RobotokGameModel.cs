@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -107,7 +108,7 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Játéktábla lekérdezése.(játékvezetői)
         /// </summary>
-        public RobotokTable Table { get { return _table; } }
+        public RobotokTable Table { set { _table = value; } get { return _table; } }
 
         /// <summary>
         /// Játéktábla lekérdezése (zöld csapataban 1. játékosé).
@@ -180,7 +181,6 @@ namespace ELTE.Robotok.Model
 
             }
             
-
             _teams = teams;
             _figure1 = new Shape();
             _figure2 = new Shape();
@@ -306,9 +306,6 @@ namespace ELTE.Robotok.Model
                     tempDistance = _ManhattanDistanceHard;
                     break;
             }
-
-
-
 
             Boolean toMerge = false;
 
