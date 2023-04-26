@@ -1031,7 +1031,6 @@ namespace ELTE.Robotok.Model
                 _table.SetAttachmentWest(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].westAttachment);
                 i++;
             }
-
             return true;
         }
 
