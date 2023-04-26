@@ -15,9 +15,9 @@ build_model:
 test_model:
   stage: test
   before_script:    
-    - dotnet restore Robotok.Test --packages .nuget
+    - dotnet restore Robotok.TestCases --packages .nuget
   script:
-    - dotnet test Robotok.Test --no-restore
+    - dotnet test Robotok.TestCases --no-restore
 
 
 
