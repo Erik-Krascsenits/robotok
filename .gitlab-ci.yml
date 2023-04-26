@@ -17,3 +17,13 @@ build:
 
 test:
   stage: test
+  before_script:    
+    - dotnet restore Robotok.Test --packages .nuget
+  script:
+    - dotnet test Robotok.Test --no-restore
+  cache:
+    key: "unittest-$CI_COMMIT_REF_SLUG"
+    paths:
+      - .nuget
+
+
