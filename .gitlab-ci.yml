@@ -12,5 +12,13 @@ build_model:
   script:
     - dotnet build Robotok.Library
 
+test_model:
+  stage: test
+  before_script:    
+    - dotnet restore Robotok.Test --packages .nuget
+  script:
+    - dotnet test Robotok.Test --no-restore
+
+
 
 
