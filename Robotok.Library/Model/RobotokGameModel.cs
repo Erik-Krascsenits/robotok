@@ -358,34 +358,7 @@ namespace ELTE.Robotok.Model
                                     }
                                 }
                             }
-                        }  // Ez a rész nem kell abban az esetben, ha előre feltöltjük a mezőket üresre
-                        /*else // abban az esetben ha Manhattan távolságon kívül vagyunk, akkor minket nem érdekel hogy milyen mező van ott, ezért 10-esekkel jelöljük őket
-                        {
-                            if (_gameStepCount == 300 ) //Ha ez az első kör, akkor az észlelési területen kívül szürke lesz minden
-                            {
-                                if (player == 1)
-                                {
-                                    _tableGreenPlayerOne.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
-                                }
-
-                                if (player == 8)
-                                {
-                                    _tableGreenPlayerTwo.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
-                                }
-                                if (_teams == 2)
-                                {
-                                    if (player == 2)
-                                    {
-                                        _tableRedPlayerOne.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
-                                    }
-
-                                    if (player == 9)
-                                    {
-                                        _tableRedPlayerTwo.SetValue(i - 3, j - 4, 10, _table.GetFieldRemainingCleaningOperations(i, j));
-                                    }
-                                }
-                            }
-                        }*/
+                        }
     }
                     else if ((i == 3 || i == 13) && (j >= 4 && j <= 23) || (i >= 3 && i <= 13) && (j == 4 || j == 23)) // de ugy a pálya határa az mindenképp kell, hogy megjelenjen
                     {
