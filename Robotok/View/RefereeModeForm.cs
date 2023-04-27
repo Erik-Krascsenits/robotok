@@ -158,7 +158,7 @@ namespace Robotok.WinForms.View
             {
                 for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
                 {
-                    _buttonGrid[i, j].BackgroundImage = null;
+                    RefreshRefereeCleaningOperationImage(i, j);
                     if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == -2)
                     {
                         _buttonGrid[i, j].BackColor = Color.Gray;
@@ -262,6 +262,55 @@ namespace Robotok.WinForms.View
             else if (GameMenuForm.instance._model.Table.GetFaceEast(i, j))
             {
                 _buttonGrid[i, j].BackgroundImage.RotateFlip(RotateFlipType.Rotate90FlipXY);
+            }
+        }
+
+        public void RefreshRefereeCleaningOperationImage(int i, int j)
+        {
+            if(GameMenuForm.instance._model.GameDifficulty  == ELTE.Robotok.Model.GameDifficulty.Easy)
+            {
+                if(GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
+                {
+                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                }
+                else
+                {
+                    _buttonGrid[i, j].BackgroundImage = null;
+                }
+            }
+            else if(GameMenuForm.instance._model.GameDifficulty == ELTE.Robotok.Model.GameDifficulty.Medium)
+            {
+                if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 2)
+                {
+                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack2;
+                }
+                else if(GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
+                {
+                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                }
+                else
+                {
+                    _buttonGrid[i, j].BackgroundImage = null;
+                }
+            }
+            else
+            {
+                if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 3)
+                {
+                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack1;
+                }
+                else if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 2)
+                {
+                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack2;
+                }
+                else if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
+                {
+                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                }
+                else
+                {
+                    _buttonGrid[i, j].BackgroundImage = null;
+                }
             }
         }
         #endregion

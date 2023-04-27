@@ -231,6 +231,26 @@ namespace ELTE.Robotok.Persistence
             return _fields[x, y]._remainingCleaningOperations;
         }
 
+
+        /// <summary>
+        /// Visszaadja hogy a mezőhöz van-e csatolva valami
+        /// </summary>
+        /// <param name="x">Vízszintes koordináta.</param>
+        /// <param name="y">Függőleges koordináta.</param>
+        /// <returns>A mező értéke.</returns>
+       public bool HasAttachments(Int32 x, Int32 y)
+        {
+            if(!_fields[x, y]._attachmentNorth && !_fields[x, y]._attachmentSouth && !_fields[x, y]._attachmentEast && !_fields[x, y]._attachmentWest)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
         /// <summary>
         /// Visszaadja egy mező északi csatolási részéről, hogy van-e valami hozzá csatolva
         /// </summary>
