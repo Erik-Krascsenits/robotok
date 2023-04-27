@@ -897,7 +897,13 @@ namespace ELTE.Robotok.Model
             {
                 int x = _cubesOldPosition[0].x - (_cubesOldPosition[i].y - _cubesOldPosition[0].y);
                 int y = _cubesOldPosition[0].y + (_cubesOldPosition[i].x - _cubesOldPosition[0].x);
-                
+
+                //Ha kiindexelnénk a tábláról a forgatás után, akkor az mindenképpen sikertelen
+                if (x < 0 || y < 0 || x >= 17 || y >= 28)
+                {
+                    return false;
+                }
+
                 _cubesNewPosition.Add(new CubeToMove(x, y, _cubesOldPosition[i].value, _cubesOldPosition[i].eastAttachment, _cubesOldPosition[i].westAttachment, _cubesOldPosition[i].southAttachment, _cubesOldPosition[i].northAttachment, ""));
 
                 i++;
