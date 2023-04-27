@@ -1920,6 +1920,8 @@ namespace ELTE.Robotok.Model
                     redPlayerOne_i = random.Next(4, 13);
                     redPlayerOne_j = random.Next(5, 23);
                 }
+                _table.SetValue(redPlayerOne_i, redPlayerOne_j, 2, -1);
+
 
                 while (_table.GetFieldValue(redPlayerTwo_i, redPlayerTwo_j) != 7)
                 {
@@ -1927,7 +1929,6 @@ namespace ELTE.Robotok.Model
                     redPlayerTwo_j = random.Next(5, 23);
                 }
 
-                _table.SetValue(redPlayerOne_i, redPlayerOne_j, 2, -1);
                 _table.SetValue(redPlayerTwo_i, redPlayerTwo_j, 9, -1);
             }
 
