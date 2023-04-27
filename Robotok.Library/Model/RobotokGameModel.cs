@@ -181,7 +181,10 @@ namespace ELTE.Robotok.Model
                     break;
 
             }
-            
+            if(GameDifficulty == GameDifficulty.Easy)
+            {
+
+            }
             _teams = teams;
             _figure1 = new Shape();
             _figure2 = new Shape();

@@ -436,6 +436,7 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 0)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Brown;
+                                RefreshCleaningOperationImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 1)
                             {
@@ -452,18 +453,22 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 3)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Yellow;
+                                RefreshCleaningOperationImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 4)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Orange;
+                                RefreshCleaningOperationImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 5)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Blue;
+                                RefreshCleaningOperationImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 6)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Violet;
+                                RefreshCleaningOperationImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 7)
                             {
@@ -515,6 +520,7 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 0)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Brown;
+                                RefreshCleaningOperationImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 1)
                             {
@@ -531,18 +537,22 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 3)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Yellow;
+                                RefreshCleaningOperationImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 4)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Orange;
+                                RefreshCleaningOperationImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 5)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Blue;
+                                RefreshCleaningOperationImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 6)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Violet;
+                                RefreshCleaningOperationImage(i, j);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 7)
                             {
@@ -590,6 +600,7 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 0)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Brown;
+                                    RefreshCleaningOperationImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 1)
                                 {
@@ -606,18 +617,22 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 3)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Yellow;
+                                    RefreshCleaningOperationImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 4)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Orange;
+                                    RefreshCleaningOperationImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 5)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Blue;
+                                    RefreshCleaningOperationImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 6)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Violet;
+                                    RefreshCleaningOperationImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 7)
                                 {
@@ -663,6 +678,7 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 0)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Brown;
+                                    RefreshCleaningOperationImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 1)
                                 {
@@ -679,18 +695,22 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 3)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Yellow;
+                                    RefreshCleaningOperationImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 4)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Orange;
+                                    RefreshCleaningOperationImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 5)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Blue;
+                                    RefreshCleaningOperationImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 6)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Violet;
+                                    RefreshCleaningOperationImage(i, j);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 7)
                                 {
@@ -747,8 +767,57 @@ namespace ELTE.Robotok.View
             }
         }
 
-        // Letiltja a műveletek használatát
-        public void DisableButtons()
+        public void RefreshCleaningOperationImage(int i, int j)
+        {
+            if (GameMenuForm.instance._model.GameDifficulty == ELTE.Robotok.Model.GameDifficulty.Easy)
+            {
+                if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
+                {
+                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.crack3;
+                }
+                else
+                {
+                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
+                }
+            }
+            else if (GameMenuForm.instance._model.GameDifficulty == ELTE.Robotok.Model.GameDifficulty.Medium)
+            {
+                if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 2)
+                {
+                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.crack2;
+                }
+                else if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
+                {
+                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.crack3;
+                }
+                else
+                {
+                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
+                }
+            }
+            else
+            {
+                if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 3)
+                {
+                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.crack1;
+                }
+                else if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 2)
+                {
+                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.crack2;
+                }
+                else if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
+                {
+                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.crack3;
+                }
+                else
+                {
+                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
+                }
+            }
+        }
+
+            // Letiltja a műveletek használatát
+            public void DisableButtons()
         {
             waitButton.Enabled = false;
             moveButton.Enabled = false;
