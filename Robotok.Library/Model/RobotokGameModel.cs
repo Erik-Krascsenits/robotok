@@ -498,7 +498,13 @@ namespace ELTE.Robotok.Model
                                 }
                                 else
                                 {
+                                    int cubeValue = _table.GetFieldValue(i - 1, j);
                                     _table.SetValue(i - 1, j, 7, -1);
+                                    if (cubeValue != 0)
+                                    {
+                                        GenerateNewCube(cubeValue);
+                                    }
+
                                 }
                                 success = true;
                                 break;
@@ -523,7 +529,12 @@ namespace ELTE.Robotok.Model
                                 }
                                 else
                                 {
+                                    int cubeValue = _table.GetFieldValue(i + 1, j);
                                     _table.SetValue(i + 1, j, 7, -1);
+                                    if (cubeValue != 0)
+                                    {
+                                        GenerateNewCube(cubeValue);
+                                    }
                                 }
                                 success = true;
                                 break;
@@ -548,7 +559,12 @@ namespace ELTE.Robotok.Model
                                 }
                                 else
                                 {
+                                    int cubeValue = _table.GetFieldValue(i, j - 1);
                                     _table.SetValue(i, j - 1, 7, -1);
+                                    if (cubeValue != 0)
+                                    {
+                                        GenerateNewCube(cubeValue);
+                                    }
                                 }
                                 success = true;
                                 break;
@@ -573,7 +589,12 @@ namespace ELTE.Robotok.Model
                                 }
                                 else
                                 {
+                                    int cubeValue = _table.GetFieldValue(i, j + 1);
                                     _table.SetValue(i, j + 1, 7, -1);
+                                    if (cubeValue != 0)
+                                    {
+                                        GenerateNewCube(cubeValue);
+                                    }
                                 }
                                 success = true;
                                 break;
@@ -781,6 +802,9 @@ namespace ELTE.Robotok.Model
                 return true;
         }
 
+        /// <summary>
+        /// Összekapcsolt kockák eltárolása
+        /// </summary>
         public void AddCubesToRotate(int playerCoordinateX, int playerCoordinateY, int playerFieldValue, String direction)
         {
             _cubesOldPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, playerFieldValue, _table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY), _table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY), _table.GetAttachmentEast(playerCoordinateX, playerCoordinateY), _table.GetAttachmentWest(playerCoordinateX, playerCoordinateY), direction, _table.GetFieldRemainingCleaningOperations(playerCoordinateX, playerCoordinateY)));
@@ -857,6 +881,9 @@ namespace ELTE.Robotok.Model
             }
         }
 
+        /// <summary>
+        /// Balra forgatás
+        /// </summary>
         public Boolean RotateLeft(int playerCoordinateX, int playerCoordinateY)
         {
             //eltároljuk, hogy a játékos melyik oldalon van kockához csatlakozva
@@ -936,6 +963,9 @@ namespace ELTE.Robotok.Model
             return true;
         }
 
+        /// <summary>
+        /// Jobbra forgatás
+        /// </summary>
         public Boolean RotateRight(int playerCoordinateX, int playerCoordinateY)
         {
             //eltároljuk, hogy a játékos melyik oldalon van kockához csatlakozva
@@ -2065,10 +2095,27 @@ namespace ELTE.Robotok.Model
                 }
                 _SyncRedPlayerTwo = true;
             }
+        }
 
+        /// <summary>
+        /// Új kocka generálása
+        /// </summary>
+        private void GenerateNewCube(int cubeValue)
+        {
+            Random random_num = new Random();
+            int cube_i, cube_j;
+            cube_i = random_num.Next(4, 13);
+            cube_j = random_num.Next(5, 23);
+ 
 
+            while (_table.GetFieldValue(cube_i, cube_j) != 7)
+            {
+                cube_i = random_num.Next(4, 13);
+                cube_j = random_num.Next(5, 23);
+            }
 
-
+            _table.SetValue(cube_i, cube_j, cubeValue, _cleaningOperations);
+            
         }
 
         

@@ -233,7 +233,7 @@ namespace ELTE.Robotok.Persistence
 
 
         /// <summary>
-        /// Visszaadja egy mező északi csatolási részéről, hogy van-e valami hozzá csatolva
+        /// Visszaadja hogy a mezőhöz van-e csatolva valami
         /// </summary>
         /// <param name="x">Vízszintes koordináta.</param>
         /// <param name="y">Függőleges koordináta.</param>
