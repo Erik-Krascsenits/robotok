@@ -216,6 +216,7 @@ partial class GameMenuForm
             this.MaximizeBox = false;
             this.Name = "GameMenuForm";
             this.Text = "Robotok - Főmenü";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GameMenuForm_FormClosing);
             this.groupChoice.ResumeLayout(false);
             this.groupChoice.PerformLayout();
             this.difficultyChoice.ResumeLayout(false);

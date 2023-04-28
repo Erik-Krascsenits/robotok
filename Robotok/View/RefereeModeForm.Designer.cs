@@ -51,6 +51,7 @@
             this.MaximizeBox = false;
             this.Name = "RefereeModeForm";
             this.Text = "Játékvezetői nézet";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RefereeModeForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
