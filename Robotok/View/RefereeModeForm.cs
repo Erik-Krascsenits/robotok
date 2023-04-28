@@ -149,6 +149,17 @@ namespace Robotok.WinForms.View
                 }
             }
         }
+
+        private void RefereeModeForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                if (MessageBox.Show("A játékvezetői mód bezárásával a nézet végleg elérhetetlenné válik. Folytatja?", "Figyelmeztetés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
         #endregion
 
         #region Public methods
@@ -251,7 +262,7 @@ namespace Robotok.WinForms.View
         // Robotok képeinek forgatása 
         public void RotateRefereeImage(int i, int j)
         {
-            if (GameMenuForm.instance._model.Table.GetFaceNorth(i, j))            // Megnézzük, hogy a robot melyik irányba néz          
+            if (GameMenuForm.instance._model.Table.GetFaceNorth(i, j)) // Megnézzük, hogy a robot melyik irányba néz          
             {
                 _buttonGrid[i , j].BackgroundImage.RotateFlip(RotateFlipType.Rotate180FlipX);    // Abba az irányba forgatjuk a képet, amerre a robot néz
             }

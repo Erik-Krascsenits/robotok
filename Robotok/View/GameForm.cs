@@ -235,8 +235,21 @@ namespace ELTE.Robotok.View
                     // felvesszük az ablakra a gombot
                 }
             }
+        }
 
-
+        private void GameForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                if (MessageBox.Show("A játékosnézet ablak bezárásával a játék megszakad, folytatja?", "Figyelmeztetés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+                else
+                {
+                    GameMenuForm.instance.DisposeAllForms();
+                }
+            }
         }
         #endregion
 
@@ -960,5 +973,6 @@ namespace ELTE.Robotok.View
         }
 
         #endregion
+
     }
 }

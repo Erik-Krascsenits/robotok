@@ -119,6 +119,20 @@ public partial class GameMenuForm : Form
         _timer.Interval = 1000;
         _timer.Tick += new EventHandler(Timer_Tick);
         _timer.Start();
+
+        // Letiltjuk a fõmenü gombjait, amíg a játék tart
+        startButton.Enabled = false;
+        difficultyChoice.Enabled = false;
+        groupChoice.Enabled = false;
+        refereeModeCheckbox.Enabled = false;
+    }
+
+    private void GameMenuForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        if (MessageBox.Show("A fõmenü bezárásával az összes játékablak bezáródik. Folytatja?", "Figyelmeztetés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+        {
+            e.Cancel = true;
+        }
     }
 
     #endregion
@@ -130,12 +144,12 @@ public partial class GameMenuForm : Form
         _model.AdvanceTime(actualPlayer); // Játék léptetése
 
         _gameFormGreenTeamPlayerOne.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc"; // frissítjük a hátralevõ másodpercek számának kijelzését
-        _gameFormGreenTeamPlayerTwo.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc"; 
+        _gameFormGreenTeamPlayerTwo.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc";
 
         // Amennyiben 2 csapat játszik a többi játékos Formjának értékeit is kell frisíteni
         if (selectedGroupCount == 2)
         {
-            _gameFormRedTeamPlayerOne.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc"; 
+            _gameFormRedTeamPlayerOne.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc";
             _gameFormRedTeamPlayerTwo.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc";
         }
 
@@ -159,7 +173,7 @@ public partial class GameMenuForm : Form
                     actualPlayer++;
                 }
                 else
-                {  
+                {
                     actualPlayer = 1;
                 }
             }
@@ -185,12 +199,12 @@ public partial class GameMenuForm : Form
                     _gameFormRedTeamPlayerTwo.stepsLeftValueText.Text = _model.GameStepCount.ToString();
                 }
             }
-           
+
 
 
             UpdatePlayerButtonStatuses();
             ShowNextPlayerForm();
-            
+
 
             if (refereeModeCheckbox.Checked)
             {
@@ -353,6 +367,30 @@ public partial class GameMenuForm : Form
         }
     }
 
-    #endregion
+    public void DisposeAllForms()
+    {
+        _gameFormGreenTeamPlayerOne.Dispose();
+        _gameFormGreenTeamPlayerTwo.Dispose();
+        if (selectedGroupCount == 2)
+        {
+            _gameFormRedTeamPlayerOne.Dispose();
+            _gameFormRedTeamPlayerTwo.Dispose();
+        }
+        if (refereeModeCheckbox.Checked)
+        {
+            _refereeModeForm.Dispose();
+        }
+        _timer.Enabled = false;
+        EnableButtons();
+    }
 
+    private void EnableButtons()
+    {
+        startButton.Enabled = true;
+        difficultyChoice.Enabled = true;
+        groupChoice.Enabled = true;
+        refereeModeCheckbox.Enabled = true;
+    }
+
+    #endregion
 }
