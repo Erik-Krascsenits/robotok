@@ -68,11 +68,11 @@ namespace ELTE.Robotok.Persistence
         {
             if (x < 0 || x >= _fields.GetLength(0))
             {
-                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range: " + x.ToString());
             }
             if (y < 0 || y >= _fields.GetLength(1))
             {
-                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range: " + y.ToString());
             }
 
             _fields[x, y]._fieldValue = value;
