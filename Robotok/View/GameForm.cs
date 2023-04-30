@@ -172,7 +172,7 @@ namespace ELTE.Robotok.View
                     _buttonGridNoticeBoardOne[i, j].Enabled = false; // kikapcsolt állapot
                     _buttonGridNoticeBoardOne[i, j].Visible = true;
                     _buttonGridNoticeBoardOne[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
-                    if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 3)
+                    if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 3) //szín
                     {
                         _buttonGridNoticeBoardOne[i, j].BackColor = Color.Yellow;
                     }
@@ -188,7 +188,7 @@ namespace ELTE.Robotok.View
                     {
                         _buttonGridNoticeBoardOne[i, j].BackColor = Color.Violet;
                     }
-                    else if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 7)
+                    else if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == -2)
                     {
                         _buttonGridNoticeBoardOne[i, j].BackColor = Color.White;
                     }
@@ -211,7 +211,7 @@ namespace ELTE.Robotok.View
                     _buttonGridNoticeBoardTwo[i, j].Enabled = false; // kikapcsolt állapot
                     _buttonGridNoticeBoardTwo[i, j].Visible = true;
                     _buttonGridNoticeBoardTwo[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
-                    if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 3) // szín
+                    if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 3)
                     {
                         _buttonGridNoticeBoardTwo[i, j].BackColor = Color.Yellow;
                     }
@@ -227,7 +227,7 @@ namespace ELTE.Robotok.View
                     {
                         _buttonGridNoticeBoardTwo[i, j].BackColor = Color.Violet;
                     }
-                    else if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 7)
+                    else if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == -2)
                     {
                         _buttonGridNoticeBoardTwo[i, j].BackColor = Color.White;
                     }
@@ -257,7 +257,6 @@ namespace ELTE.Robotok.View
         // Elküldi az irány paraméterét a játékos számával a modelnek, és végrehajtja a tisztítást
         private void clearButton_Click(object sender, EventArgs e)
         {
-
             if (String.IsNullOrEmpty(operationParameter.Text) || ((operationParameter.Text != "észak") && operationParameter.Text != "dél" && operationParameter.Text != "kelet" && operationParameter.Text != "nyugat"))
             {
                 _successText = "Hibás paraméter!";
@@ -312,7 +311,7 @@ namespace ELTE.Robotok.View
             else
             {
 
-                if (GameMenuForm.instance._model.Dettach(operationParameter.Text, _activePlayer))
+                if (GameMenuForm.instance._model.Detach(operationParameter.Text, _activePlayer))
                 {
                     _successText = "Sikeres lekapcsolódás!";
                 }

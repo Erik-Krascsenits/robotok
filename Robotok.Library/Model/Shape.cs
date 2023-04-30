@@ -13,45 +13,45 @@ namespace Robotok.Library.Model
         private Int32 y; // a táblán függőleges elhelyezkedése
         private Int32[,] _shape; // maga az alakzat
         private Int32[,] _cube = new Int32[4, 4] { // egyszerűség kedvéért, most minden alakzat 4x4 méretű mátrixban lesz, de jövőben ez megváltoztathatjuk
-            {0, 0, 0, 0},
-            {0, 3, 3, 0},
-            {0, 3, 3, 0},
-            {0, 0, 0, 0}
+            {-2, -2, -2, -2},
+            {-2, -2, -2, -2},
+            {-2, 3, 3, -2},
+            {-2, 3, 3, -2}
         };
 
         private Int32[,] _triangle = new Int32[4, 4] {
-            {0, 0, 0, 0},
-            {0, 0, 4, 0},
-            {0, 4, 4, 0},
-            {0, 0, 0, 0}
+            {-2, -2, -2, -2},
+            {-2, -2, -2, -2},
+            {-2, -2, 4, -2},
+            {-2, 4, 4, -2}
         };
 
         private Int32[,] _straight = new Int32[4, 4] {
-            {0, 0, 0, 0},
-            {5, 5, 5, 5},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}
+            {-2, -2, -2, -2},
+            {-2, -2, -2, -2},
+            {-2, -2, -2, -2},
+            {5, 5, 5, 5}
         };
 
         private Int32[,] _lType = new Int32[4, 4] {
-            {6, 0, 0, 0},
-            {6, 6, 6, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}
+            {-2, -2, -2, -2},
+            {-2, -2, -2, -2},
+            {-2, 6, -2, -2},
+            {-2, 6, 6, 6}
         };
 
         private Int32[,] _rhombus = new Int32[4, 4] {
-            {0, 0, 0, 0},
-            {0, 0, 3, 0},
-            {0, 3, 3, 3},
-            {0, 0, 3, 0}
+            {-2, -2, -2, -2},
+            {-2, -2, 3, -2},
+            {-2, 3, 3, 3},
+            {-2, -2, 3, -2}
         };
 
         private Int32[,] _piType = new Int32[4, 4] {
-            {0, 0, 0, 0},
+            {-2, -2, -2, -2},
+            {-2, -2, -2, -2},
             {4, 4, 4, 4},
-            {4, 0, 0, 4},
-            {0, 0, 0, 0}
+            {4, -2, -2, 4}
         };
 
         #endregion
@@ -82,7 +82,7 @@ namespace Robotok.Library.Model
         private void GenerateShape()
         {
             Random temp = new Random();
-            switch (temp.Next(1, 7))
+            switch (temp.Next(2, 7))
             {
                 case 1:
                     _shape = _cube;
@@ -97,7 +97,8 @@ namespace Robotok.Library.Model
                     _shape = _lType;
                     break;
                 case 5:
-                    _shape = _rhombus;
+                    /*_shape = _rhombus;*/
+                    _shape = _triangle;
                     break;
                 case 6:
                     _shape = _piType;
@@ -113,7 +114,7 @@ namespace Robotok.Library.Model
             {
                 for (Int32 j = 0; j < y; ++j)
                 {
-                    _shape[x, y] = -1;
+                    _shape[i, j] = -2;
                 }
             }
         }
@@ -130,11 +131,11 @@ namespace Robotok.Library.Model
         {
             if (x < 0 || x >= this.x)
             {
-                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range: " + x.ToString());
             }
             if (y < 0 || y >= this.y)
             {
-                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range: " + y.ToString());
             }
 
             return _shape[x, y];
