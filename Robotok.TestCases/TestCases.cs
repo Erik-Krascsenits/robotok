@@ -930,7 +930,7 @@ namespace Robotok.TestCases
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(9, 10, 4, 3);
             _model.Attach("észak", 1);
-            bool successDetach = _model.Dettach("észak", 1);
+            bool successDetach = _model.Detach("észak", 1);
             Assert.IsTrue(successDetach);
         }
         // Megnézzük a lekapcsolást déli írányba
@@ -943,7 +943,7 @@ namespace Robotok.TestCases
             _model.Table.SetValue(10, 10, 4, 3);
 
             _model.Attach("dél", 1);
-            bool successDetach = _model.Dettach("dél", 1);
+            bool successDetach = _model.Detach("dél", 1);
             Assert.IsTrue(successDetach);
         }
         // Megnézzük a lekapcsolást nyugati írányba
@@ -955,7 +955,7 @@ namespace Robotok.TestCases
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(10, 9, 4, 3);
             _model.Attach("nyugat", 1);
-            bool successDetach = _model.Dettach("nyugat", 1);
+            bool successDetach = _model.Detach("nyugat", 1);
             Assert.IsTrue(successDetach);
         }
         // Megnézzük a lekapcsolást keleti írányba
@@ -967,7 +967,7 @@ namespace Robotok.TestCases
             _model.Table.SetValue(10, 9, 1, -1);
             _model.Table.SetValue(10, 10, 4, 3);
             _model.Attach("kelet", 1);
-            bool successDetach = _model.Dettach("kelet", 1);
+            bool successDetach = _model.Detach("kelet", 1);
             Assert.IsTrue(successDetach);
         }
         // Az alábbi tesztekben megnézzük, hogy helyesen műkodik Detach fv. több kocka esetén
@@ -1240,13 +1240,106 @@ namespace Robotok.TestCases
         #endregion
 
         #region Cheking clean function
-        //[TestMethod]
-        //public void CheckCleaningWithoutCubes()
-        //{
-        //    _model = new RobotokGameModel(_mock.Object, 3, 1);
-        //    _model.Table = _mockedTable;
-        //    _model.Table.SetValue(10, 10, 1, -1);
-        //}
+        [TestMethod]
+        public void CheckCleaningWithoutCubes()
+        {
+            _model = new RobotokGameModel(_mock.Object, 3, 1);
+            _model.Table = _mockedTable;
+            for (int i = 0; i < _model.Table.SizeX; ++i)
+            {
+                for (int j = 0; j < _model.Table.SizeY; ++j)
+                {
+                    _model.Table.SetValue(i, j, 7, -1);
+                }
+            }
+            _model.Table.SetValue(10, 10, 1, -1);
+            _model.Table.SetValue(11, 10, 4, _model.RemainingCleaningOperetions);
+
+            for (int i = 0; i < _model.RemainingCleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("dél", 1));
+            }
+
+            Assert.AreEqual(7, _model.Table.GetFieldValue(11, 10));
+
+            _model.Table.SetValue(10, 11, 4, _model.RemainingCleaningOperetions);
+
+            for (int i = 0; i < _model.RemainingCleaningOperetions; i++)
+            {
+                _model.Clear("kelet", 1);
+            }
+
+            Assert.AreEqual(7, _model.Table.GetFieldValue(10, 11));
+
+            _model.Table.SetValue(9, 10, 4, _model.RemainingCleaningOperetions);
+
+            for (int i = 0; i < _model.RemainingCleaningOperetions; i++)
+            {
+                _model.Clear("észak", 1);
+            }
+
+            Assert.AreEqual(7, _model.Table.GetFieldValue(10, 9));
+
+            _model.Table.SetValue(9, 10, 4, _model.RemainingCleaningOperetions);
+
+            for (int i = 0; i < _model.RemainingCleaningOperetions; i++)
+            {
+                _model.Clear("nyugat", 1);
+            }
+
+            Assert.AreEqual(7, _model.Table.GetFieldValue(10, 9));
+        }
+
+        [TestMethod]
+        public void CheckCleaningWithCubes()
+        {
+            _model = new RobotokGameModel(_mock.Object, 3, 1);
+            _model.Table = _mockedTable;
+            for (int i = 0; i < _model.Table.SizeX; ++i)
+            {
+                for (int j = 0; j < _model.Table.SizeY; ++j)
+                {
+                    _model.Table.SetValue(i, j, 7, -1);
+                }
+            }
+            _model.Table.SetValue(10, 10, 1, -1);
+            _model.Table.SetValue(11, 10, 4, _model.RemainingCleaningOperetions);
+            Assert.IsTrue(_model.Attach("dél", 1));
+
+            for (int i = 0; i < _model.RemainingCleaningOperetions; i++)
+            {
+                Assert.IsFalse(_model.Clear("dél", 1));
+            }
+
+            Assert.AreEqual(4, _model.Table.GetFieldValue(11, 10));
+
+            _model.Table.SetValue(10, 11, 4, _model.RemainingCleaningOperetions);
+
+            for (int i = 0; i < _model.RemainingCleaningOperetions; i++)
+            {
+                _model.Clear("kelet", 1);
+            }
+
+            Assert.AreEqual(7, _model.Table.GetFieldValue(10, 11));
+
+            _model.Table.SetValue(9, 10, 4, _model.RemainingCleaningOperetions);
+
+            for (int i = 0; i < _model.RemainingCleaningOperetions; i++)
+            {
+                _model.Clear("észak", 1);
+            }
+
+            Assert.AreEqual(7, _model.Table.GetFieldValue(10, 9));
+
+            _model.Table.SetValue(9, 10, 4, _model.RemainingCleaningOperetions);
+
+            for (int i = 0; i < _model.RemainingCleaningOperetions; i++)
+            {
+                _model.Clear("nyugat", 1);
+            }
+
+            Assert.AreEqual(7, _model.Table.GetFieldValue(10, 9));
+        }
         #endregion
     }
 }
