@@ -755,6 +755,60 @@ namespace ELTE.Robotok.View
             coordinate2.Text = "";
             // Visszaállítjuk, hogy először az első koordinátadoboz kerüljön kitöltésre
             _activeCoordinateBox = 1;
+            // Hirdetőtábla 1
+            for (Int32 i = 0; i < GameMenuForm.instance._model.TableNoticeBoardOne.SizeX; i++)
+            {
+                for (Int32 j = 0; j < GameMenuForm.instance._model.TableNoticeBoardOne.SizeY; j++)
+                {
+                    if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 3) //szín
+                    {
+                        _buttonGridNoticeBoardOne[i, j].BackColor = Color.Yellow;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 4)
+                    {
+                        _buttonGridNoticeBoardOne[i, j].BackColor = Color.Orange;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 5)
+                    {
+                        _buttonGridNoticeBoardOne[i, j].BackColor = Color.Blue;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == 6)
+                    {
+                        _buttonGridNoticeBoardOne[i, j].BackColor = Color.Violet;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardOne.GetFieldValue(i, j) == -2)
+                    {
+                        _buttonGridNoticeBoardOne[i, j].BackColor = Color.White;
+                    }
+                }
+            }
+
+            for (Int32 i = 0; i < GameMenuForm.instance._model.TableNoticeBoardTwo.SizeX; i++)
+            {
+                for (Int32 j = 0; j < GameMenuForm.instance._model.TableNoticeBoardTwo.SizeY; j++)
+                {
+                    if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 3)
+                    {
+                        _buttonGridNoticeBoardTwo[i, j].BackColor = Color.Yellow;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 4)
+                    {
+                        _buttonGridNoticeBoardTwo[i, j].BackColor = Color.Orange;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 5)
+                    {
+                        _buttonGridNoticeBoardTwo[i, j].BackColor = Color.Blue;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == 6)
+                    {
+                        _buttonGridNoticeBoardTwo[i, j].BackColor = Color.Violet;
+                    }
+                    else if (GameMenuForm.instance._model.TableNoticeBoardTwo.GetFieldValue(i, j) == -2)
+                    {
+                        _buttonGridNoticeBoardTwo[i, j].BackColor = Color.White;
+                    }
+                }
+            }
         }
 
         public void GameForm_Load(object sender, EventArgs e)
@@ -829,7 +883,7 @@ namespace ELTE.Robotok.View
         }
 
             // Letiltja a műveletek használatát
-            public void DisableButtons()
+        public void DisableButtons()
         {
             waitButton.Enabled = false;
             moveButton.Enabled = false;
