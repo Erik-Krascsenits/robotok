@@ -220,7 +220,6 @@ namespace ELTE.Robotok.Model
             greenTeamCubeAttachState = 0;
             redTeamCubeAttachState = 0;
         }
-
         #endregion
 
         #region Public game methods
@@ -280,7 +279,7 @@ namespace ELTE.Robotok.Model
                     }
                     else
                     {
-                        _tableNoticeBoardOne.SetValue(i, j, 7, _cleaningOperations);
+                        _tableNoticeBoardOne.SetValue(i, j, -2, -1);
                     }
                 }
             }
@@ -295,7 +294,7 @@ namespace ELTE.Robotok.Model
                     }
                     else
                     {
-                        _tableNoticeBoardTwo.SetValue(i, j, 7, _cleaningOperations);
+                        _tableNoticeBoardTwo.SetValue(i, j, -2, -1);
                     }
                 }
             }
@@ -838,10 +837,6 @@ namespace ELTE.Robotok.Model
 
                 return validStep;
             }
-
-
-
-
             return true;
         }
 
@@ -1148,6 +1143,11 @@ namespace ELTE.Robotok.Model
                 if (playerCoordinateX == 3 && _table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY))
                 {
                     int result = EvaluateShape("észak");
+                    if (result > 0)
+                    {
+                        GenerateShape(result);
+                    }
+
                     if (result == 1)
                     {
                         // 1. alakzat teljesült, ide jöhet a pontozás logikája
@@ -1187,6 +1187,11 @@ namespace ELTE.Robotok.Model
                 if (playerCoordinateX == 13 && _table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
                 {
                     int result = EvaluateShape("dél");
+                    if (result > 0)
+                    {
+                        GenerateShape(result);
+                    }
+
                     if (result == 1)
                     {
                         _table.SetAttachmentSouth(playerCoordinateX, playerCoordinateY, false);
@@ -1224,6 +1229,11 @@ namespace ELTE.Robotok.Model
                 if (playerCoordinateY == 23 && _table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
                 {
                     int result = EvaluateShape("kelet");
+                    if (result > 0)
+                    {
+                        GenerateShape(result);
+                    }
+
                     if (result == 1)
                     {
                         _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY, false);
@@ -1261,6 +1271,11 @@ namespace ELTE.Robotok.Model
                 if (playerCoordinateY == 4 && _table.GetAttachmentWest(playerCoordinateX, playerCoordinateY))
                 {
                     int result = EvaluateShape("nyugat");
+                    if (result > 0)
+                    {
+                        GenerateShape(result);
+                    }
+
                     if (result == 1)
                     {
                         _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY, false);

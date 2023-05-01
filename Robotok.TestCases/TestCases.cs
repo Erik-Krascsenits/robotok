@@ -9,7 +9,6 @@ namespace Robotok.TestCases
     [TestClass]
     public class TestCases
     {
-        
         private RobotokGameModel _model = null!;
         private RobotokTable _mockedTable = null!;
         private Mock<IRobotokDataAccess> _mock = null!;
