@@ -1240,13 +1240,130 @@ namespace Robotok.TestCases
         #endregion
 
         #region Cheking clean function
-        //[TestMethod]
-        //public void CheckCleaningWithoutCubes()
-        //{
-        //    _model = new RobotokGameModel(_mock.Object, 3, 1);
-        //    _model.Table = _mockedTable;
-        //    _model.Table.SetValue(10, 10, 1, -1);
-        //}
+        [TestMethod]
+        public void CheckCleaningWithoutCubes()
+        {
+            _model = new RobotokGameModel(_mock.Object, 3, 1);
+            _model.Table = _mockedTable;
+            for (int i = 0; i < _model.Table.SizeX; ++i)
+            {
+                for (int j = 0; j < _model.Table.SizeY; ++j)
+                {
+                    _model.Table.SetValue(i, j, 7, -1);
+                }
+            }
+            _model.Table.SetValue(10, 10, 1, -1);
+            _model.Table.SetValue(11, 10, 4, _model.CleaningOperetions);
+            _model.Table.SetValue(10, 11, 4, _model.CleaningOperetions);
+            _model.Table.SetValue(9, 10, 4, _model.CleaningOperetions);
+            _model.Table.SetValue(10, 9, 4, _model.CleaningOperetions);
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("dél", 1));
+            }
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("kelet", 1));
+            }
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("nyugat", 1));
+            }
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("észak", 1));
+            }
+
+            _model.Table.SetValue(11, 10, 2, _model.CleaningOperetions);
+            _model.Table.SetValue(10, 11, 8, _model.CleaningOperetions);
+            _model.Table.SetValue(10, 9, 9, _model.CleaningOperetions);
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsFalse(_model.Clear("kelet", 1));
+            }
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsFalse(_model.Clear("nyugat", 1));
+            }
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsFalse(_model.Clear("észak", 1));
+            }
+
+            _model.Table.SetValue(10, 10, 1, -1);
+            _model.Table.SetValue(11, 10, 0, _model.CleaningOperetions);
+            _model.Table.SetValue(10, 11, 0, _model.CleaningOperetions);
+            _model.Table.SetValue(9, 10, 0, _model.CleaningOperetions);
+            _model.Table.SetValue(10, 9, 0, _model.CleaningOperetions);
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("dél", 1));
+            }
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("kelet", 1));
+            }
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("nyugat", 1));
+            }
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("észak", 1));
+            }
+        }
+
+        [TestMethod]
+        public void CheckCleaningWithCubes()
+        {
+            _model = new RobotokGameModel(_mock.Object, 3, 1);
+            _model.Table = _mockedTable;
+            for (int i = 0; i < _model.Table.SizeX; ++i)
+            {
+                for (int j = 0; j < _model.Table.SizeY; ++j)
+                {
+                    _model.Table.SetValue(i, j, 7, -1);
+                }
+            }
+            _model.Table.SetValue(10, 10, 1, -1);
+            _model.Table.SetValue(11, 10, 4, _model.CleaningOperetions);
+            _model.Table.SetValue(10, 11, 4, _model.CleaningOperetions);
+            _model.Table.SetValue(9, 10, 4, _model.CleaningOperetions);
+            _model.Table.SetValue(10, 9, 4, _model.CleaningOperetions);
+
+            Assert.IsTrue(_model.Attach("dél", 1));
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsFalse(_model.Clear("dél", 1));
+            }
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("kelet", 1));
+            }
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("nyugat", 1));
+            }
+
+            for (int i = 0; i < _model.CleaningOperetions; i++)
+            {
+                Assert.IsTrue(_model.Clear("észak", 1));
+            }
+        }
         #endregion
     }
 }

@@ -122,6 +122,11 @@ namespace ELTE.Robotok.Model
         /// </summary>
         public Int32 RemainingSeconds { get { return _remainingSeconds; } }
         /// <summary>
+        /// Tisztításhoz szükséges műveletek számának lekérdezése.
+        /// </summary>
+        public Int32 CleaningOperetions { get { return _cleaningOperations; } }
+
+        /// <summary>
         /// Csapatak széma lekérdezése
         /// </summary>
         public Int32 Teams { get { return _teams; } }
