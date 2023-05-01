@@ -121,6 +121,12 @@ namespace ELTE.Robotok.Model
         /// Hátramaradt játékidő lekérdezése.
         /// </summary>
         public Int32 RemainingSeconds { get { return _remainingSeconds; } }
+
+        /// <summary>
+        /// Tisztításhoz szükséges műveletek számának lekérdezése.
+        /// </summary>
+        public Int32 RemainingCleaningOperetions { get { return _cleaningOperations; } }
+
         /// <summary>
         /// Csapatak széma lekérdezése
         /// </summary>
@@ -267,11 +273,11 @@ namespace ELTE.Robotok.Model
                 {
                     if (_figure1.GetFieldValue(i, j) != -2)
                     {
-                        _tableNoticeBoardOne.SetValue(i, j, _figure1.GetFieldValue(i,j), _cleaningOperations);
+                        _tableNoticeBoardOne.SetValue(i, j, _figure1.GetFieldValue(i,j), -1);
                     }
                     else
                     {
-                        _tableNoticeBoardOne.SetValue(i, j, -2, _cleaningOperations);
+                        _tableNoticeBoardOne.SetValue(i, j, -2, -1);
                     }
                 }
             }
@@ -282,11 +288,11 @@ namespace ELTE.Robotok.Model
                 {
                     if (_figure2.GetFieldValue(i, j) != -2)
                     {
-                        _tableNoticeBoardTwo.SetValue(i, j, _figure2.GetFieldValue(i,j), _cleaningOperations);
+                        _tableNoticeBoardTwo.SetValue(i, j, _figure2.GetFieldValue(i,j), -1);
                     }
                     else
                     {
-                        _tableNoticeBoardTwo.SetValue(i, j, -2, _cleaningOperations);
+                        _tableNoticeBoardTwo.SetValue(i, j, -2, -1);
                     }
                 }
             }
