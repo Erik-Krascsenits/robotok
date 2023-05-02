@@ -243,18 +243,32 @@ namespace ELTE.Robotok.Model
             _SyncGreenPlayerTwo = false;
             _SyncRedPlayerOne = false;
             _SyncRedPlayerTwo = false;
-            for (int i = 0; i < 11; i++) // játékosok tábláját feltöltjük nem látható mezőkkel
+            for (int i = 0; i < 11; i++) // játékosok tábláját feltöltjük nem látható mezőkkel, illetve a pálya határával
             {
                 for (int j = 0; j < 20; j++)
                 {
-                    _greenTeamObservation[i, j] = 0;
-                    _tableGreenPlayerOne.SetValue(i, j, 10, _cleaningOperations);
-                    _tableGreenPlayerTwo.SetValue(i, j, 10, _cleaningOperations);
-                    if (_teams == 2)
+                   
+                    if ((i == 0 || i == 10) && (j >= 0 && j <= 19) || (i >= 0 && i <= 10) && (j == 0 || j == 19)) 
+                    {                      
+                        _tableGreenPlayerOne.SetValue(i, j, -1, -1);                   
+                        _tableGreenPlayerTwo.SetValue(i, j, -1, -1);
+                        if (_teams == 2)
+                        {                       
+                            _tableRedPlayerOne.SetValue(i - 3, j - 4, -1, -1);
+                            _tableRedPlayerTwo.SetValue(i - 3, j - 4, -1, -1);           
+                        }
+                    }
+                    else
                     {
-                        _redTeamObservation[i, j] = 0;
-                        _tableRedPlayerOne.SetValue(i, j, 10, _cleaningOperations);
-                        _tableRedPlayerTwo.SetValue(i, j, 10, _cleaningOperations);
+                        _greenTeamObservation[i, j] = 0;
+                        _tableGreenPlayerOne.SetValue(i, j, 10, _cleaningOperations);
+                        _tableGreenPlayerTwo.SetValue(i, j, 10, _cleaningOperations);
+                        if (_teams == 2)
+                        {
+                            _redTeamObservation[i, j] = 0;
+                            _tableRedPlayerOne.SetValue(i, j, 10, _cleaningOperations);
+                            _tableRedPlayerTwo.SetValue(i, j, 10, _cleaningOperations);
+                        }
                     }
                 }
             }
@@ -337,7 +351,7 @@ namespace ELTE.Robotok.Model
             {
                 for (int j = 0; j < _table.SizeY; j++)
                 {
-                    if (i > 3 && i < 13 && j > 4 && j < 23) // játék pályán vagyunk-e
+                    if (i >= 3 && i <= 13 && j >= 4 && j <= 23) // játék pályán vagyunk-e
                     {
                         if (Math.Abs(i - tempX) + Math.Abs(j - tempY) < tempDistance) // ha igen, akkor megnézzük, hogy benne van a mező a Manhattan távolságban.
                         {
@@ -385,31 +399,7 @@ namespace ELTE.Robotok.Model
                             }
                         }
                     }
-                    else if ((i == 3 || i == 13) && (j >= 4 && j <= 23) || (i >= 3 && i <= 13) && (j == 4 || j == 23)) // de ugy a pálya határa az mindenképp kell, hogy megjelenjen
-                    {
-                        if (player == 1)
-                        {
-                            _tableGreenPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), -1);
-                        }
-
-                        if (player == 8)
-                        {
-                            _tableGreenPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), -1);
-                        }
-
-                        if (_teams == 2)
-                        {
-                            if (player == 2)
-                            {
-                                _tableRedPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), -1);
-                            }
-
-                            if (player == 9)
-                            {
-                                _tableRedPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), -1);
-                            }
-                        }
-                    }
+                   
                 }
             }
             if (toMerge) //Ha volt Manhattan távolságon belül csapattárs, akkor belépünk az if-be, és egyesítünk
@@ -2517,7 +2507,7 @@ namespace ELTE.Robotok.Model
             {
                 for (int j = 0; j < _table.SizeY; j++)
                 {
-                    if (i > 3 && i < 13 && j > 4 && j < 23) // játék pályán vagyunk-e
+                    if (i >= 3 && i <= 13 && j >= 4 && j <= 23) // játék pályán vagyunk-e
                     {
                         if (Math.Abs(i - playerTwoPosX) + Math.Abs(j - playerTwoPosY) < distance) // ha igen, akkor megnézzük, hogy benne van-e a mező a Manhattan távolságban.
                         {
