@@ -254,8 +254,8 @@ namespace ELTE.Robotok.Model
                         _tableGreenPlayerTwo.SetValue(i, j, -1, -1);
                         if (_teams == 2)
                         {                       
-                            _tableRedPlayerOne.SetValue(i - 3, j - 4, -1, -1);
-                            _tableRedPlayerTwo.SetValue(i - 3, j - 4, -1, -1);           
+                            _tableRedPlayerOne.SetValue(i, j, -1, -1);
+                            _tableRedPlayerTwo.SetValue(i, j, -1, -1);           
                         }
                     }
                     else
