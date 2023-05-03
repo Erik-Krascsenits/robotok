@@ -247,7 +247,6 @@ namespace ELTE.Robotok.Model
             {
                 for (int j = 0; j < 20; j++)
                 {
-                   
                     if ((i == 0 || i == 10) && (j >= 0 && j <= 19) || (i >= 0 && i <= 10) && (j == 0 || j == 19)) 
                     {                      
                         _tableGreenPlayerOne.SetValue(i, j, -1, -1);                   
@@ -359,6 +358,8 @@ namespace ELTE.Robotok.Model
                             {
                                 _greenTeamObservation[i - 3, j - 4] = 1;
                                 _tableGreenPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j)); // minden játékosnak külön van egy saját "pálya", amin megjelenítjük a Manhattan távolságot
+                                _tableGreenPlayerOne.SetAttachmentValues(i - 3, j - 4, _table.GetAttachmentNorth(i, j), _table.GetAttachmentSouth(i, j), _table.GetAttachmentEast(i, j), _table.GetAttachmentWest(i, j));
+                                _tableGreenPlayerOne.SetFaceDirection(i - 3, j - 4, _table.GetFaceNorth(i, j), _table.GetFaceSouth(i, j), _table.GetFaceEast(i, j), _table.GetFaceWest(i, j));
                                 if (_table.GetFieldValue(i, j) == 8) // Ha a csapattárs benne van a manhattan távolságban, akkor a két játékos nézetét egyesíteni kell 
                                 {
                                     toMerge = true;
@@ -369,6 +370,8 @@ namespace ELTE.Robotok.Model
                             {
                                 _greenTeamObservation[i - 3, j - 4] = 8;
                                 _tableGreenPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
+                                _tableGreenPlayerTwo.SetAttachmentValues(i - 3, j - 4, _table.GetAttachmentNorth(i, j), _table.GetAttachmentSouth(i, j), _table.GetAttachmentEast(i, j), _table.GetAttachmentWest(i, j));
+                                _tableGreenPlayerTwo.SetFaceDirection(i - 3, j - 4, _table.GetFaceNorth(i, j), _table.GetFaceSouth(i, j), _table.GetFaceEast(i, j), _table.GetFaceWest(i, j));
                                 if (_table.GetFieldValue(i, j) == 1)
                                 {
                                     toMerge = true;
@@ -381,6 +384,8 @@ namespace ELTE.Robotok.Model
                                 {
                                     _redTeamObservation[i - 3, j - 4] = 2;
                                     _tableRedPlayerOne.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
+                                    _tableRedPlayerOne.SetAttachmentValues(i - 3, j - 4, _table.GetAttachmentNorth(i, j), _table.GetAttachmentSouth(i, j), _table.GetAttachmentEast(i, j), _table.GetAttachmentWest(i, j));
+                                    _tableRedPlayerOne.SetFaceDirection(i - 3, j - 4, _table.GetFaceNorth(i, j), _table.GetFaceSouth(i, j), _table.GetFaceEast(i, j), _table.GetFaceWest(i, j));
                                     if (_table.GetFieldValue(i, j) == 9)
                                     {
                                         toMerge = true;
@@ -391,6 +396,8 @@ namespace ELTE.Robotok.Model
                                 {
                                     _redTeamObservation[i - 3, j - 4] = 9;
                                     _tableRedPlayerTwo.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j), _table.GetFieldRemainingCleaningOperations(i, j));
+                                    _tableRedPlayerTwo.SetAttachmentValues(i - 3, j - 4, _table.GetAttachmentNorth(i, j), _table.GetAttachmentSouth(i, j), _table.GetAttachmentEast(i, j), _table.GetAttachmentWest(i, j));
+                                    _tableRedPlayerTwo.SetFaceDirection(i - 3, j - 4, _table.GetFaceNorth(i, j), _table.GetFaceSouth(i, j), _table.GetFaceEast(i, j), _table.GetFaceWest(i, j));
                                     if (_table.GetFieldValue(i, j) == 2)
                                     {
                                         toMerge = true;
@@ -676,9 +683,9 @@ namespace ELTE.Robotok.Model
 
             int playerCoordinateX = 0, playerCoordinateY = 0; // 0-val van inicializálva, de a keresés után biztosan helyes értéket kap
 
-            for (int i = 4; i < 13; i++)
+            for (int i = 0; i < _table.SizeX; i++)
             {
-                for (int j = 5; j < 23; j++)
+                for (int j = 0; j < _table.SizeY; j++)
                 {
                     if (_table.GetFieldValue(i, j) == playerFieldValue)
                     {
@@ -1019,7 +1026,7 @@ namespace ELTE.Robotok.Model
             while (i < _cubesNewPosition.Count)
             {
                 //Ha valamelyik kocka nem üres mezőre érkezne a forgatás után, akkor megnézzük, hogy egy korábbi kocka helyére érkezne-e amit elforgattunk, ha nem, akkor a művelet sikertelen 
-                if (_table.GetFieldValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y) != 7)
+                if (_table.GetFieldValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y) != 7 && _table.GetFieldValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y) != 10)
                 {
                     int j = 1;
                     bool found = false;
@@ -2514,21 +2521,29 @@ namespace ELTE.Robotok.Model
                             if (player == 1) //frissítjük az egyes játékosok látómezőjét a csapattárs aktuális látómezőjével
                             {
                                 _tableGreenPlayerOne.SetValue(i - 3, j - 4, _tableGreenPlayerTwo.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                                _tableGreenPlayerOne.SetAttachmentValues(i - 3, j - 4, _tableGreenPlayerTwo.GetAttachmentNorth(i - 3, j - 4), _tableGreenPlayerTwo.GetAttachmentSouth(i - 3, j - 4), _tableGreenPlayerTwo.GetAttachmentEast(i - 3, j - 4), _tableGreenPlayerTwo.GetAttachmentWest(i - 3, j - 4));
+                                _tableGreenPlayerOne.SetFaceDirection(i - 3, j - 4, _tableGreenPlayerTwo.GetFaceNorth(i - 3, j - 4), _tableGreenPlayerTwo.GetFaceSouth(i - 3, j - 4), _tableGreenPlayerTwo.GetFaceEast(i - 3, j - 4), _tableGreenPlayerTwo.GetFaceWest(i - 3, j - 4));
                             }
                             if (player == 8)
                             {
                                 _tableGreenPlayerTwo.SetValue(i - 3, j - 4, _tableGreenPlayerOne.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                                _tableGreenPlayerTwo.SetAttachmentValues(i - 3, j - 4, _tableGreenPlayerOne.GetAttachmentNorth(i - 3, j - 4), _tableGreenPlayerOne.GetAttachmentSouth(i - 3, j - 4), _tableGreenPlayerOne.GetAttachmentEast(i - 3, j - 4), _tableGreenPlayerOne.GetAttachmentWest(i - 3, j - 4));
+                                _tableGreenPlayerTwo.SetFaceDirection(i - 3, j - 4, _tableGreenPlayerOne.GetFaceNorth(i - 3, j - 4), _tableGreenPlayerOne.GetFaceSouth(i - 3, j - 4), _tableGreenPlayerOne.GetFaceEast(i - 3, j - 4), _tableGreenPlayerOne.GetFaceWest(i - 3, j - 4));
                             }
                             if (_teams == 2)
                             {
                                 if (player == 2)
                                 {
                                     _tableRedPlayerOne.SetValue(i - 3, j - 4, _tableRedPlayerTwo.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                                    _tableRedPlayerOne.SetAttachmentValues(i - 3, j - 4, _tableRedPlayerTwo.GetAttachmentNorth(i - 3, j - 4), _tableRedPlayerTwo.GetAttachmentSouth(i - 3, j - 4), _tableRedPlayerTwo.GetAttachmentEast(i - 3, j - 4), _tableRedPlayerTwo.GetAttachmentWest(i - 3, j - 4));
+                                    _tableRedPlayerOne.SetFaceDirection(i - 3, j - 4, _tableRedPlayerTwo.GetFaceNorth(i - 3, j - 4), _tableRedPlayerTwo.GetFaceSouth(i - 3, j - 4), _tableRedPlayerTwo.GetFaceEast(i - 3, j - 4), _tableRedPlayerTwo.GetFaceWest(i - 3, j - 4));
                                 }
 
                                 if (player == 9)
                                 {
                                     _tableRedPlayerTwo.SetValue(i - 3, j - 4, _tableRedPlayerOne.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                                    _tableRedPlayerTwo.SetAttachmentValues(i - 3, j - 4, _tableRedPlayerOne.GetAttachmentNorth(i - 3, j - 4), _tableRedPlayerOne.GetAttachmentSouth(i - 3, j - 4), _tableRedPlayerOne.GetAttachmentEast(i - 3, j - 4), _tableRedPlayerOne.GetAttachmentWest(i - 3, j - 4));
+                                    _tableRedPlayerTwo.SetFaceDirection(i - 3, j - 4, _tableRedPlayerOne.GetFaceNorth(i - 3, j - 4), _tableRedPlayerOne.GetFaceSouth(i - 3, j - 4), _tableRedPlayerOne.GetFaceEast(i - 3, j - 4), _tableRedPlayerOne.GetFaceWest(i - 3, j - 4));
                                 }
                             }
 
@@ -2554,6 +2569,8 @@ namespace ELTE.Robotok.Model
                         if (_greenTeamObservation[i, j] == 8)
                         {
                             TableGreenPlayerOne.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                            TableGreenPlayerOne.SetAttachmentValues(i, j, _table.GetAttachmentNorth(i + 3, j + 4), _table.GetAttachmentSouth(i + 3, j + 4), _table.GetAttachmentEast(i + 3, j + 4), _table.GetAttachmentWest(i + 3, j + 4));
+                            TableGreenPlayerOne.SetFaceDirection(i, j, _table.GetFaceNorth(i + 3, j + 4), _table.GetFaceSouth(i + 3, j + 4), _table.GetFaceEast(i + 3, j + 4), _table.GetFaceWest(i + 3, j + 4));
                         }
                     }
                 }
@@ -2569,6 +2586,8 @@ namespace ELTE.Robotok.Model
                         if (_greenTeamObservation[i, j] == 1)
                         {
                             TableGreenPlayerTwo.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                            TableGreenPlayerTwo.SetAttachmentValues(i, j, _table.GetAttachmentNorth(i + 3, j + 4), _table.GetAttachmentSouth(i + 3, j + 4), _table.GetAttachmentEast(i + 3, j + 4), _table.GetAttachmentWest(i + 3, j + 4));
+                            TableGreenPlayerTwo.SetFaceDirection(i, j, _table.GetFaceNorth(i + 3, j + 4), _table.GetFaceSouth(i + 3, j + 4), _table.GetFaceEast(i + 3, j + 4), _table.GetFaceWest(i + 3, j + 4));
                         }
                     }
                 }
@@ -2583,6 +2602,8 @@ namespace ELTE.Robotok.Model
                         if (_redTeamObservation[i, j] == 9)
                         {
                             TableRedPlayerOne.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                            TableRedPlayerOne.SetAttachmentValues(i, j, _table.GetAttachmentNorth(i + 3, j + 4), _table.GetAttachmentSouth(i + 3, j + 4), _table.GetAttachmentEast(i + 3, j + 4), _table.GetAttachmentWest(i + 3, j + 4));
+                            TableRedPlayerOne.SetFaceDirection(i, j, _table.GetFaceNorth(i + 3, j + 4), _table.GetFaceSouth(i + 3, j + 4), _table.GetFaceEast(i + 3, j + 4), _table.GetFaceWest(i + 3, j + 4));
                         }
                     }
                 }
@@ -2597,6 +2618,8 @@ namespace ELTE.Robotok.Model
                         if (_redTeamObservation[i, j] == 2)
                         {
                             TableRedPlayerTwo.SetValue(i, j, _table.GetFieldValue(i + 3, j + 4), _table.GetFieldRemainingCleaningOperations(i, j));
+                            TableRedPlayerTwo.SetAttachmentValues(i, j, _table.GetAttachmentNorth(i + 3, j + 4), _table.GetAttachmentSouth(i + 3, j + 4), _table.GetAttachmentEast(i + 3, j + 4), _table.GetAttachmentWest(i + 3, j + 4));
+                            TableRedPlayerTwo.SetFaceDirection(i, j, _table.GetFaceNorth(i + 3, j + 4), _table.GetFaceSouth(i + 3, j + 4), _table.GetFaceEast(i + 3, j + 4), _table.GetFaceWest(i + 3, j + 4));
                         }
                     }
                 }
