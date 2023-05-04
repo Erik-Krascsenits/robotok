@@ -153,6 +153,15 @@ namespace ELTE.Robotok.View
                         {
                             _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
                         }
+                        if (!GameMenuForm.instance._model.TableGreenPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 10) // Manhattan távolságon kívüli mezők beállítása
+                        {
+                            Color col = _buttonGridPlayer[i - 3, j - 4].BackColor;
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(150, col.R, col.G, col.B);
+                        }
+                        if (GameMenuForm.instance._model.TableGreenPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 7) // Manhattan távolságon belüli mezők beállítása
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(70, Color.Green.R, Color.Green.G, Color.Green.B);
+                        }
                         Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
                         // felvesszük az ablakra a gombot
                         successfulText.Text = "Nincs művelet!";
@@ -468,7 +477,9 @@ namespace ELTE.Robotok.View
                 successfulText.Text = "Nincs művelet!";
             }
             _operationDone = false;
-
+            
+                      
+         
             if (active == 1) //első játékos zöld csapat esetén
             {
                 nextRoundValueText.Text = "Zöld csapat 2. játékos";
@@ -479,10 +490,11 @@ namespace ELTE.Robotok.View
                     {
                         if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                         {
-                            if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 10)
+                            if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 10) // Kapcsolatok megjelenítésének frissítése
                             {
                                 RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
                             }
+                            
 
                             _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                             if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == -1)
@@ -546,8 +558,15 @@ namespace ELTE.Robotok.View
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
                                 ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
-                            }     
-                           
+                            }
+                            if (!GameMenuForm.instance._model.TableGreenPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 10)
+                            {
+                                Color col = _buttonGridPlayer[i - 3, j - 4].BackColor;
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(150, col.R, col.G, col.B);
+                            }
+                            if (GameMenuForm.instance._model.TableGreenPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 7){
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(70, Color.Green.R, Color.Green.G, Color.Green.B);
+                            }
                             Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
                         }
                     }
@@ -637,7 +656,15 @@ namespace ELTE.Robotok.View
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
                                 ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerTwo);
                             }
-
+                            if (!GameMenuForm.instance._model.TableGreenPlayerTwo.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
+                            {
+                                Color col = _buttonGridPlayer[i - 3, j - 4].BackColor;
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(150, col.R, col.G, col.B);
+                            }
+                            if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 7)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(70, Color.DarkGreen.R, Color.DarkGreen.G, Color.DarkGreen.B);
+                            }
                             Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
                         }
                     }
@@ -723,7 +750,15 @@ namespace ELTE.Robotok.View
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
                                     ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerOne);
                                 }
-
+                                if (!GameMenuForm.instance._model.TableRedPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) != 10)
+                                {
+                                    Color col = _buttonGridPlayer[i - 3, j - 4].BackColor;
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(150, col.R, col.G, col.B);
+                                }
+                                if (GameMenuForm.instance._model.TableRedPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 7)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(70, Color.Red.R, Color.Red.G, Color.Red.B);
+                                }
                                 Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
                             }
                         }
@@ -807,7 +842,15 @@ namespace ELTE.Robotok.View
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
                                     ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
                                 }
-
+                                if (!GameMenuForm.instance._model.TableRedPlayerTwo.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
+                                {
+                                    Color col = _buttonGridPlayer[i - 3, j - 4].BackColor;
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(150, col.R, col.G, col.B);
+                                }
+                                if (GameMenuForm.instance._model.TableRedPlayerTwo.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 7)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(70, Color.DarkRed.R, Color.DarkRed.G, Color.DarkRed.B);
+                                }
                                 Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
                             }
                         }
@@ -871,6 +914,42 @@ namespace ELTE.Robotok.View
                     {
                         _buttonGridNoticeBoardTwo[i, j].BackColor = Color.White;
                     }
+                }
+            }
+            if (_teams == 1)                // Elmenti az előző körben észlelt kocka mozgatásokat
+            {
+                if (active == 1)
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(2);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(2);
+                }
+                else
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(1);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(1);
+                }
+            }
+            else
+            {
+                if (active == 1)
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(2);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(2);
+                }
+                else if (active == 2)
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(1);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(1);
+                }
+                else if (active == 3)
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(4);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(4);
+                }
+                else
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(3);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(3);
                 }
             }
         }
@@ -1009,6 +1088,7 @@ namespace ELTE.Robotok.View
                     _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                 }
             }
+
         }
 
             // Letiltja a műveletek használatát
