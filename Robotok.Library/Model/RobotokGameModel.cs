@@ -89,10 +89,11 @@ namespace ELTE.Robotok.Model
         private Boolean _SyncRedPlayerTwo; // piros csapatban 2. játékos látta-e a piros 1. játékost
         private List<CubeToMove> _cubesOldPosition = new List<CubeToMove>(); // lépés végrehajtásakor a régi helyek eltárolása
         private List<CubeToMove> _cubesNewPosition = new List<CubeToMove>(); // lépés végrehajtásakor az új helyek eltárolása
-        private List<CubeToEvaluate> _cubesToEvaluate1 = new List<CubeToEvaluate>(); // ebbe a listába pakoljuk be a játék határán kívüli kockákat, amit ki szeretnénk értékelni, hogy helyes alakzat-e
-        private List<CubeToEvaluate> _cubesToEvaluate2 = new List<CubeToEvaluate>();
-        private List<CubeToEvaluate> _figure1ToEvaluate = new List<CubeToEvaluate>();
-        private List<CubeToEvaluate> _figure2ToEvaluate = new List<CubeToEvaluate>();
+        private List<CubeToEvaluate> _cubesToEvaluate = new List<CubeToEvaluate>(); // ebbe a listába pakoljuk be a játék határán kívüli kockákat, amit ki szeretnénk értékelni, hogy helyes alakzat-e
+        private List<CubeToEvaluate> _figureToEvaluate = new List<CubeToEvaluate>(); // ebbe a listába pakoljuk be a hirdetőtáblán szereplő alakzat építőkockáit (külön-külön lista az egyes tükrözésekhez)
+        private List<CubeToEvaluate> _figureToEvaluateMirrorX = new List<CubeToEvaluate>();
+        private List<CubeToEvaluate> _figureToEvaluateMirrorY = new List<CubeToEvaluate>();
+        private List<CubeToEvaluate> _figureToEvaluateMirrorXY = new List<CubeToEvaluate>();
 
         /* Eltároljuk minden játékosról, hogy milyen műveletet végzet legutoljára sikerességtől függetlenül
         0 - még nem végzett műveletet (alapállapot játék elején), 1 - várakozás, 2 - mozgás, 3 - forgás, 4 - kocka csatolása robothoz, 5 - kocka lecsatolása robotról, 6 - kocka-kocka összekapcsolás, 7 - kocka-kocka szétválasztás, 8 - tisztítás 
@@ -1963,9 +1964,11 @@ namespace ELTE.Robotok.Model
         }
 
 
-        public int EvaluateShape(string direction) // Visszatérési érték: 0 - helytelen alakzat, 1 - 1. alakzat teljesült, 2 - 2. alakzat teljesült, 3 - mindkét alakzat teljesült
+        public int EvaluateShape(string direction) // Visszatérési érték: 0 - helytelen alakzat, 1 - 1. alakzat teljesült, 2 - 2. alakzat teljesült
         {
-            int result = 0; // A kiértés alatt külön változóban tároljuk el a visszatérési értéket
+            int result = 0; // A kiértékelés alatt külön változóban tároljuk el a visszatérési értéket
+
+            int figureToEvaluateColor = 0; // Eltároljuk a kivinni kívánt alakzat színét (minden lehetséges alakzat egyedi színű, biztosan helyes értéket kap)
 
             if (direction == "észak") // Iránytól függően a játékon kívüli területről bepakoljuk a kockákat a kiértékelésre szolgáló listába
             {
@@ -1975,8 +1978,8 @@ namespace ELTE.Robotok.Model
                     {
                         if (_table.GetFieldValue(i, j) != -2 && _table.GetFieldValue(i, j) != 7)
                         {
-                            _cubesToEvaluate1.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
-                            _cubesToEvaluate2.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
+                            figureToEvaluateColor = _table.GetFieldValue(i, j); // A kockák listában való eltárolásával egyidejűleg meghatározzuk a kivitt alakzat színét
+                            _cubesToEvaluate.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
                         }
                     }
                 }
@@ -1989,8 +1992,8 @@ namespace ELTE.Robotok.Model
                     {
                         if (_table.GetFieldValue(i, j) != -2 && _table.GetFieldValue(i, j) != 7)
                         {
-                            _cubesToEvaluate1.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
-                            _cubesToEvaluate2.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
+                            figureToEvaluateColor = _table.GetFieldValue(i, j);
+                            _cubesToEvaluate.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
                         }
                     }
                 }
@@ -2003,8 +2006,8 @@ namespace ELTE.Robotok.Model
                     {
                         if (_table.GetFieldValue(i, j) != -2 && _table.GetFieldValue(i, j) != 7)
                         {
-                            _cubesToEvaluate1.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
-                            _cubesToEvaluate2.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
+                            figureToEvaluateColor = _table.GetFieldValue(i, j);
+                            _cubesToEvaluate.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
                         }
                     }
                 }
@@ -2017,83 +2020,242 @@ namespace ELTE.Robotok.Model
                     {
                         if (_table.GetFieldValue(i, j) != -2 && _table.GetFieldValue(i, j) != 7)
                         {
-                            _cubesToEvaluate1.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
-                            _cubesToEvaluate2.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
+                            figureToEvaluateColor = _table.GetFieldValue(i, j);
+                            _cubesToEvaluate.Add(new CubeToEvaluate(i, j, _table.GetFieldValue(i, j)));
                         }
                     }
                 }
             }
-            // A hirdetőtáblákon szereplő nem -2 (játékterületen kívüli) kockákat bepakoljuk 1-1 listába
+
+            // Megkeressük, melyik hirdetőtábláról származik a kivinni kívánt alakzat
+            bool foundFigureNumber = false;
+            int figureNumber = 0;
+
+            int k = 0;
+            while (k < 4 && !foundFigureNumber)
+            {
+                int l = 0;
+                while (l < 4 && !foundFigureNumber)
+                {
+                    if (_figure1.GetFieldValue(k, l) == figureToEvaluateColor)
+                    {
+                        figureNumber = 1;
+                        foundFigureNumber = true;
+                    }
+                    else if (_figure2.GetFieldValue(k, l) == figureToEvaluateColor)
+                    {
+                        figureNumber = 2;
+                        foundFigureNumber = true;
+                    }
+                    l++;
+                }
+                k++;
+            }
+            // A megfelelő hirdetőtáblás alakzatból elkészítjük az elforgatott változatokat is
+            int[,] _figureMirrorX = new int[4, 4];
+            int[,] _figureMirrorY = new int[4, 4];
+            int[,] _figureMirrorXY = new int[4, 4];
+
+
+            // X tengely szerinti tükrözés
             for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    if (_figure1.GetFieldValue(i, j) != -2)
+                    if (figureNumber == 1)
                     {
-                        _figure1ToEvaluate.Add(new CubeToEvaluate(i, j, _figure1.GetFieldValue(i, j)));
+                        _figureMirrorX[i, j] = _figure1.GetFieldValue(i, 3 - j);
                     }
-                    if (_figure2.GetFieldValue(i, j) != -2)
+                    else if (figureNumber == 2)
                     {
-                        _figure2ToEvaluate.Add(new CubeToEvaluate(i, j, _figure2.GetFieldValue(i, j)));
+                        _figureMirrorX[i, j] = _figure2.GetFieldValue(i, 3 - j);
+                    }
+                }
+            }
+            // Y tengely szerinti tükrözés
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    if (figureNumber == 1)
+                    {
+                        _figureMirrorY[i, j] = _figure1.GetFieldValue(3 - i, j);
+                    }
+                    else if (figureNumber == 2)
+                    {
+                        _figureMirrorY[i, j] = _figure2.GetFieldValue(3 - i, j);
+                    }
+                }
+            }
+            // X és Y tengely szerinti tükrözés}
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    if (figureNumber == 1)
+                    {
+                        _figureMirrorXY[i, j] = _figure1.GetFieldValue(3 - i, 3 - j);
+                    }
+                    else if (figureNumber == 2)
+                    {
+                        _figureMirrorXY[i, j] = _figure2.GetFieldValue(3 - i, 3 - j);
                     }
                 }
             }
 
-            bool foundFigure1 = true, foundFigure2 = true;
 
-            if (_cubesToEvaluate1.Count != _figure1ToEvaluate.Count) // Ha nem egyezik meg a kivitt alakzat elemszáma egyik hiretőttáblán szereplő alakzat elemszámával sem, akkor nem kell tovább ellenőriznünk
+            // A játékos kivitt kockáinak színe alapján kiértékelendő hirdetőtáblán szereplő nem -2 (játékterületen kívüli) kockákat bepakoljuk egy listába
+            for (int i = 0; i < 4; i++)
             {
-                foundFigure1 = false;
+                for (int j = 0; j < 4; j++)
+                {
+                    if (figureNumber == 1)
+                    {
+                        if (_figure1.GetFieldValue(i, j) != -2 && _figure1.GetFieldValue(i, j) != 7)
+                        {
+                            _figureToEvaluate.Add(new CubeToEvaluate(i, j, _figure1.GetFieldValue(i, j)));
+                        }
+                        if (_figureMirrorX[i,j] != -2 && _figureMirrorX[i,j] != 7)
+                        {
+                            _figureToEvaluateMirrorX.Add(new CubeToEvaluate(i, j, _figureMirrorX[i, j]));
+                        }
+                        if (_figureMirrorY[i, j] != -2 && _figureMirrorY[i, j] != 7)
+                        {
+                            _figureToEvaluateMirrorY.Add(new CubeToEvaluate(i, j, _figureMirrorY[i, j]));
+                        }
+                        if (_figureMirrorXY[i, j] != -2 && _figureMirrorXY[i, j] != 7)
+                        {
+                            _figureToEvaluateMirrorXY.Add(new CubeToEvaluate(i, j, _figureMirrorXY[i, j]));
+                        }
+                    }
+                    else if (figureNumber == 2)
+                    {
+                        if (_figure2.GetFieldValue(i, j) != -2 && _figure2.GetFieldValue(i, j) != 7)
+                        {
+                            _figureToEvaluate.Add(new CubeToEvaluate(i, j, _figure2.GetFieldValue(i, j)));
+                        }
+                        if (_figureMirrorX[i, j] != -2 && _figureMirrorX[i, j] != 7)
+                        {
+                            _figureToEvaluateMirrorX.Add(new CubeToEvaluate(i, j, _figureMirrorX[i, j]));
+                        }
+                        if (_figureMirrorY[i, j] != -2 && _figureMirrorY[i, j] != 7)
+                        {
+                            _figureToEvaluateMirrorY.Add(new CubeToEvaluate(i, j, _figureMirrorY[i, j]));
+                        }
+                        if (_figureMirrorXY[i, j] != -2 && _figureMirrorXY[i, j] != 7)
+                        {
+                            _figureToEvaluateMirrorXY.Add(new CubeToEvaluate(i, j, _figureMirrorXY[i, j]));
+                        }
+                    }
+                }
             }
-            if (_cubesToEvaluate2.Count != _figure2ToEvaluate.Count)
+
+            bool foundFigure = true; // Alapértelmezetten azt állítjuk, hogy megtaláltuk az alakzatot
+
+            if (_cubesToEvaluate.Count != _figureToEvaluate.Count) // Ha nem egyezik meg a kivitt alakzat elemszáma egyik hiretőttáblán szereplő alakzat elemszámával sem, akkor nem kell tovább ellenőriznünk
             {
-                foundFigure2 = false;
+                foundFigure = false;
             }
 
             // Megnézzük, hogy a játékon kívüli területről származó alakzat olyan alakú-e, mint ami a hirdetőtáblán van (Itt fontos a sorrend, hogy ugyanolyan sorrendben kerültek be a játéktábláról a kockák, mint a hirdetőtábláról. Mivel ez a tulajonság teljesül, elég megnéznünk, hogy a listában szereplő kockák közötti x,y relatív távolság megegyezik-e
-            if (_cubesToEvaluate1.Count > 1 && foundFigure1 == true)
+            if (_cubesToEvaluate.Count > 1 && foundFigure == true)
             {
-                int cubeToEvaluateFirstX = _cubesToEvaluate1[0].x;
-                int cubeToEvaluateFirstY = _cubesToEvaluate1[0].y;
-                _cubesToEvaluate1.RemoveAt(0);
+                int cubeToEvaluateFirstX = _cubesToEvaluate[0].x;
+                int cubeToEvaluateFirstY = _cubesToEvaluate[0].y;
+                _cubesToEvaluate.RemoveAt(0);
 
-                int figure1ToEvaluateFirstX = _figure1ToEvaluate[0].x;
-                int figure1ToEvaluateFirstY = _figure1ToEvaluate[0].y;
-                _figure1ToEvaluate.RemoveAt(0);
+                int cubeToEvaluateSecondX = _cubesToEvaluate[0].x;
+                int cubeToEvaluateSecondY = _cubesToEvaluate[0].y;
+                _cubesToEvaluate.RemoveAt(0);
 
-                int cubeToEvaluateSecondX = _cubesToEvaluate1[0].x;
-                int cubeToEvaluateSecondY = _cubesToEvaluate1[0].y;
-                _cubesToEvaluate1.RemoveAt(0);
+                int figureToEvaluateFirstX = _figureToEvaluate[0].x;
+                int figureToEvaluateFirstY = _figureToEvaluate[0].y;
+                _figureToEvaluate.RemoveAt(0);
 
-                int figure1ToEvaluateSecondX = _figure1ToEvaluate[0].x;
-                int figure1ToEvaluateSecondY = _figure1ToEvaluate[0].y;
-                _figure1ToEvaluate.RemoveAt(0);
+                int figureToEvaluateSecondX = _figureToEvaluate[0].x;
+                int figureToEvaluateSecondY = _figureToEvaluate[0].y;
+                _figureToEvaluate.RemoveAt(0);
 
-                while (_cubesToEvaluate1.Count > 0)
+                int figureToEvaluateFirstXMirrorX = _figureToEvaluateMirrorX[0].x;
+                int figureToEvaluateFirstYMirrorX = _figureToEvaluateMirrorX[0].y;
+                _figureToEvaluateMirrorX.RemoveAt(0);
+
+                int figureToEvaluateSecondXMirrorX = _figureToEvaluateMirrorX[0].x;
+                int figureToEvaluateSecondYMirrorX = _figureToEvaluateMirrorX[0].y;
+                _figureToEvaluateMirrorX.RemoveAt(0);
+
+                int figureToEvaluateFirstXMirrorY = _figureToEvaluateMirrorY[0].x;
+                int figureToEvaluateFirstYMirrorY = _figureToEvaluateMirrorY[0].y;
+                _figureToEvaluateMirrorY.RemoveAt(0);
+
+                int figureToEvaluateSecondXMirrorY = _figureToEvaluateMirrorY[0].x;
+                int figureToEvaluateSecondYMirrorY = _figureToEvaluateMirrorY[0].y;
+                _figureToEvaluateMirrorY.RemoveAt(0);
+
+                int figureToEvaluateFirstXMirrorXY = _figureToEvaluateMirrorXY[0].x;
+                int figureToEvaluateFirstYMirrorXY = _figureToEvaluateMirrorXY[0].y;
+                _figureToEvaluateMirrorXY.RemoveAt(0);
+
+                int figureToEvaluateSecondXMirrorXY = _figureToEvaluateMirrorXY[0].x;
+                int figureToEvaluateSecondYMirrorXY = _figureToEvaluateMirrorXY[0].y;
+                _figureToEvaluateMirrorXY.RemoveAt(0);
+
+                while (_cubesToEvaluate.Count > 0)
                 {
                     // Ha valamelyik két koordináta relatív különbsége nem megegyező, az alakzat hibás
-                    if (cubeToEvaluateSecondX - cubeToEvaluateFirstX != figure1ToEvaluateSecondX - figure1ToEvaluateFirstX || cubeToEvaluateSecondY - cubeToEvaluateFirstY != figure1ToEvaluateSecondY - figure1ToEvaluateFirstY)
+                    if (cubeToEvaluateSecondX - cubeToEvaluateFirstX != figureToEvaluateSecondX - figureToEvaluateFirstX || cubeToEvaluateSecondY - cubeToEvaluateFirstY != figureToEvaluateSecondY - figureToEvaluateFirstY)
                     {
-                        foundFigure1 = false;
+                        if (cubeToEvaluateSecondX - cubeToEvaluateFirstX != figureToEvaluateSecondXMirrorX - figureToEvaluateFirstXMirrorX || cubeToEvaluateSecondY - cubeToEvaluateFirstY != figureToEvaluateSecondYMirrorX - figureToEvaluateFirstYMirrorX)
+                        {
+                            if (cubeToEvaluateSecondX - cubeToEvaluateFirstX != figureToEvaluateSecondXMirrorY - figureToEvaluateFirstXMirrorY || cubeToEvaluateSecondY - cubeToEvaluateFirstY != figureToEvaluateSecondYMirrorY - figureToEvaluateFirstYMirrorY)
+                            {
+                                if (cubeToEvaluateSecondX - cubeToEvaluateFirstX != figureToEvaluateSecondXMirrorXY - figureToEvaluateFirstXMirrorXY || cubeToEvaluateSecondY - cubeToEvaluateFirstY != figureToEvaluateSecondYMirrorXY - figureToEvaluateFirstYMirrorXY)
+                                {
+                                    foundFigure = false;
+                                }
+                            }
+                        }
                     }
 
                     // Az ellenőrzésre szánt kockákat léptetjük eggyel
                     cubeToEvaluateFirstX = cubeToEvaluateSecondX;
                     cubeToEvaluateFirstY = cubeToEvaluateSecondY;
 
-                    figure1ToEvaluateFirstX = figure1ToEvaluateSecondX;
-                    figure1ToEvaluateFirstY = figure1ToEvaluateSecondY;
+                    cubeToEvaluateSecondX = _cubesToEvaluate[0].x;
+                    cubeToEvaluateSecondY = _cubesToEvaluate[0].y;
+                    _cubesToEvaluate.RemoveAt(0);
 
-                    cubeToEvaluateSecondX = _cubesToEvaluate1[0].x;
-                    cubeToEvaluateSecondY = _cubesToEvaluate1[0].y;
-                    _cubesToEvaluate1.RemoveAt(0);
+                    figureToEvaluateFirstX = figureToEvaluateSecondX;
+                    figureToEvaluateFirstY = figureToEvaluateSecondY;
 
-                    figure1ToEvaluateSecondX = _figure1ToEvaluate[0].x;
-                    figure1ToEvaluateSecondY = _figure1ToEvaluate[0].y;
-                    _figure1ToEvaluate.RemoveAt(0);
+                    figureToEvaluateSecondX = _figureToEvaluate[0].x;
+                    figureToEvaluateSecondY = _figureToEvaluate[0].y;
+                    _figureToEvaluate.RemoveAt(0);
+
+                    figureToEvaluateFirstXMirrorX = figureToEvaluateSecondXMirrorX;
+                    figureToEvaluateFirstYMirrorX = figureToEvaluateSecondYMirrorX;
+
+                    figureToEvaluateSecondXMirrorX = _figureToEvaluateMirrorX[0].x;
+                    figureToEvaluateSecondYMirrorX = _figureToEvaluateMirrorX[0].y;
+                    _figureToEvaluateMirrorX.RemoveAt(0);
+
+                    figureToEvaluateFirstXMirrorY = figureToEvaluateSecondXMirrorY;
+                    figureToEvaluateFirstYMirrorY = figureToEvaluateSecondYMirrorY;
+
+                    figureToEvaluateSecondXMirrorY = _figureToEvaluateMirrorY[0].x;
+                    figureToEvaluateSecondYMirrorY = _figureToEvaluateMirrorY[0].y;
+                    _figureToEvaluateMirrorY.RemoveAt(0);
+
+                    figureToEvaluateFirstXMirrorXY = figureToEvaluateSecondXMirrorXY;
+                    figureToEvaluateFirstYMirrorXY = figureToEvaluateSecondYMirrorXY;
+
+                    figureToEvaluateSecondXMirrorXY = _figureToEvaluateMirrorXY[0].x;
+                    figureToEvaluateSecondYMirrorXY = _figureToEvaluateMirrorXY[0].y;
+                    _figureToEvaluateMirrorXY.RemoveAt(0);
                 }
 
-                if (foundFigure1) // Letöröljük az alakzatot a játéktábláról
+                if (foundFigure) // Letöröljük az alakzatot a játéktábláról
                 {
                     if (direction == "észak")
                     {
@@ -2151,143 +2313,23 @@ namespace ELTE.Robotok.Model
                             }
                         }
                     }
-                }
-                if (foundFigure1)
-                {
-                    result = 1;
+                    result = figureNumber; // Ha kiértékelődött egy alakzat, és le lettek törölve az építőkockái, akkor a visszatérési érték az aktív alakzat száma lesz
                 }
             }
 
-            else if (_cubesToEvaluate2.Count > 1 && foundFigure2 == true)
+            else if (_cubesToEvaluate.Count == 1) // Speciális eset, ha az alakzat csak egy kockából áll (igazából ilyen alakzatunk jelenleg nincs, a kódban csak a teljesség igénye miatt szerepel)
             {
-                int cubeToEvaluateFirstX = _cubesToEvaluate2[0].x;
-                int cubeToEvaluateFirstY = _cubesToEvaluate2[0].y;
-                _cubesToEvaluate2.RemoveAt(0);
-
-                int figure2ToEvaluateFirstX = _figure2ToEvaluate[0].x;
-                int figure2ToEvaluateFirstY = _figure2ToEvaluate[0].y;
-                _figure2ToEvaluate.RemoveAt(0);
-
-                int cubeToEvaluateSecondX = _cubesToEvaluate2[0].x;
-                int cubeToEvaluateSecondY = _cubesToEvaluate2[0].y;
-                _cubesToEvaluate2.RemoveAt(0);
-
-                int figure2ToEvaluateSecondX = _figure2ToEvaluate[0].x;
-                int figure2ToEvaluateSecondY = _figure2ToEvaluate[0].y;
-                _figure2ToEvaluate.RemoveAt(0);
-
-                while (_cubesToEvaluate2.Count > 0)
+                if (_figureToEvaluate.Count == _cubesToEvaluate.Count && _cubesToEvaluate[0].value == _figureToEvaluate[0].value) // Ha az 1. alakzat teljesül
                 {
-                    // Ha valamelyik két koordináta relatív különbsége nem megegyező, az alakzat hibás
-                    if (cubeToEvaluateSecondX - cubeToEvaluateFirstX != figure2ToEvaluateSecondX - figure2ToEvaluateFirstX || cubeToEvaluateSecondY - cubeToEvaluateFirstY != figure2ToEvaluateSecondY - figure2ToEvaluateFirstY)
-                    {
-                        foundFigure2 = false;
-                    }
-
-                    // Az ellenőrzésre szánt kockákat léptetjük eggyel
-                    cubeToEvaluateFirstX = cubeToEvaluateSecondX;
-                    cubeToEvaluateFirstY = cubeToEvaluateSecondY;
-
-                    figure2ToEvaluateFirstX = figure2ToEvaluateSecondX;
-                    figure2ToEvaluateFirstY = figure2ToEvaluateSecondY;
-
-                    cubeToEvaluateSecondX = _cubesToEvaluate2[0].x;
-                    cubeToEvaluateSecondY = _cubesToEvaluate2[0].y;
-                    _cubesToEvaluate2.RemoveAt(0);
-
-                    figure2ToEvaluateSecondX = _figure2ToEvaluate[0].x;
-                    figure2ToEvaluateSecondY = _figure2ToEvaluate[0].y;
-                    _figure2ToEvaluate.RemoveAt(0);
-                }
-
-                if (foundFigure2)
-                {
-                    if (direction == "észak")
-                    {
-                        for (int i = 0; i < 3; i++)
-                        {
-                            for (int j = 0; j < _table.SizeY; j++)
-                            {
-                                _table.SetValue(i, j, -2, -1);
-                                _table.SetAttachmentNorth(i, j, false);
-                                _table.SetAttachmentSouth(i, j, false);
-                                _table.SetAttachmentEast(i, j, false);
-                                _table.SetAttachmentWest(i, j, false);
-                            }
-                        }
-                    }
-                    else if (direction == "dél")
-                    {
-                        for (int i = 14; i < 17; i++)
-                        {
-                            for (int j = 0; j < _table.SizeY; j++)
-                            {
-                                _table.SetValue(i, j, -2, -1);
-                                _table.SetAttachmentNorth(i, j, false);
-                                _table.SetAttachmentSouth(i, j, false);
-                                _table.SetAttachmentEast(i, j, false);
-                                _table.SetAttachmentWest(i, j, false);
-                            }
-                        }
-                    }
-                    else if (direction == "nyugat")
-                    {
-                        for (int i = 0; i < _table.SizeX; i++)
-                        {
-                            for (int j = 0; j < 4; j++)
-                            {
-                                _table.SetValue(i, j, -2, -1);
-                                _table.SetAttachmentNorth(i, j, false);
-                                _table.SetAttachmentSouth(i, j, false);
-                                _table.SetAttachmentEast(i, j, false);
-                                _table.SetAttachmentWest(i, j, false);
-                            }
-                        }
-                    }
-                    else if (direction == "kelet")
-                    {
-                        for (int i = 0; i < _table.SizeX; i++)
-                        {
-                            for (int j = 24; j < 28; j++)
-                            {
-                                _table.SetValue(i, j, -2, -1);
-                                _table.SetAttachmentNorth(i, j, false);
-                                _table.SetAttachmentSouth(i, j, false);
-                                _table.SetAttachmentEast(i, j, false);
-                                _table.SetAttachmentWest(i, j, false);
-                            }
-                        }
-                    }
-                }
-                if (foundFigure2)
-                {
-                    result = 2;
-                }
-                if (foundFigure1 && foundFigure2) // Ez az az eset, ha a hirdetőtáblán szereplő két alakzat megegyezik és kivitelkor mindkettő teljesül
-                {
-                    result = 3;
+                    result = figureNumber;
                 }
             }
 
-            else if (_cubesToEvaluate1.Count == 1) // Speciális eset, ha az alakzat csak egy kockából áll (igazából ilyen alakzatunk jelenleg nincs, a kódban csak a teljesség igénye miatt szerepel)
-            {
-                if (_figure1ToEvaluate.Count == _cubesToEvaluate1.Count && _cubesToEvaluate1[0].value == _figure1ToEvaluate[0].value) // Ha az 1. alakzat teljesül
-                {
-                    result = 1;
-                }
-            }
-            else if (_cubesToEvaluate2.Count == 1)
-            {
-                if (_figure2ToEvaluate.Count == _cubesToEvaluate2.Count && _cubesToEvaluate2[0].value == _figure2ToEvaluate[0].value) // Ha a 2. alakzat teljesül
-                {
-                    result = 2;
-                }
-            }
-
-            _cubesToEvaluate1.Clear(); // Mindegyik esetben töröljük a lista tartalmát
-            _cubesToEvaluate2.Clear();
-            _figure1ToEvaluate.Clear();
-            _figure2ToEvaluate.Clear();
+            _cubesToEvaluate.Clear(); // Mindegyik esetben töröljük a lista tartalmát
+            _figureToEvaluate.Clear();
+            _figureToEvaluateMirrorX.Clear();
+            _figureToEvaluateMirrorY.Clear();
+            _figureToEvaluateMirrorXY.Clear();
             return result;
         }
 
