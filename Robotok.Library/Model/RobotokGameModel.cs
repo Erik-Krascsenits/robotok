@@ -1816,6 +1816,22 @@ namespace ELTE.Robotok.Model
                 }
             }
 
+            // Ellenőriznünk kell azt is, hogy az összekapcsolni kívánt két kocka megegyező színű-e
+            if (group == "green")
+            {
+                if (_table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) != _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (_table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) != _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed))
+                {
+                    return false;
+                }
+            }
+
             // Következő lépésként meghatározzuk a kapcsolás pozícióját (élszomszédosság helye alapján), majd létrehozzuk azt
             if (group == "green")
             {
@@ -1962,7 +1978,6 @@ namespace ELTE.Robotok.Model
                 return false;
             }
         }
-
 
         public int EvaluateShape(string direction) // Visszatérési érték: 0 - helytelen alakzat, 1 - 1. alakzat teljesült, 2 - 2. alakzat teljesült
         {
