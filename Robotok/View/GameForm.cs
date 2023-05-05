@@ -1,6 +1,6 @@
 using ELTE.Robotok.Model;
 using ELTE.Robotok.Persistence;
-using Robotok.WinForms.Properties; 
+using Robotok.WinForms.Properties;
 
 namespace ELTE.Robotok.View
 {
@@ -69,7 +69,7 @@ namespace ELTE.Robotok.View
         #region Private methods
         // Lejebb sokszor található lesz i - 3, illetve j - 4. Ez azért van, mert maga a játékpálya sokkal nagyobb mint a játékosak "játékpályai", ezért hogy ne legyen semmilyen túlindexelés vagy valami hasonló, ezt így oldottam meg
         // Létrehozza a gombokat, amiből a játékosnézet és a hirdektőtáblák felépülnek
-        private void GenerateTables() 
+        private void GenerateTables()
         {
             GameMenuForm.instance._model.ManhattanDistance(_difficulty, 1);
             GameMenuForm.instance._model.ManhattanDistance(_difficulty, 8);
@@ -87,7 +87,7 @@ namespace ELTE.Robotok.View
                     if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                     {
                         _buttonGridPlayer[i - 3, j - 4] = new Button();
-                        _buttonGridPlayer[i - 3, j - 4].Location = new Point(60 + 25 * (j-4), 85 + 25 * (i-3)); // elhelyezkedés
+                        _buttonGridPlayer[i - 3, j - 4].Location = new Point(60 + 25 * (j - 4), 85 + 25 * (i - 3)); // elhelyezkedés
                         _buttonGridPlayer[i - 3, j - 4].Size = new Size(25, 25); // méret
                         _buttonGridPlayer[i - 3, j - 4].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
                         _buttonGridPlayer[i - 3, j - 4].Enabled = true;
@@ -97,7 +97,7 @@ namespace ELTE.Robotok.View
                         _buttonGridPlayer[i - 3, j - 4].Name = i.ToString() + "," + j.ToString();
                         _buttonGridPlayer[i - 3, j - 4].Click += ButtonGrid_Click;
 
-                        if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i-3, j-4) == -1) // minden mezőnek megadjuk a színét
+                        if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == -1) // minden mezőnek megadjuk a színét
                         {
                             _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Black;
                         }
@@ -302,6 +302,7 @@ namespace ELTE.Robotok.View
             }
             DisableButtons();
         }
+
         public void dettachButton_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(operationParameter.Text) || ((operationParameter.Text != "észak") && operationParameter.Text != "dél" && operationParameter.Text != "kelet" && operationParameter.Text != "nyugat"))
@@ -332,7 +333,9 @@ namespace ELTE.Robotok.View
             }
             DisableButtons();
         }
-        public void attachButton_Click(object sender, EventArgs e) {
+
+        public void attachButton_Click(object sender, EventArgs e)
+        {
             if (String.IsNullOrEmpty(operationParameter.Text) || ((operationParameter.Text != "észak") && operationParameter.Text != "dél" && operationParameter.Text != "kelet" && operationParameter.Text != "nyugat"))
             {
                 _successText = "Hibás paraméter!";
@@ -370,7 +373,7 @@ namespace ELTE.Robotok.View
             }
             else
             {
-                
+
                 if (GameMenuForm.instance._model.Move(operationParameter.Text, _activePlayer))
                 {
                     _successText = "Sikeres mozgás!";
@@ -397,7 +400,7 @@ namespace ELTE.Robotok.View
                 if (GameMenuForm.instance._model.Rotate(operationParameter.Text, _activePlayer))
                 {
                     _successText = "Sikeres forgás!";
-                }          
+                }
                 else
                 {
                     _successText = "Sikertelen forgás!";
@@ -670,7 +673,7 @@ namespace ELTE.Robotok.View
                             }
                         }
                     }
-                } 
+                }
                 else if (active == 4) //másik játékos piros csapat esetén
                 {
                     nextRoundValueText.Text = "Zöld csapat 1. játékos";
@@ -755,7 +758,6 @@ namespace ELTE.Robotok.View
             coordinate2.Text = "";
             // Visszaállítjuk, hogy először az első koordinátadoboz kerüljön kitöltésre
             _activeCoordinateBox = 1;
-            // Hirdetőtábla 1
             for (Int32 i = 0; i < GameMenuForm.instance._model.TableNoticeBoardOne.SizeX; i++)
             {
                 for (Int32 j = 0; j < GameMenuForm.instance._model.TableNoticeBoardOne.SizeY; j++)
@@ -815,7 +817,7 @@ namespace ELTE.Robotok.View
         {
 
         }
-        
+
         // Robotok képeinek forgatása 
         public void RotateImage(int i, int j)
         {
@@ -882,7 +884,7 @@ namespace ELTE.Robotok.View
             }
         }
 
-            // Letiltja a műveletek használatát
+        // Letiltja a műveletek használatát
         public void DisableButtons()
         {
             waitButton.Enabled = false;
@@ -994,7 +996,7 @@ namespace ELTE.Robotok.View
                 _successText = "Sikertelen összekapcsolás!";
             }
             _operationDone = true;
-            GameMenuForm.instance._model.Wait(); 
+            GameMenuForm.instance._model.Wait();
             DisableButtons();
         }
 
@@ -1021,7 +1023,7 @@ namespace ELTE.Robotok.View
                 _successText = "Sikertelen szétkapcsolás!";
             }
             _operationDone = true;
-            GameMenuForm.instance._model.Wait(); 
+            GameMenuForm.instance._model.Wait();
             DisableButtons();
         }
 
