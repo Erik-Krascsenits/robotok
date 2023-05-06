@@ -754,19 +754,19 @@ namespace ELTE.Robotok.Model
 
                 if (_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY))
                 {
-                    AddCubesToRotate(playerCoordinateX, playerCoordinateY, playerFieldValue, "észak");
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "észak");
                 }
                 else if (_table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
                 {
-                    AddCubesToRotate(playerCoordinateX, playerCoordinateY, playerFieldValue, "dél");
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "dél");
                 }
                 else if (_table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
                 {
-                    AddCubesToRotate(playerCoordinateX, playerCoordinateY, playerFieldValue, "kelet");
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "kelet");
                 }
                 else
                 {
-                    AddCubesToRotate(playerCoordinateX, playerCoordinateY, playerFieldValue, "nyugat");
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "nyugat");
                 }
 
                 bool validStep;
@@ -841,7 +841,7 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Összekapcsolt kockák eltárolása
         /// </summary>
-        public void AddCubesToRotate(int playerCoordinateX, int playerCoordinateY, int playerFieldValue, String direction)
+        public void AddCubesToOldList(int playerCoordinateX, int playerCoordinateY, int playerFieldValue, String direction)
         {
             _cubesOldPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, playerFieldValue, _table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY), _table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY), _table.GetAttachmentEast(playerCoordinateX, playerCoordinateY), _table.GetAttachmentWest(playerCoordinateX, playerCoordinateY), direction, _table.GetFieldRemainingCleaningOperations(playerCoordinateX, playerCoordinateY)));
 
@@ -1506,7 +1506,7 @@ namespace ELTE.Robotok.Model
                     if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 7) // Megnézi, hogy üres kockára lép-e
                     {
                         _table.SetValue(playerCoordinateX - 1, playerCoordinateY, playerFieldValue, -1); // új helyre ráléptetjük
-                        _table.SetFaceDirection(playerCoordinateX - 1, playerCoordinateY, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY)); //az új helyreátadjuk hogy merre nézett a játékos
+                        _table.SetFaceDirection(playerCoordinateX - 1, playerCoordinateY, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY)); //az új helyre átadjuk hogy merre nézett a játékos
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1); // régi helyről letöröljük
                         _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false); //a régi helyről töröljük hogy merre nézett a játékos
                         return true;
@@ -1564,31 +1564,38 @@ namespace ELTE.Robotok.Model
             }
             else // Az az eset, amikor a játékoshoz van 1 vagy több kocka csatolva
             {
-                // A játékos kockáját eltároljuk a régi pozíciókban
-                _cubesOldPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, playerFieldValue, _table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY), _table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY), _table.GetAttachmentEast(playerCoordinateX, playerCoordinateY), _table.GetAttachmentWest(playerCoordinateX, playerCoordinateY), direction, _table.GetFieldRemainingCleaningOperations(playerCoordinateX, playerCoordinateY)));
+                // A játékost és a hozzákapcsolt kockákat eltároljuk a régi pozíciók listájában
 
-                // Először le kell ellenőriznünk, hogy egyáltalán végrehajtható-e a művelet
-                // A játékos kockájával kezdjük
+                if (_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY))
+                {
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "észak");
+                }
+                else if (_table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
+                {
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "dél");
+                }
+                else if (_table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
+                {
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "kelet");
+                }
+                else
+                {
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "nyugat");
+                }
+
                 bool validStep = true;
+
+                // Ellenőrizzük azokat az eseteket, ha a játékos a pálya szélén áll az építménnyel, és ki szeretne lépni a pályáról
                 if (direction == "észak")
                 {
-                    // Akkor biztosan érvénytelen a művelet, ha felette nem üres kocka vagy játékterületen kívüli kocka van és nincs is felette csatolmánya.
-                    if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) != 7 && _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) != -2 && !_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY))
-                    {
-                        validStep = false;
-                    }
-                    // Az az eset is érvénytelen, ha már a játékos a határon áll a kilógó csatolmánnyal, mégis folytatni szeretné az útját kifelé.
                     if (playerCoordinateX == 3)
                     {
                         validStep = false;
                     }
+
                 }
                 else if (direction == "dél")
                 {
-                    if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) != 7 && _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) != -2 && !_table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
-                    {
-                        validStep = false;
-                    }
                     if (playerCoordinateX == 13)
                     {
                         validStep = false;
@@ -1596,50 +1603,90 @@ namespace ELTE.Robotok.Model
                 }
                 else if (direction == "kelet")
                 {
-                    if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) != 7 && _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) != -2 && !_table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
-                    {
-                        validStep = false;
-                    }
                     if (playerCoordinateY == 23)
                     {
                         validStep = false;
                     }
                 }
-                else
+                else if (direction == "nyugat")
                 {
-                    if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) != 7 && _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) != -2 && !_table.GetAttachmentWest(playerCoordinateX, playerCoordinateY))
-                    {
-                        validStep = false;
-                    }
                     if (playerCoordinateY == 4)
                     {
                         validStep = false;
                     }
                 }
 
-                // Ha a játékos kockájával tudnánk lépni, folytatjuk az ellenőrzést a csatolt kockákkal
-                // Megnézzük hol van szomszédja és meghívjuk rá a ValidateStep rekurzív függvényt
 
-                if (Table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY))
+                // Készítünk egy másolatot az eredeti játéktábláról, hogy ellenőrzés során ha kiderül, hogy érvénytelen a lépés, ne veszítsünk adatot
+                int[,] stepTest = new int[_table.SizeX, _table.SizeY];
+
+                for (int i = 0; i < _table.SizeX; i++)
                 {
-                    validStep = validStep && ValidateStep(playerCoordinateX - 1, playerCoordinateY, _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY), direction, "dél"); // Meghívja a csatolt kockájára is az ellenőrzést
+                    for (int j = 0; j < _table.SizeY; j++)
+                    {
+                        stepTest[i, j] = _table.GetFieldValue(i, j);
+                    }
                 }
-                else if (Table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
+
+                // Letöröljük a régi kockapozíciókat a másolt tábláról
+                for (int i = 0; i < _cubesOldPosition.Count; i++)
                 {
-                    validStep = validStep && ValidateStep(playerCoordinateX + 1, playerCoordinateY, _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY), direction, "észak");
+                    stepTest[_cubesOldPosition[i].x, _cubesOldPosition[i].y] = 7;
                 }
-                else if (Table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
+
+                // Ellenőrizzük, hogy az adott irányba történő léptetés után a kocka érvényes pozícióra kerülne-e
+                for (int i = 0; i < _cubesOldPosition.Count && validStep; i++)
                 {
-                    validStep = validStep && ValidateStep(playerCoordinateX, playerCoordinateY + 1, _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1), direction, "nyugat");
+                    if (direction == "észak")
+                    {
+                        if (_cubesOldPosition[i].x - 1 < 0) // Annak az esetnek a kiszűrése, ha kiindexelnénk a pályáról
+                        {
+                            validStep = false;
+                        }
+                        else if (stepTest[_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y] != 7 && stepTest[_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y] != -2)
+                        {
+                            validStep = false;
+                        }
+                    }
+                    else if (direction == "dél")
+                    {
+                        if (_cubesOldPosition[i].x + 1 == _table.SizeX)
+                        {
+                            validStep = false;
+                        }
+                        else if (stepTest[_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y] != 7 && stepTest[_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y] != -2)
+                        {
+                            validStep = false;
+                        }
+                    }
+                    else if (direction == "kelet")
+                    {
+                        if (_cubesOldPosition[i].y + 1 == _table.SizeY)
+                        {
+                            validStep = false;
+                        }
+                        else if (stepTest[_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1] != 7 && stepTest[_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1] != -2)
+                        {
+                            validStep = false;
+                        }
+                    }
+                    else if (direction == "nyugat")
+                    {
+                        if (_cubesOldPosition[i].y - 1 < 0)
+                        {
+                            validStep = false;
+                        }
+                        else if (stepTest[_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1] != 7 && stepTest[_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1] != -2)
+                        {
+                            validStep = false;
+                        }
+                    }
                 }
-                else if (Table.GetAttachmentWest(playerCoordinateX, playerCoordinateY))
-                {
-                    validStep = validStep && ValidateStep(playerCoordinateX, playerCoordinateY - 1, _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1), direction, "kelet");
-                }
+                
 
                 if (validStep) // Ha sikeres a lépés ellenőrzése, végrehajtjuk
                 {
-                    ExecuteSafeSteps();
+                    ExecuteSafeSteps(direction);
                 }
 
                 // Sikerességtől függetlenül a lépés után kitisztítjuk a listákat (hiszen pl. a játékos kockája minden esetben szerepel a régi pozíciókban)
@@ -1650,97 +1697,8 @@ namespace ELTE.Robotok.Model
             }
         }
 
-        public bool ValidateStep(int x, int y, int value, string direction, string parentSide)
+        void ExecuteSafeSteps(string direction)
         {
-            bool validStep = true; // Először azt feltételezzük a lépésről, hogy helyes
-
-            if (direction == "észak")
-            {
-                // Megnézzük, hogy a kívánt lépés eredménye egyáltalán még a pályán van-e (nagy alakzatok kiszűrése)
-                if (x - 1 < 0)
-                {
-                    validStep = false;
-                }
-                else if (_table.GetFieldValue(x - 1, y) != 7 && _table.GetFieldValue(x - 1, y) != -2) // Ha a kívánt lépés irányában nem üres hely vagy játékon kívüli terület van
-                {
-                    // Ilyenkor még abban a két esetben lehet érvényes a lépés, ha a szülő kocka van az adott irányban, vagy egy gyerek kocka
-                    if (!(parentSide == "észak" || _table.GetAttachmentNorth(x, y)))
-                    {
-                        validStep = false;
-                    }
-                }
-            }
-            else if (direction == "dél")
-            {
-                if (x + 1 == _table.SizeX)
-                {
-                    validStep = false;
-                }
-                else if (_table.GetFieldValue(x + 1, y) != 7 && _table.GetFieldValue(x + 1, y) != -2)
-                {
-                    if (!(parentSide == "dél" || _table.GetAttachmentSouth(x, y)))
-                    {
-                        validStep = false;
-                    }
-                }
-            }
-            else if (direction == "kelet")
-            {
-                if (y + 1 == _table.SizeY)
-                {
-                    validStep = false;
-                }
-                else if (_table.GetFieldValue(x, y + 1) != 7 && _table.GetFieldValue(x, y + 1) != -2)
-                {
-                    if (!(parentSide == "kelet" || _table.GetAttachmentEast(x, y)))
-                    {
-                        validStep = false;
-                    }
-                }
-            }
-            else
-            {
-                if (y - 1 < 0)
-                {
-                    validStep = false;
-                }
-                else if (_table.GetFieldValue(x, y - 1) != 7 && _table.GetFieldValue(x, y - 1) != -2)
-                {
-                    if (!(parentSide == "nyugat" || _table.GetAttachmentWest(x, y)))
-                    {
-                        validStep = false;
-                    }
-                }
-            }
-
-            // Rekurzív függvényhívás a kockához csatolt gyerekkockák ellenőrzésére (szülőkockát nem nézi meg)
-            if (_table.GetAttachmentNorth(x, y) && parentSide != "észak")
-            {
-                validStep = validStep && validStep && ValidateStep(x - 1, y, _table.GetFieldValue(x - 1, y), direction, "dél"); ;
-            }
-            else if (_table.GetAttachmentSouth(x, y) && parentSide != "dél")
-            {
-                validStep = validStep && ValidateStep(x + 1, y, _table.GetFieldValue(x + 1, y), direction, "észak");
-            }
-            else if (_table.GetAttachmentEast(x, y) && parentSide != "kelet")
-            {
-                validStep = validStep && ValidateStep(x, y + 1, _table.GetFieldValue(x, y + 1), direction, "nyugat");
-            }
-            else if (_table.GetAttachmentWest(x, y) && parentSide != "nyugat")
-            {
-                validStep = validStep && ValidateStep(x, y - 1, _table.GetFieldValue(x, y - 1), direction, "kelet");
-            }
-
-            // Hozzáadjuk a feldolgozott kockák a régi pozíciókhoz
-            _cubesOldPosition.Add(new CubeToMove(x, y, value, _table.GetAttachmentNorth(x, y), _table.GetAttachmentSouth(x, y), _table.GetAttachmentEast(x, y), _table.GetAttachmentWest(x, y), direction, _table.GetFieldRemainingCleaningOperations(x, y))); // Elmentjük a mozgatni kívánt kockák mozgatás előtti pozícióját
-
-            return validStep;
-        }
-
-        void ExecuteSafeSteps()
-        {
-            string direction = _cubesOldPosition[0].direction; // Lekérdezzük, hogy melyik irányba lesz a lépés, majd egy új listába bepakoljuk az új adatokat
-
             for (int i = 0; i < _cubesOldPosition.Count; i++)
             {
                 if (direction == "észak")
@@ -1755,9 +1713,9 @@ namespace ELTE.Robotok.Model
                 {
                     _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1, _cubesOldPosition[i].value, _table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
                 }
-                else
+                else if (direction == "nyugat")
                 {
-                    _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1, _cubesOldPosition[i].value, _table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations)); ;
+                    _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1, _cubesOldPosition[i].value, _table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
                 }
             }
 
@@ -1765,8 +1723,17 @@ namespace ELTE.Robotok.Model
 
             for (int i = 0; i < _cubesOldPosition.Count; i++)
             {
-                _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, -1);
+                // Az az eset, amikor játékon kívüli kockát törlünk (-2 értékre kell visszaállítani)
+                if (_cubesOldPosition[i].x < 3 || _cubesOldPosition[i].x > 13 || _cubesOldPosition[i].y < 4 || _cubesOldPosition[i].y > 23)
+                {
+                    _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, -2, -1);
+                }
+                else // Általános eset 7-re (üres kocka) visszaállítva
+                {
+                    _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, -1);
+                }
                 _table.SetAttachmentValues(_cubesOldPosition[i].x, _cubesOldPosition[i].y, false, false, false, false);
+                _table.SetFaceDirection(_cubesOldPosition[i].x, _cubesOldPosition[i].x, false, false, false, false);
             }
 
 
@@ -1777,7 +1744,6 @@ namespace ELTE.Robotok.Model
                 _table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].remainingCleaningOperations);
                 _table.SetFaceDirection(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _table.GetFaceNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y));
                 _table.SetAttachmentValues(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment);
-                _table.SetFaceDirection(_cubesOldPosition[i].x, _cubesOldPosition[i].x, false, false, false, false);
             }
         }
 
