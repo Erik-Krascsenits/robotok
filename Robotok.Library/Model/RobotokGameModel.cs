@@ -816,7 +816,6 @@ namespace ELTE.Robotok.Model
 
                 if (validStep)    // Ha sikerült a forgatás, akkor a játékos irányát is megváltoztatjuk
                 {
-                   RotatePlayerView(playerNumber, direction);
                     if (_table.GetFaceNorth(playerCoordinateX, playerCoordinateY))   // A játékos északra néz 
                     {
                         if (direction == "óramutatóval megegyező")
@@ -868,7 +867,7 @@ namespace ELTE.Robotok.Model
             return true;
         }
 
-        public void RotatePlayerView(int playerNumber, string direction)
+        public void RotatePlayerView(string direction,int playerNumber)
         {
             if (playerNumber == 1 || playerNumber == 2)
             {

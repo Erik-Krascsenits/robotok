@@ -443,6 +443,7 @@ namespace ELTE.Robotok.View
             {
                 if (GameMenuForm.instance._model.Rotate(operationParameter.Text, _activePlayer))
                 {
+                    GameMenuForm.instance._model.RotatePlayerView(operationParameter.Text, _activePlayer);
                     _successText = "Sikeres forgás!";
                 }          
                 else
