@@ -194,25 +194,25 @@ public partial class GameMenuForm : Form
                     _gameFormRedTeamPlayerTwo.stepsLeftValueText.Text = (_model.GameStepCount - 1).ToString();
                     _gameFormRedTeamPlayerTwo.taskOneDeadlineValueText.Text = (_model.FirstTaskDeadline - 1).ToString() + ". lépés";
                     _gameFormRedTeamPlayerTwo.taskTwoDeadlineValueText.Text = (_model.SecondTaskDeadline - 1).ToString() + ". lépés";
-                }
+                }  
             }
             else
             {
                 _gameFormGreenTeamPlayerOne.stepsLeftValueText.Text = _model.GameStepCount.ToString(); // ha elfogyott a gondolkodási idõ, csökkenti a hátralevõ lépések számát
-                _gameFormGreenTeamPlayerOne.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline.ToString();
-                _gameFormGreenTeamPlayerOne.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString();
+                _gameFormGreenTeamPlayerOne.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline.ToString() + ". lépés";
+                _gameFormGreenTeamPlayerOne.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString() + ". lépés";
                 _gameFormGreenTeamPlayerTwo.stepsLeftValueText.Text = _model.GameStepCount.ToString();
-                _gameFormGreenTeamPlayerTwo.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline.ToString();
-                _gameFormGreenTeamPlayerTwo.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString();
+                _gameFormGreenTeamPlayerTwo.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline.ToString() + ". lépés";
+                _gameFormGreenTeamPlayerTwo.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString() + ". lépés";
 
                 if (selectedGroupCount == 2) // 2 csapat esetén a pirosakét is frissíteni kell
                 {
                     _gameFormRedTeamPlayerOne.stepsLeftValueText.Text = _model.GameStepCount.ToString();
-                    _gameFormRedTeamPlayerOne.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline .ToString();
-                    _gameFormRedTeamPlayerOne.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString();
+                    _gameFormRedTeamPlayerOne.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline.ToString() + ". lépés";
+                    _gameFormRedTeamPlayerOne.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString() + ". lépés";
                     _gameFormRedTeamPlayerTwo.stepsLeftValueText.Text = _model.GameStepCount.ToString();
-                    _gameFormRedTeamPlayerTwo.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline.ToString();
-                    _gameFormRedTeamPlayerTwo.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString();
+                    _gameFormRedTeamPlayerTwo.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline.ToString() + ". lépés";
+                    _gameFormRedTeamPlayerTwo.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString() + ". lépés";
                 }
             }
 

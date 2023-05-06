@@ -42,16 +42,16 @@ namespace Robotok.Library.Model
 
         private Int32[,] _rhombus = new Int32[4, 4] {
             {-2, -2, -2, -2},
-            {-2, -2, 3, -2},
-            {-2, 3, 3, 3},
-            {-2, -2, 3, -2}
+            {-2, -2, 11, -2},
+            {-2, 11, 11, 11},
+            {-2, -2, 11, -2}
         };
 
         private Int32[,] _piType = new Int32[4, 4] {
             {-2, -2, -2, -2},
             {-2, -2, -2, -2},
-            {4, 4, 4, 4},
-            {4, -2, -2, 4}
+            {12, 12, 12, 12},
+            {12, -2, -2, 12}
         };
 
         #endregion
@@ -159,22 +159,33 @@ namespace Robotok.Library.Model
         /// </summary>
         public int GetColor()
         {
-            if (_shape == _cube || _shape == _rhombus)
+            if (this._shape == _cube)
             {
                 return 3;
             }
 
-            if (_shape == _piType || _shape == _triangle)
+            if (this._shape == _triangle)
             {
                 return 4;
             }
 
-            if (_shape == _straight)
+            if (this._shape == _straight)
             {
                 return 5;
             }
 
-            return 6;
+            if (this._shape == _lType)
+            {
+                return 6;
+            }
+
+            if (this._shape == _rhombus)
+            {
+                return 11;
+            }
+
+            return 12;
+
         }
         #endregion
     }

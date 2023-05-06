@@ -196,7 +196,14 @@
             this.redGroupPointsValueText.Name = "redGroupPointsValueText";
             this.redGroupPointsValueText.Size = new System.Drawing.Size(22, 25);
             this.redGroupPointsValueText.TabIndex = 17;
-            this.redGroupPointsValueText.Text = GameMenuForm.instance._model.RedTeamPoints.ToString();
+            if (GameMenuForm.instance._model.Teams != 2)
+            {
+                this.redGroupPointsValueText.Text = "-";
+            } 
+            else
+            {
+                this.redGroupPointsValueText.Text = GameMenuForm.instance._model.RedTeamPoints.ToString();
+            }
             // 
             // greenGroupPointsValueText
             // 

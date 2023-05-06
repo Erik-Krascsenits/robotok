@@ -490,79 +490,82 @@ namespace ELTE.Robotok.Model
                     _firstTaskDeadline--;
                     _secondTaskDeadline--;
                 }
-            }
 
-            if (_firstTaskDeadline == 0 || _secondTaskDeadline == 0)
-            {
-                for (int i = 0; i < _table.SizeX; i++) 
+                if (player == 2 || player == 4)
                 {
-                    for (int j = 0; j < _table.SizeY; j++)
+                    if (_firstTaskDeadline == 0 || _secondTaskDeadline == 0)
                     {
-                        if (_table.GetFieldValue(i, j) == _figure1.GetColor() && _firstTaskDeadline == 0)
+                        for (int i = 0; i < _table.SizeX; i++)
                         {
-                            _table.SetValue(i, j, 7, -1); // figure1 építőkockai törlése
+                            for (int j = 0; j < _table.SizeY; j++)
+                            {
+                                if (_table.GetFieldValue(i, j) == _figure1.GetColor() && _firstTaskDeadline == 0)
+                                {
+                                    _table.SetValue(i, j, 7, -1); // figure1 építőkockai törlése
+                                }
+
+                                if (_table.GetFieldValue(i, j) == _figure2.GetColor() && _secondTaskDeadline == 0)
+                                {
+                                    _table.SetValue(i, j, 7, -1); // figure2 építőkockai törlése
+                                }
+
+                            }
                         }
 
-                        if (_table.GetFieldValue(i, j) == _figure2.GetColor() && _secondTaskDeadline == 0)
+                        for (int i = 0; i < _table.SizeX; i++) // lehet hogy kockák már voltak összekapcsolva, ezért az összekapcsolást is törölni kell
                         {
-                            _table.SetValue(i, j, 7, -1); // figure2 építőkockai törlése
-                        }
+                            for (int j = 0; j < _table.SizeY; j++)
+                            {
+                                if (_table.GetFieldValue(i, j) == 7 && _table.HasAttachments(i, j))
+                                {
+                                    if (_table.GetAttachmentEast(i, j))
+                                    {
+                                        _table.SetAttachmentEast(i, j, false);
+                                    }
 
+                                    if (_table.GetAttachmentNorth(i, j))
+                                    {
+                                        _table.SetAttachmentNorth(i, j, false);
+                                    }
+
+                                    if (_table.GetAttachmentSouth(i, j))
+                                    {
+                                        _table.SetAttachmentSouth(i, j, false);
+                                    }
+
+                                    if (_table.GetAttachmentWest(i, j))
+                                    {
+                                        _table.SetAttachmentWest(i, j, false);
+                                    }
+                                }
+
+                                if (_table.GetFieldValue(i, j) == 1 || _table.GetFieldValue(i, j) == 2 || _table.GetFieldValue(i, j) == 8 || _table.GetFieldValue(i, j) == 9)
+                                {
+                                    if (_table.GetFieldValue(i, j + 1) == 7 && _table.GetAttachmentEast(i, j))
+                                    {
+                                        _table.SetAttachmentEast(i, j, false);
+                                    }
+
+                                    if (_table.GetFieldValue(i, j - 1) == 7 && _table.GetAttachmentWest(i, j))
+                                    {
+                                        _table.SetAttachmentWest(i, j, false);
+                                    }
+
+                                    if (_table.GetFieldValue(i + 1, j) == 7 && _table.GetAttachmentSouth(i, j))
+                                    {
+                                        _table.SetAttachmentSouth(i, j, false);
+                                    }
+
+                                    if (_table.GetFieldValue(i - 1, j) == 7 && _table.GetAttachmentNorth(i, j))
+                                    {
+                                        _table.SetAttachmentNorth(i, j, false);
+                                    }
+                                }
+                            }
+                        }
+                        GenerateShape();
                     }
                 }
-
-                for (int i = 0; i < _table.SizeX; i++) // lehet hogy kockák már voltak összekapcsolva, ezért az összekapcsolást is törölni kell
-                {
-                    for (int j = 0; j < _table.SizeY; j++)
-                    {
-                        if (_table.GetFieldValue(i, j) == 7 && _table.HasAttachments(i, j)) 
-                        {
-                            if (_table.GetAttachmentEast(i, j))
-                            {
-                                _table.SetAttachmentEast(i, j, false);
-                            }
-
-                            if (_table.GetAttachmentNorth(i, j))
-                            {
-                                _table.SetAttachmentNorth(i, j, false);
-                            }
-
-                            if (_table.GetAttachmentSouth(i, j))
-                            {
-                                _table.SetAttachmentSouth(i, j, false);
-                            }
-
-                            if (_table.GetAttachmentWest(i, j))
-                            {
-                                _table.SetAttachmentWest(i, j, false);
-                            }
-                        }
-
-                        if (_table.GetFieldValue(i, j) == 1 || _table.GetFieldValue(i, j) == 2 || _table.GetFieldValue(i, j) == 8 || _table.GetFieldValue(i, j) == 9)
-                        {
-                            if (_table.GetFieldValue(i, j + 1) == 7 && _table.GetAttachmentEast(i, j))
-                            {
-                                _table.SetAttachmentEast(i, j, false);
-                            }
-
-                            if (_table.GetFieldValue(i, j - 1) == 7 && _table.GetAttachmentWest(i, j))
-                            {
-                                _table.SetAttachmentWest(i, j, false);
-                            }
-
-                            if (_table.GetFieldValue(i + 1, j) == 7 && _table.GetAttachmentSouth(i, j))
-                            {
-                                _table.SetAttachmentSouth(i, j, false);
-                            }
-
-                            if (_table.GetFieldValue(i - 1, j) == 7 && _table.GetAttachmentNorth(i, j))
-                            {
-                                _table.SetAttachmentNorth(i, j, false);
-                            }
-                        }    
-                    }
-                }
-                GenerateShape();
             }
         }
         /// <summary>
@@ -598,7 +601,7 @@ namespace ELTE.Robotok.Model
                     {
                         if (_table.GetFieldValue(i, j) == num)
                         {
-                            if (!_table.HasAttachments(i - 1, j) && (_table.GetFieldValue(i - 1, j) == 0 || _table.GetFieldValue(i - 1, j) == 3 || _table.GetFieldValue(i - 1, j) == 4 || _table.GetFieldValue(i - 1, j) == 5 || _table.GetFieldValue(i - 1, j) == 6))
+                            if (!_table.HasAttachments(i - 1, j) && (_table.GetFieldValue(i - 1, j) == 0 || _table.GetFieldValue(i - 1, j) == 3 || _table.GetFieldValue(i - 1, j) == 4 || _table.GetFieldValue(i - 1, j) == 5 || _table.GetFieldValue(i - 1, j) == 6 || _table.GetFieldValue(i - 1, j) == 11 || _table.GetFieldValue(i - 1, j) == 12))
                             {
                                 if (_table.GetFieldRemainingCleaningOperations(i - 1, j) != 1)
                                 {
@@ -629,7 +632,7 @@ namespace ELTE.Robotok.Model
                     {
                         if (_table.GetFieldValue(i, j) == num)
                         {
-                            if (!_table.HasAttachments(i + 1, j) && (_table.GetFieldValue(i + 1, j) == 0 || _table.GetFieldValue(i + 1, j) == 3 || _table.GetFieldValue(i + 1, j) == 4 || _table.GetFieldValue(i + 1, j) == 5 || _table.GetFieldValue(i + 1, j) == 6))
+                            if (!_table.HasAttachments(i + 1, j) && (_table.GetFieldValue(i + 1, j) == 0 || _table.GetFieldValue(i + 1, j) == 3 || _table.GetFieldValue(i + 1, j) == 4 || _table.GetFieldValue(i + 1, j) == 5 || _table.GetFieldValue(i + 1, j) == 6 || _table.GetFieldValue(i - 1, j) == 11 || _table.GetFieldValue(i - 1, j) == 12))
                             {
                                 if (_table.GetFieldRemainingCleaningOperations(i + 1, j) != 1)
                                 {
@@ -659,7 +662,7 @@ namespace ELTE.Robotok.Model
                     {
                         if (_table.GetFieldValue(i, j) == num)
                         {
-                            if (!_table.HasAttachments(i, j - 1) && (_table.GetFieldValue(i, j - 1) == 0 || _table.GetFieldValue(i, j - 1) == 3 || _table.GetFieldValue(i, j - 1) == 4 || _table.GetFieldValue(i, j - 1) == 5 || _table.GetFieldValue(i, j - 1) == 6))
+                            if (!_table.HasAttachments(i, j - 1) && (_table.GetFieldValue(i, j - 1) == 0 || _table.GetFieldValue(i, j - 1) == 3 || _table.GetFieldValue(i, j - 1) == 4 || _table.GetFieldValue(i, j - 1) == 5 || _table.GetFieldValue(i, j - 1) == 6 || _table.GetFieldValue(i - 1, j) == 11 || _table.GetFieldValue(i - 1, j) == 12))
                             {
                                 if (_table.GetFieldRemainingCleaningOperations(i, j - 1) != 1)
                                 {
@@ -689,7 +692,7 @@ namespace ELTE.Robotok.Model
                     {
                         if (_table.GetFieldValue(i, j) == num)
                         {
-                            if (!_table.HasAttachments(i, j + 1) && (_table.GetFieldValue(i, j + 1) == 0 || _table.GetFieldValue(i, j + 1) == 3 || _table.GetFieldValue(i, j + 1) == 4 || _table.GetFieldValue(i, j + 1) == 5 || _table.GetFieldValue(i, j + 1) == 6))
+                            if (!_table.HasAttachments(i, j + 1) && (_table.GetFieldValue(i, j + 1) == 0 || _table.GetFieldValue(i, j + 1) == 3 || _table.GetFieldValue(i, j + 1) == 4 || _table.GetFieldValue(i, j + 1) == 5 || _table.GetFieldValue(i, j + 1) == 6 || _table.GetFieldValue(i - 1, j) == 11 || _table.GetFieldValue(i - 1, j) == 12))
                             {
                                 if (_table.GetFieldRemainingCleaningOperations(i, j + 1) != 1)
                                 {
@@ -1238,6 +1241,7 @@ namespace ELTE.Robotok.Model
                                 _redTeamPoints += _firstTaskPoints;
                             }
 
+                            RegenerateShape(result);
                         }
                         else if (result == 2)
                         {
@@ -1249,8 +1253,11 @@ namespace ELTE.Robotok.Model
                             {
                                 _redTeamPoints += _secondTaskPoints;
                             }
+
+                            RegenerateShape(result);
                         }
 
+                        
                         _table.SetAttachmentNorth(playerCoordinateX, playerCoordinateY, false);
                         return true;
                     }
@@ -1260,7 +1267,7 @@ namespace ELTE.Robotok.Model
                     }
 
                 }
-                else if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 6)
+                else if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 6 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 11 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 12)
                 {
                     _table.SetAttachmentNorth(playerCoordinateX, playerCoordinateY, false);
                     _table.SetAttachmentSouth(playerCoordinateX - 1, playerCoordinateY, false);
@@ -1288,7 +1295,8 @@ namespace ELTE.Robotok.Model
                             {
                                 _redTeamPoints += _firstTaskPoints;
                             }
-                            
+
+                            RegenerateShape(result);
                         } 
                         else if (result == 2)
                         {
@@ -1300,6 +1308,8 @@ namespace ELTE.Robotok.Model
                             {
                                 _redTeamPoints += _secondTaskPoints;
                             }
+
+                            RegenerateShape(result);
                         }
 
                         _table.SetAttachmentSouth(playerCoordinateX, playerCoordinateY, false);
@@ -1310,7 +1320,7 @@ namespace ELTE.Robotok.Model
                         return false;
                     }
                 }
-                else if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 6)
+                else if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 6 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 11 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 12)
                 {
                     _table.SetAttachmentSouth(playerCoordinateX, playerCoordinateY, false);
                     _table.SetAttachmentNorth(playerCoordinateX + 1, playerCoordinateY, false);
@@ -1340,6 +1350,7 @@ namespace ELTE.Robotok.Model
                                 _redTeamPoints += _firstTaskPoints;
                             }
 
+                            RegenerateShape(result);
                         }
                         else if (result == 2)
                         {
@@ -1351,6 +1362,8 @@ namespace ELTE.Robotok.Model
                             {
                                 _redTeamPoints += _secondTaskPoints;
                             }
+
+                            RegenerateShape(result);
                         }
 
                         _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY, false);
@@ -1361,7 +1374,7 @@ namespace ELTE.Robotok.Model
                         return false;
                     }
                 }
-                else if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 6)
+                else if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 6 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 11 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 12)
                 {
                     _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY, false);
                     _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY + 1, false);
@@ -1390,7 +1403,7 @@ namespace ELTE.Robotok.Model
                             {
                                 _redTeamPoints += _firstTaskPoints;
                             }
-
+                            RegenerateShape(result);
                         }
                         else if (result == 2)
                         {
@@ -1402,6 +1415,7 @@ namespace ELTE.Robotok.Model
                             {
                                 _redTeamPoints += _secondTaskPoints;
                             }
+                            RegenerateShape(result);
                         }
 
                         _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY, false);
@@ -1412,7 +1426,7 @@ namespace ELTE.Robotok.Model
                         return false;
                     }
                 }
-                else if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 6)
+                else if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 6 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 11 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 12)
                 {
                     _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY, false);
                     _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY - 1, false);
@@ -1492,7 +1506,7 @@ namespace ELTE.Robotok.Model
             // Irányparamétertől függően megpróbáljuk csatlakoztatni a játékost a kockához (ami csak építőkocka lehet)
             if (direction == "észak")
             {
-                if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 6)
+                if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 6 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 11 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 12)
                 {
                     // Itt a csatolás kicsit redundáns, hiszen pl. északi csatoláskor a játékos északi csatoló részét is át kell állítani, továbbá annak a déli részét is, amelyik kockához akarunk csatlakozni
                     _table.SetAttachmentNorth(playerCoordinateX, playerCoordinateY, true);
@@ -1506,7 +1520,7 @@ namespace ELTE.Robotok.Model
             }
             else if (direction == "dél")
             {
-                if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 6)
+                if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 6 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 11 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 12)
                 {
                     _table.SetAttachmentSouth(playerCoordinateX, playerCoordinateY, true);
                     _table.SetAttachmentNorth(playerCoordinateX + 1, playerCoordinateY, true);
@@ -1520,7 +1534,7 @@ namespace ELTE.Robotok.Model
 
             else if (direction == "kelet")
             {
-                if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 6)
+                if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 6 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 11 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 12)
                 {
                     _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY, true);
                     _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY + 1, true);
@@ -1534,7 +1548,7 @@ namespace ELTE.Robotok.Model
 
             else // Biztosan a nyugati irány, hiszen a direction változó értéke azelőtt ellenőrzésre kerül, mielőtt meghívodna a metódus
             {
-                if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 6)
+                if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 6 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 11 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 12)
                 {
                     _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY, true);
                     _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY - 1, true);
@@ -1918,14 +1932,14 @@ namespace ELTE.Robotok.Model
             // Következő lépésként ellenőrizzük, hogy a két kocka olyan típusú-e, amit lehet csatolni (mindegy melyik játékoséval nézzük, hiszen ha idáig eljutunk akkor a két játékos által megadott kockák egyenlőek)
             if (group == "green")
             {
-                if (!(_table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 3 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 4 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 5 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 6) || !(_table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 3 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 4 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 5 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 6))
+                if (!(_table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 3 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 4 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 5 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 6 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 11 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 12) || !(_table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 3 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 4 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 5 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 6 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 11 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 12))
                 {
                     return false;
                 }
             }
             else
             {
-                if (!(_table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 3 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 4 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 5 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 6) || !(_table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 3 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 4 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 5 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 6))
+                if (!(_table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 3 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 4 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 5 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 6 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 11 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 12) || !(_table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 3 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 4 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 5 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 6 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 11 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 12))
                 {
                     return false;
                 }
@@ -2014,7 +2028,7 @@ namespace ELTE.Robotok.Model
                 }
             }
             // Először ellenőrizzük, hogy építőkockákat adtak-e meg a szétválasztáshoz
-            if (!(_table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 3 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 4 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 5 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 6) || !(_table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 3 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 4 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 5 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 6))
+            if (!(_table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 3 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 4 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 5 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 6 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 11 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 12) || !(_table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 3 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 4 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 5 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 6 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 11 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 12))
             {
                 return false;
             }
@@ -2711,7 +2725,7 @@ namespace ELTE.Robotok.Model
             if (_firstTaskDeadline == 0)
             {
                 _figure1 = new Shape();
-                while(_figure1.Figure == _figure2.Figure)
+                while(_figure1.GetColor() == _figure2.GetColor())
                 {
                     _figure1 = new Shape();
                 }
@@ -2719,17 +2733,17 @@ namespace ELTE.Robotok.Model
                 if (_figure1.Figure == _figure1.Triangle)
                 {
                     _firstTaskPoints = 50;
-                    _firstTaskDeadline = 10; 
+                    _firstTaskDeadline = 45; 
                 }
                 else if (_figure1.Figure == _figure1.Cube || _figure1.Figure == _figure1.lType || _figure1.Figure == _figure1.Straight)
                 {
-                    _firstTaskPoints = 75;
-                    _firstTaskDeadline = 15;
+                    _firstTaskPoints = 65;
+                    _firstTaskDeadline = 77;
                 }
                 else if (_figure1.Figure == _figure1.PiType || _figure1.Figure == _figure1.Rhombus)
                 {
-                    _firstTaskPoints = 100;
-                    _firstTaskDeadline = 25;
+                    _firstTaskPoints = 80;
+                    _firstTaskDeadline = 100;
                 }
 
                 Random random = new Random();
@@ -2774,7 +2788,7 @@ namespace ELTE.Robotok.Model
             {
                 _figure2 = new Shape();
 
-                while (_figure1.Figure == _figure2.Figure)
+                while (_figure1.GetColor() == _figure2.GetColor())
                 {
                     _figure2 = new Shape();
                 }
@@ -2782,17 +2796,17 @@ namespace ELTE.Robotok.Model
                 if (_figure2.Figure == _figure2.Triangle)
                 {
                     _secondTaskPoints = 50;
-                    _secondTaskDeadline = 10;
+                    _secondTaskDeadline = 45;
                 }
                 else if (_figure2.Figure == _figure2.Cube || _figure2.Figure == _figure2.lType || _figure2.Figure == _figure2.Straight)
                 {
-                    _secondTaskPoints = 75;
-                    _secondTaskDeadline = 15;
+                    _secondTaskPoints = 65;
+                    _secondTaskDeadline = 77;
                 }
                 else if (_figure2.Figure == _figure2.PiType || _figure2.Figure == _figure2.Rhombus)
                 {
-                    _secondTaskPoints = 100;
-                    _secondTaskDeadline = 25;
+                    _secondTaskPoints = 80;
+                    _secondTaskDeadline = 100;
                 }
 
                 Random random = new Random();
@@ -2833,6 +2847,88 @@ namespace ELTE.Robotok.Model
             } 
         }
 
+        /// <summary>
+        /// Régi alakzat létrehozása
+        /// </summary>
+        private void RegenerateShape(int num)
+        {
+            if (num == 1)
+            {
+                Random random = new Random();
+
+                for (int x = 0; x < _figure1.Figure.GetLength(0); ++x)
+                {
+                    for (int y = 0; y < _figure1.Figure.GetLength(1); ++y)
+                    {
+                        if (_figure1.GetFieldValue(x, y) != -2)
+                        {
+                            Int32 figureOne_i = random.Next(4, 13);
+                            Int32 figureOne_j = random.Next(5, 23);
+                            while (_table.GetFieldValue(figureOne_i, figureOne_j) != 7)
+                            {
+                                figureOne_i = random.Next(4, 13);
+                                figureOne_j = random.Next(5, 23);
+                            }
+
+                            _table.SetValue(figureOne_i, figureOne_j, _figure1.GetColor(), _cleaningOperations);
+                        }
+
+                    }
+                }
+
+                for (int i = 0; i < _figure1.Figure.GetLength(0); ++i)
+                {
+                    for (int j = 0; j < _figure1.Figure.GetLength(1); ++j)
+                    {
+                        if (_figure1.GetFieldValue(i, j) != -2)
+                        {
+                            _tableNoticeBoardOne.SetValue(i, j, _figure1.GetFieldValue(i, j), _cleaningOperations);
+                        }
+                        else
+                        {
+                            _tableNoticeBoardOne.SetValue(i, j, -2, -1);
+                        }
+                    }
+                }
+            } else if (num == 2)
+            {
+                Random random = new Random();
+                for (int x = 0; x < _figure2.Figure.GetLength(0); ++x)
+                {
+                    for (int y = 0; y < _figure2.Figure.GetLength(1); ++y)
+                    {
+                        if (_figure2.GetFieldValue(x, y) != -2)
+                        {
+                            Int32 figureTwo_i = random.Next(4, 13);
+                            Int32 figureTwo_j = random.Next(5, 23);
+                            while (_table.GetFieldValue(figureTwo_i, figureTwo_j) != 7)
+                            {
+                                figureTwo_i = random.Next(4, 13);
+                                figureTwo_j = random.Next(5, 23);
+                            }
+
+                            _table.SetValue(figureTwo_i, figureTwo_j, _figure2.GetColor(), _cleaningOperations);
+                        }
+
+                    }
+                }
+
+                for (int i = 0; i < _figure2.Figure.GetLength(0); ++i)
+                {
+                    for (int j = 0; j < _figure2.Figure.GetLength(1); ++j)
+                    {
+                        if (_figure2.GetFieldValue(i, j) != -2)
+                        {
+                            _tableNoticeBoardTwo.SetValue(i, j, _figure2.GetFieldValue(i, j), _cleaningOperations);
+                        }
+                        else
+                        {
+                            _tableNoticeBoardTwo.SetValue(i, j, -2, -1);
+                        }
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Private event methods
