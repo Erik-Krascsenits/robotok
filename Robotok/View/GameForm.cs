@@ -899,11 +899,6 @@ namespace ELTE.Robotok.View
             }
         }
 
-        public void GameForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
         // Robotok képeinek forgatása 
         public void RotateImage(int i, int j)
         {
