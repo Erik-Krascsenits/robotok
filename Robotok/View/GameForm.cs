@@ -1027,10 +1027,12 @@ namespace ELTE.Robotok.View
                         if (GameMenuForm.instance._model.AttachCubes("green") == true)
                         {
                             _successText = "Sikeres összekapcsolás!";
+                            GameMenuForm.instance._model.greenTeamCubeAttachState = 0;
                         }
                         else
                         {
                             _successText = "Sikertelen összekapcsolás!";
+                            GameMenuForm.instance._model.greenTeamCubeAttachState = 0;
                         }
                     }
                     else if (GameMenuForm.instance._model.greenTeamCubeAttachState > 2)
@@ -1059,10 +1061,12 @@ namespace ELTE.Robotok.View
                         if (GameMenuForm.instance._model.AttachCubes("red") == true)
                         {
                             _successText = "Sikeres összekapcsolás!";
+                            GameMenuForm.instance._model.redTeamCubeAttachState = 0;
                         }
                         else
                         {
                             _successText = "Sikertelen összekapcsolás!";
+                            GameMenuForm.instance._model.redTeamCubeAttachState = 0;
                         }
                     }
                     else if (GameMenuForm.instance._model.redTeamCubeAttachState > 2)
