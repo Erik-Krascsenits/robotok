@@ -93,12 +93,12 @@ namespace ELTE.Robotok.Model
         private List<CubeToEvaluate> _cubesToEvaluate2 = new List<CubeToEvaluate>();
         private List<CubeToEvaluate> _figure1ToEvaluate = new List<CubeToEvaluate>();
         private List<CubeToEvaluate> _figure2ToEvaluate = new List<CubeToEvaluate>();
-        private Int32 _firstTaskDeadline;
-        private Int32 _firstTaskPoints;
-        private Int32 _secondTaskDeadline;
-        private Int32 _secondTaskPoints;
-        private Int32 _greenTeamPoints;
-        private Int32 _redTeamPoints;
+        private Int32 _firstTaskDeadline; // első feladat határideje
+        private Int32 _firstTaskPoints; // első feladatért járó pont
+        private Int32 _secondTaskDeadline; // második feladat határideje
+        private Int32 _secondTaskPoints; // második feladatért járó pont
+        private Int32 _greenTeamPoints; // zöld csapat pontszáma
+        private Int32 _redTeamPoints; // piros csapat pontszáma
 
         /* Eltároljuk minden játékosról, hogy milyen műveletet végzet legutoljára sikerességtől függetlenül
         0 - még nem végzett műveletet (alapállapot játék elején), 1 - várakozás, 2 - mozgás, 3 - forgás, 4 - kocka csatolása robothoz, 5 - kocka lecsatolása robotról, 6 - kocka-kocka összekapcsolás, 7 - kocka-kocka szétválasztás, 8 - tisztítás 
@@ -131,11 +131,11 @@ namespace ELTE.Robotok.Model
         /// </summary>
         public Int32 SecondTaskDeadline { get { return _secondTaskDeadline; } }
         /// <summary>
-        /// Első feladatra járó pontszám.
+        /// Első feladatért járó pontszám.
         /// </summary>
         public Int32 FirstTaskPoints { get { return _firstTaskPoints; } }
         /// <summary>
-        /// Második feladatra járó pontszám.
+        /// Második feladatért járó pontszám.
         /// </summary>
         public Int32 SecondTaskPoints { get { return _secondTaskPoints; } }
         /// <summary>
@@ -272,6 +272,7 @@ namespace ELTE.Robotok.Model
                 _tableRedPlayerTwo = new RobotokTable(11, 20);
             }
             _gameStepCount = 300; // játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
+            // alapból nulla, de majd a GenerateShape-ben ennek lesz valami más értéke
             _firstTaskDeadline = 0;
             _secondTaskDeadline = 0;
 
@@ -484,87 +485,85 @@ namespace ELTE.Robotok.Model
                         _remainingSeconds = 4;
                         break;
                 }
+
+                if (_firstTaskDeadline == 0 || _secondTaskDeadline == 0) // megnézzük, hogy valamelyik feladatnak már lejárt a határideje
+                {
+                    for (int i = 0; i < _table.SizeX; i++)
+                    {
+                        for (int j = 0; j < _table.SizeY; j++)
+                        {
+                            if (_table.GetFieldValue(i, j) == _figure1.GetColor() && _firstTaskDeadline == 0)
+                            {
+                                _table.SetValue(i, j, 7, -1); // figure1 építőkockai törlése
+                            }
+
+                            if (_table.GetFieldValue(i, j) == _figure2.GetColor() && _secondTaskDeadline == 0)
+                            {
+                                _table.SetValue(i, j, 7, -1); // figure2 építőkockai törlése
+                            }
+
+                        }
+                    }
+
+                    for (int i = 0; i < _table.SizeX; i++) // lehet hogy kockák már voltak összekapcsolva, ezért az összekapcsolást is törölni kell
+                    {
+                        for (int j = 0; j < _table.SizeY; j++)
+                        {
+                            if (_table.GetFieldValue(i, j) == 7 && _table.HasAttachments(i, j))
+                            {
+                                if (_table.GetAttachmentEast(i, j))
+                                {
+                                    _table.SetAttachmentEast(i, j, false);
+                                }
+
+                                if (_table.GetAttachmentNorth(i, j))
+                                {
+                                    _table.SetAttachmentNorth(i, j, false);
+                                }
+
+                                if (_table.GetAttachmentSouth(i, j))
+                                {
+                                    _table.SetAttachmentSouth(i, j, false);
+                                }
+
+                                if (_table.GetAttachmentWest(i, j))
+                                {
+                                    _table.SetAttachmentWest(i, j, false);
+                                }
+                            }
+
+                            if (_table.GetFieldValue(i, j) == 1 || _table.GetFieldValue(i, j) == 2 || _table.GetFieldValue(i, j) == 8 || _table.GetFieldValue(i, j) == 9) // az az eset, amikor játékoshoz hozzá voltak kapcsolódva a kockák
+                            {
+                                if (_table.GetFieldValue(i, j + 1) == 7 && _table.GetAttachmentEast(i, j))
+                                {
+                                    _table.SetAttachmentEast(i, j, false);
+                                }
+
+                                if (_table.GetFieldValue(i, j - 1) == 7 && _table.GetAttachmentWest(i, j))
+                                {
+                                    _table.SetAttachmentWest(i, j, false);
+                                }
+
+                                if (_table.GetFieldValue(i + 1, j) == 7 && _table.GetAttachmentSouth(i, j))
+                                {
+                                    _table.SetAttachmentSouth(i, j, false);
+                                }
+
+                                if (_table.GetFieldValue(i - 1, j) == 7 && _table.GetAttachmentNorth(i, j))
+                                {
+                                    _table.SetAttachmentNorth(i, j, false);
+                                }
+                            }
+                        }
+                    }
+                    GenerateShape(); // itt generálunk egy új alakzatot
+                }
+
                 if (player == 1)
                 {
                     _gameStepCount--; // csökkenti a hátralevő lépések számát, ha az első játékos következik
                     _firstTaskDeadline--;
                     _secondTaskDeadline--;
-                }
-
-                if (player == 2 || player == 4)
-                {
-                    if (_firstTaskDeadline == 0 || _secondTaskDeadline == 0)
-                    {
-                        for (int i = 0; i < _table.SizeX; i++)
-                        {
-                            for (int j = 0; j < _table.SizeY; j++)
-                            {
-                                if (_table.GetFieldValue(i, j) == _figure1.GetColor() && _firstTaskDeadline == 0)
-                                {
-                                    _table.SetValue(i, j, 7, -1); // figure1 építőkockai törlése
-                                }
-
-                                if (_table.GetFieldValue(i, j) == _figure2.GetColor() && _secondTaskDeadline == 0)
-                                {
-                                    _table.SetValue(i, j, 7, -1); // figure2 építőkockai törlése
-                                }
-
-                            }
-                        }
-
-                        for (int i = 0; i < _table.SizeX; i++) // lehet hogy kockák már voltak összekapcsolva, ezért az összekapcsolást is törölni kell
-                        {
-                            for (int j = 0; j < _table.SizeY; j++)
-                            {
-                                if (_table.GetFieldValue(i, j) == 7 && _table.HasAttachments(i, j))
-                                {
-                                    if (_table.GetAttachmentEast(i, j))
-                                    {
-                                        _table.SetAttachmentEast(i, j, false);
-                                    }
-
-                                    if (_table.GetAttachmentNorth(i, j))
-                                    {
-                                        _table.SetAttachmentNorth(i, j, false);
-                                    }
-
-                                    if (_table.GetAttachmentSouth(i, j))
-                                    {
-                                        _table.SetAttachmentSouth(i, j, false);
-                                    }
-
-                                    if (_table.GetAttachmentWest(i, j))
-                                    {
-                                        _table.SetAttachmentWest(i, j, false);
-                                    }
-                                }
-
-                                if (_table.GetFieldValue(i, j) == 1 || _table.GetFieldValue(i, j) == 2 || _table.GetFieldValue(i, j) == 8 || _table.GetFieldValue(i, j) == 9)
-                                {
-                                    if (_table.GetFieldValue(i, j + 1) == 7 && _table.GetAttachmentEast(i, j))
-                                    {
-                                        _table.SetAttachmentEast(i, j, false);
-                                    }
-
-                                    if (_table.GetFieldValue(i, j - 1) == 7 && _table.GetAttachmentWest(i, j))
-                                    {
-                                        _table.SetAttachmentWest(i, j, false);
-                                    }
-
-                                    if (_table.GetFieldValue(i + 1, j) == 7 && _table.GetAttachmentSouth(i, j))
-                                    {
-                                        _table.SetAttachmentSouth(i, j, false);
-                                    }
-
-                                    if (_table.GetFieldValue(i - 1, j) == 7 && _table.GetAttachmentNorth(i, j))
-                                    {
-                                        _table.SetAttachmentNorth(i, j, false);
-                                    }
-                                }
-                            }
-                        }
-                        GenerateShape();
-                    }
                 }
             }
         }
@@ -1230,7 +1229,7 @@ namespace ELTE.Robotok.Model
                     int result = EvaluateShape("észak");
                     if (result > 0)
                     {
-                        if (result == 1)
+                        if (result == 1) // hozzáadunk pontokat
                         {
                             if (playerNumber == 1 || playerNumber == 2)
                             {
@@ -1241,7 +1240,7 @@ namespace ELTE.Robotok.Model
                                 _redTeamPoints += _firstTaskPoints;
                             }
 
-                            RegenerateShape(result);
+                            RegenerateShape(result); // újragenerálunk megfelelő alakzatot
                         }
                         else if (result == 2)
                         {
@@ -2477,7 +2476,6 @@ namespace ELTE.Robotok.Model
 
         }
 
-
         /// <summary>
         /// Akadályok generálása.
         /// </summary>
@@ -2733,7 +2731,7 @@ namespace ELTE.Robotok.Model
                 if (_figure1.Figure == _figure1.Triangle)
                 {
                     _firstTaskPoints = 50;
-                    _firstTaskDeadline = 45; 
+                    _firstTaskDeadline = 60; 
                 }
                 else if (_figure1.Figure == _figure1.Cube || _figure1.Figure == _figure1.lType || _figure1.Figure == _figure1.Straight)
                 {
@@ -2796,7 +2794,7 @@ namespace ELTE.Robotok.Model
                 if (_figure2.Figure == _figure2.Triangle)
                 {
                     _secondTaskPoints = 50;
-                    _secondTaskDeadline = 45;
+                    _secondTaskDeadline = 60;
                 }
                 else if (_figure2.Figure == _figure2.Cube || _figure2.Figure == _figure2.lType || _figure2.Figure == _figure2.Straight)
                 {

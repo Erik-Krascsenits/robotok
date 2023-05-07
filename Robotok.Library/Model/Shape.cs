@@ -89,7 +89,7 @@ namespace Robotok.Library.Model
         private void GenerateShape()
         {
             Random temp = new Random();
-            switch (temp.Next(2, 7))
+            switch (temp.Next(1, 6))
             {
                 case 1:
                     _shape = _cube;
@@ -104,8 +104,7 @@ namespace Robotok.Library.Model
                     _shape = _lType;
                     break;
                 case 5:
-                    /*_shape = _rhombus;*/
-                    _shape = _triangle;
+                    _shape = _rhombus;
                     break;
                 case 6:
                     _shape = _piType;
