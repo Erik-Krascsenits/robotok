@@ -11,7 +11,7 @@ namespace Robotok.Library.Model
         #region Fields
         private Int32 x; // a táblán vízszintes elhelyezkedése
         private Int32 y; // a táblán függőleges elhelyezkedése
-        private Int32[,] _shape; // maga az alakzat
+        private Int32[,] _shape = null!; // maga az alakzat
         private Int32[,] _cube = new Int32[4, 4] { // egyszerűség kedvéért, most minden alakzat 4x4 méretű mátrixban lesz, de jövőben ez megváltoztathatjuk
             {-2, -2, -2, -2},
             {-2, -2, -2, -2},
@@ -42,16 +42,16 @@ namespace Robotok.Library.Model
 
         private Int32[,] _rhombus = new Int32[4, 4] {
             {-2, -2, -2, -2},
-            {-2, -2, 3, -2},
-            {-2, 3, 3, 3},
-            {-2, -2, 3, -2}
+            {-2, -2, 11, -2},
+            {-2, 11, 11, 11},
+            {-2, -2, 11, -2}
         };
 
         private Int32[,] _piType = new Int32[4, 4] {
             {-2, -2, -2, -2},
             {-2, -2, -2, -2},
-            {4, 4, 4, 4},
-            {4, -2, -2, 4}
+            {12, 12, 12, 12},
+            {12, -2, -2, 12}
         };
 
         #endregion
@@ -61,13 +61,20 @@ namespace Robotok.Library.Model
         public Int32 X { get { return x; } }
         public Int32 Y { get { return y; } }
         public Int32[,] Figure { get { return _shape; } }
+        public Int32[,] Cube { get { return _cube; } }
+        public Int32[,] Triangle { get { return _triangle; } }
+        public Int32[,] Straight { get { return _straight; } }
+        public Int32[,] lType { get { return _lType; } }
+        public Int32[,] Rhombus { get { return _rhombus; } }
+        public Int32[,] PiType { get { return _piType; } }
+
+
 
         #endregion
 
         #region Constructor
         public Shape() 
         {
-            _shape = _cube; // nem annyira fonts, hiszen majd egy új random alkzattá válik
             GenerateShape();
             x = _shape.GetLength(0);
             y = _shape.GetLength(1);
@@ -82,7 +89,7 @@ namespace Robotok.Library.Model
         private void GenerateShape()
         {
             Random temp = new Random();
-            switch (temp.Next(2, 7))
+            switch (temp.Next(1, 6))
             {
                 case 1:
                     _shape = _cube;
@@ -97,25 +104,11 @@ namespace Robotok.Library.Model
                     _shape = _lType;
                     break;
                 case 5:
-                    /*_shape = _rhombus;*/
-                    _shape = _triangle;
+                    _shape = _rhombus;
                     break;
                 case 6:
                     _shape = _piType;
                     break;
-            }
-        }
-        /// <summary>
-        /// Alakzat eltűntetése.
-        /// </summary>
-        private void Destroy()
-        {
-            for (Int32 i = 0; i < x; ++i)
-            {
-                for (Int32 j = 0; j < y; ++j)
-                {
-                    _shape[i, j] = -2;
-                }
             }
         }
         #endregion
@@ -165,22 +158,33 @@ namespace Robotok.Library.Model
         /// </summary>
         public int GetColor()
         {
-            if (_shape == _cube || _shape == _rhombus)
+            if (this._shape == _cube)
             {
                 return 3;
             }
 
-            if (_shape == _piType || _shape == _triangle)
+            if (this._shape == _triangle)
             {
                 return 4;
             }
 
-            if (_shape == _straight)
+            if (this._shape == _straight)
             {
                 return 5;
             }
 
-            return 6;
+            if (this._shape == _lType)
+            {
+                return 6;
+            }
+
+            if (this._shape == _rhombus)
+            {
+                return 11;
+            }
+
+            return 12;
+
         }
         #endregion
     }

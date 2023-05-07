@@ -65,7 +65,7 @@ namespace Robotok.TestCases
                     if (_model.Table.GetFieldValue(i, j) == 0)
                         walls++;
 
-                    if (_model.Table.GetFieldValue(i, j) == 3 || _model.Table.GetFieldValue(i, j) == 4 || _model.Table.GetFieldValue(i, j) == 5 || _model.Table.GetFieldValue(i, j) == 6)
+                    if (_model.Table.GetFieldValue(i, j) == 3 || _model.Table.GetFieldValue(i, j) == 4 || _model.Table.GetFieldValue(i, j) == 5 || _model.Table.GetFieldValue(i, j) == 6 || _model.Table.GetFieldValue(i, j) == 11 || _model.Table.GetFieldValue(i, j) == 12)
                         blocks++;
                 }
             }
@@ -109,7 +109,7 @@ namespace Robotok.TestCases
                     if (_model.Table.GetFieldValue(i, j) == 0)
                         walls++;
 
-                    if (_model.Table.GetFieldValue(i, j) == 3 || _model.Table.GetFieldValue(i, j) == 4 || _model.Table.GetFieldValue(i, j) == 5 || _model.Table.GetFieldValue(i, j) == 6)
+                    if (_model.Table.GetFieldValue(i, j) == 3 || _model.Table.GetFieldValue(i, j) == 4 || _model.Table.GetFieldValue(i, j) == 5 || _model.Table.GetFieldValue(i, j) == 6 || _model.Table.GetFieldValue(i, j) == 11 || _model.Table.GetFieldValue(i, j) == 12)
                         blocks++;
                 }
             }

@@ -136,7 +136,7 @@
             this.taskTwoPointsValueText.Name = "taskTwoPointsValueText";
             this.taskTwoPointsValueText.Size = new System.Drawing.Size(32, 25);
             this.taskTwoPointsValueText.TabIndex = 11;
-            this.taskTwoPointsValueText.Text = "64";
+            this.taskTwoPointsValueText.Text = GameMenuForm.instance._model.SecondTaskPoints.ToString();
             // 
             // taskTwoDeadlineValueText
             // 
@@ -146,7 +146,7 @@
             this.taskTwoDeadlineValueText.Name = "taskTwoDeadlineValueText";
             this.taskTwoDeadlineValueText.Size = new System.Drawing.Size(92, 25);
             this.taskTwoDeadlineValueText.TabIndex = 10;
-            this.taskTwoDeadlineValueText.Text = "255. lépés";
+            this.taskTwoDeadlineValueText.Text = GameMenuForm.instance._model.SecondTaskDeadline.ToString() + ". lépés";
             // 
             // taskOnePointsValueText
             // 
@@ -156,7 +156,7 @@
             this.taskOnePointsValueText.Name = "taskOnePointsValueText";
             this.taskOnePointsValueText.Size = new System.Drawing.Size(32, 25);
             this.taskOnePointsValueText.TabIndex = 9;
-            this.taskOnePointsValueText.Text = "52";
+            this.taskOnePointsValueText.Text = GameMenuForm.instance._model.FirstTaskPoints.ToString();
             // 
             // taskOneDeadlineValueText
             // 
@@ -166,7 +166,7 @@
             this.taskOneDeadlineValueText.Name = "taskOneDeadlineValueText";
             this.taskOneDeadlineValueText.Size = new System.Drawing.Size(92, 25);
             this.taskOneDeadlineValueText.TabIndex = 8;
-            this.taskOneDeadlineValueText.Text = "260. lépés";
+            this.taskOneDeadlineValueText.Text = GameMenuForm.instance._model.FirstTaskDeadline.ToString() + ". lépés";
             // 
             // stepsLeftText
             // 
@@ -196,7 +196,14 @@
             this.redGroupPointsValueText.Name = "redGroupPointsValueText";
             this.redGroupPointsValueText.Size = new System.Drawing.Size(22, 25);
             this.redGroupPointsValueText.TabIndex = 17;
-            this.redGroupPointsValueText.Text = "0";
+            if (GameMenuForm.instance._model.Teams != 2)
+            {
+                this.redGroupPointsValueText.Text = "-";
+            } 
+            else
+            {
+                this.redGroupPointsValueText.Text = GameMenuForm.instance._model.RedTeamPoints.ToString();
+            }
             // 
             // greenGroupPointsValueText
             // 
@@ -206,7 +213,7 @@
             this.greenGroupPointsValueText.Name = "greenGroupPointsValueText";
             this.greenGroupPointsValueText.Size = new System.Drawing.Size(22, 25);
             this.greenGroupPointsValueText.TabIndex = 16;
-            this.greenGroupPointsValueText.Text = "0";
+            this.greenGroupPointsValueText.Text = GameMenuForm.instance._model.GreenTeamPoints.ToString();
             // 
             // redGroupPointsText
             // 
