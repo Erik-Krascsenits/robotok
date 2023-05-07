@@ -146,7 +146,7 @@
             this.taskTwoDeadlineValueText.Name = "taskTwoDeadlineValueText";
             this.taskTwoDeadlineValueText.Size = new System.Drawing.Size(92, 25);
             this.taskTwoDeadlineValueText.TabIndex = 10;
-            this.taskTwoDeadlineValueText.Text = GameMenuForm.instance._model.SecondTaskDeadline.ToString() + ". lépés";
+            this.taskTwoDeadlineValueText.Text = GameMenuForm.instance._model.SecondTaskDeadline.ToString() + " lépés van hátra";
             // 
             // taskOnePointsValueText
             // 
@@ -166,7 +166,7 @@
             this.taskOneDeadlineValueText.Name = "taskOneDeadlineValueText";
             this.taskOneDeadlineValueText.Size = new System.Drawing.Size(92, 25);
             this.taskOneDeadlineValueText.TabIndex = 8;
-            this.taskOneDeadlineValueText.Text = GameMenuForm.instance._model.FirstTaskDeadline.ToString() + ". lépés";
+            this.taskOneDeadlineValueText.Text = GameMenuForm.instance._model.FirstTaskDeadline.ToString() + " lépés van hátra";
             // 
             // stepsLeftText
             // 
