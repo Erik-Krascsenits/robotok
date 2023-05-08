@@ -232,7 +232,6 @@ namespace ELTE.Robotok.Persistence
             return _fields[x, y]._remainingCleaningOperations;
         }
 
-
         /// <summary>
         /// Visszaadja hogy a mezőhöz van-e csatolva valami
         /// </summary>
@@ -250,7 +249,6 @@ namespace ELTE.Robotok.Persistence
                 return true;
             }
         }
-
 
         /// <summary>
         /// Visszaadja egy mező északi csatolási részéről, hogy van-e valami hozzá csatolva

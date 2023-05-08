@@ -91,6 +91,14 @@ namespace Robotok.WinForms.View
                     {
                         _buttonGrid[i, j].BackColor = Color.Violet;
                     }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 11)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Purple;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 12)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Aquamarine;
+                    }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 7)
                     {
                         _buttonGrid[i, j].BackColor = Color.White;
@@ -209,6 +217,14 @@ namespace Robotok.WinForms.View
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 6)
                     {
                         _buttonGrid[i, j].BackColor = Color.Violet;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 11)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Purple;
+                    }
+                    else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 12)
+                    {
+                        _buttonGrid[i, j].BackColor = Color.Aquamarine;
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 7)
                     {
