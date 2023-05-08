@@ -1978,19 +1978,19 @@ namespace ELTE.Robotok.Model
 
                 if (_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY))
                 {
-                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "észak");
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "észak", _table);
                 }
                 else if (_table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
                 {
-                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "dél");
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "dél", _table);
                 }
                 else if (_table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
                 {
-                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "kelet");
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "kelet", _table);
                 }
                 else
                 {
-                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "nyugat");
+                    AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "nyugat", _table);
                 }
 
                 bool validStep = true;
