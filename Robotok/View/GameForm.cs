@@ -17,6 +17,9 @@ namespace ELTE.Robotok.View
         private string? _successText; // a végrehajtott művelet sikeressége
         private bool _operationDone; // végzett-e valamilyen műveletet a játékos
         private int _activeCoordinateBox = 1; // 1 - első összekapcsolandó kocka koorinátáinak doboza 2 - második összekapcsolandó kocka koordinátáinak doboza
+
+        private Panel[,] _verticalPanels = null!; // függőleges panelek (kapcsolódások megjelenítésére)
+        private Panel[,] _horizontalPanels = null!; // vízszintes panelek
         #endregion
 
         #region Constructor
@@ -34,6 +37,7 @@ namespace ELTE.Robotok.View
             _operationDone = false;
             // Játéktáblák inicializálása
             GenerateTables();
+            GenerateAttachments();
 
         }
 
@@ -157,6 +161,15 @@ namespace ELTE.Robotok.View
                         {
                             _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
                         }
+                        if (!GameMenuForm.instance._model.TableGreenPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 10) // Manhattan távolságon kívüli mezők beállítása
+                        {
+                            Color col = _buttonGridPlayer[i - 3, j - 4].BackColor;
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(150, col.R, col.G, col.B);
+                        }
+                        if (GameMenuForm.instance._model.TableGreenPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 7) // Manhattan távolságon belüli mezők beállítása
+                        {
+                            _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(70, Color.Green.R, Color.Green.G, Color.Green.B);
+                        }
                         Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
                         // felvesszük az ablakra a gombot
                         successfulText.Text = "Nincs művelet!";
@@ -257,6 +270,40 @@ namespace ELTE.Robotok.View
                     }
                     Controls.Add(_buttonGridNoticeBoardTwo[i, j]);
                     // felvesszük az ablakra a gombot
+                }
+            }
+        }
+
+
+        // Panelek generálása a játékos nézetre
+        private void GenerateAttachments()
+        {
+
+            _verticalPanels = new Panel[GameMenuForm.instance._model.TableGreenPlayerOne.SizeX + 1, GameMenuForm.instance._model.TableGreenPlayerOne.SizeY + 1];
+            _horizontalPanels = new Panel[GameMenuForm.instance._model.TableGreenPlayerOne.SizeX + 1, GameMenuForm.instance._model.TableGreenPlayerOne.SizeY + 1];
+
+            for (Int32 i = 0; i <= GameMenuForm.instance._model.TableGreenPlayerOne.SizeX; i++)
+            {
+                for (Int32 j = 0; j <= GameMenuForm.instance._model.TableGreenPlayerOne.SizeY; j++)
+                {
+                    _verticalPanels[i, j] = new Panel();
+                    _verticalPanels[i, j].Location = new Point(63 + 25 * j-4, 88 + 25 * i-3); // elhelyezkedés
+                    _verticalPanels[i, j].Size = new Size(5, 25); // méret
+                    _verticalPanels[i, j].BackColor = Color.Red; // debuggolás miatt piros, hogy a határoknál ne olvadjon bele a fekete színbe, később át lehet írni
+                    _verticalPanels[i, j].Visible = false;
+
+                    _horizontalPanels[i, j] = new Panel();
+                    _horizontalPanels[i, j].Location = new Point(64 + 25 * j-4, 87 + 25 * i-3);
+                    _horizontalPanels[i, j].Size = new Size(25, 5);
+                    _horizontalPanels[i, j].BackColor = Color.Red;
+                    _horizontalPanels[i, j].Visible = false;
+
+                    Controls.Add(_verticalPanels[i, j]); // Felvesszük őket az ablakra
+                    Controls.Add(_horizontalPanels[i, j]);
+
+                    _verticalPanels[i, j].BringToFront(); // Előtérbe kell hozni a paneleket, hogy a pálya gombjai ne takarják el
+                    _horizontalPanels[i, j].BringToFront();
+
                 }
             }
         }
@@ -423,6 +470,7 @@ namespace ELTE.Robotok.View
             {
                 if (GameMenuForm.instance._model.Rotate(operationParameter.Text, _activePlayer))
                 {
+                    GameMenuForm.instance._model.RotatePlayerView(operationParameter.Text, _activePlayer);
                     _successText = "Sikeres forgás!";
                 }
                 else
@@ -446,6 +494,7 @@ namespace ELTE.Robotok.View
         //Lejebb egy nagy függvény van. Igazából jobb lene, hogy ha lenne valami eszköz a tömörítéséhez, de szerintem ez itt lehetetlen, hoszen minden jétákosnak van egy saját táblája, és így külön mindegyiket kell frissíteni.
         public void RefreshTable(int active)
         {
+           
             _activePlayer = active;
             if (_operationDone)
             {
@@ -456,7 +505,9 @@ namespace ELTE.Robotok.View
                 successfulText.Text = "Nincs művelet!";
             }
             _operationDone = false;
-
+            
+                      
+         
             if (active == 1) //első játékos zöld csapat esetén
             {
                 nextRoundValueText.Text = "Zöld csapat 2. játékos";
@@ -467,6 +518,12 @@ namespace ELTE.Robotok.View
                     {
                         if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                         {
+                            if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 10) // Kapcsolatok megjelenítésének frissítése
+                            {
+                                RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
+                            }
+                            
+
                             _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                             if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == -1)
                             {
@@ -481,13 +538,13 @@ namespace ELTE.Robotok.View
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                RotateImage(i, j);
+                                RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 2)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                RotateImage(i, j);
+                                RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 3)
                             {
@@ -527,17 +584,26 @@ namespace ELTE.Robotok.View
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                RotateImage(i, j);
+                                RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 9)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                RotateImage(i, j);
+                                RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
+                                ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
+                            }
+                            if (!GameMenuForm.instance._model.TableGreenPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 10)
+                            {
+                                Color col = _buttonGridPlayer[i - 3, j - 4].BackColor;
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(150, col.R, col.G, col.B);
+                            }
+                            if (GameMenuForm.instance._model.TableGreenPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 7){
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(70, Color.Green.R, Color.Green.G, Color.Green.B);
                             }
                             Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
                         }
@@ -561,6 +627,10 @@ namespace ELTE.Robotok.View
                     {
                         if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                         {
+                            if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
+                            {
+                                RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerTwo);
+                            }
                             _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                             if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == -1)
                             {
@@ -575,13 +645,13 @@ namespace ELTE.Robotok.View
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                RotateImage(i, j);
+                                RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerTwo);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 2)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                RotateImage(i, j);
+                                RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerTwo);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 3)
                             {
@@ -621,17 +691,27 @@ namespace ELTE.Robotok.View
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                RotateImage(i, j);
+                                RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerTwo);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 9)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                RotateImage(i, j);
+                                RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerTwo);
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
+                                ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerTwo);
+                            }
+                            if (!GameMenuForm.instance._model.TableGreenPlayerTwo.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
+                            {
+                                Color col = _buttonGridPlayer[i - 3, j - 4].BackColor;
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(150, col.R, col.G, col.B);
+                            }
+                            if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 7)
+                            {
+                                _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(70, Color.DarkGreen.R, Color.DarkGreen.G, Color.DarkGreen.B);
                             }
                             Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
                         }
@@ -651,6 +731,10 @@ namespace ELTE.Robotok.View
                         {
                             if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                             {
+                                if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) != 10)
+                                {
+                                    RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerOne);
+                                }
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                                 if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == -1)
                                 {
@@ -665,13 +749,13 @@ namespace ELTE.Robotok.View
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
                                     _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                    RotateImage(i, j);
+                                    RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerOne);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 2)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
                                     _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                    RotateImage(i, j);
+                                    RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerOne);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 3)
                                 {
@@ -711,17 +795,27 @@ namespace ELTE.Robotok.View
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
                                     _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                    RotateImage(i, j);
+                                    RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerOne);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 9)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
                                     _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                    RotateImage(i, j);
+                                    RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerOne);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
+                                    ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerOne);
+                                }
+                                if (!GameMenuForm.instance._model.TableRedPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) != 10)
+                                {
+                                    Color col = _buttonGridPlayer[i - 3, j - 4].BackColor;
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(150, col.R, col.G, col.B);
+                                }
+                                if (GameMenuForm.instance._model.TableRedPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 7)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(70, Color.Red.R, Color.Red.G, Color.Red.B);
                                 }
                                 Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
                             }
@@ -737,6 +831,10 @@ namespace ELTE.Robotok.View
                     {
                         for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
                         {
+                            if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
+                            {
+                                RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
+                            }
                             if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
@@ -753,13 +851,13 @@ namespace ELTE.Robotok.View
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Green;
                                     _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                    RotateImage(i, j);
+                                    RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 2)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Red;
                                     _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                    RotateImage(i, j);
+                                    RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 3)
                                 {
@@ -799,17 +897,27 @@ namespace ELTE.Robotok.View
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGreen;
                                     _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                    RotateImage(i, j);
+                                    RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 9)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkRed;
                                     _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.robot;
-                                    RotateImage(i, j);
+                                    RotateImage(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
+                                    ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
+                                }
+                                if (!GameMenuForm.instance._model.TableRedPlayerTwo.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
+                                {
+                                    Color col = _buttonGridPlayer[i - 3, j - 4].BackColor;
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(150, col.R, col.G, col.B);
+                                }
+                                if (GameMenuForm.instance._model.TableRedPlayerTwo.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 7)
+                                {
+                                    _buttonGridPlayer[i - 3, j - 4].BackColor = Color.FromArgb(70, Color.DarkRed.R, Color.DarkRed.G, Color.DarkRed.B);
                                 }
                                 Controls.Add(_buttonGridPlayer[i - 3, j - 4]);
                             }
@@ -897,22 +1005,123 @@ namespace ELTE.Robotok.View
                     }
                 }
             }
+            if (_teams == 1)                // Elmenti az előző körben észlelt kocka mozgatásokat
+            {
+                if (active == 1)
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(2);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(2);
+                }
+                else
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(1);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(1);
+                }
+            }
+            else
+            {
+                if (active == 1)
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(2);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(2);
+                }
+                else if (active == 2)
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(1);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(1);
+                }
+                else if (active == 3)
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(4);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(4);
+                }
+                else
+                {
+                    GameMenuForm.instance._model.ImprovedObservation(3);
+                    GameMenuForm.instance._model.ClearImprovedObservationList(3);
+                }
+            }
+        }
+
+
+        // Panelek frissítése a játékos nézeten
+        public void RefreshAttachments(int i, int j, RobotokTable table)
+        {
+            if (table.GetAttachmentEast(i, j))
+            {
+                _verticalPanels[i, j + 1].Visible = true;
+            }
+            else
+            {
+                _verticalPanels[i, j + 1].Visible = false;
+            }
+
+            if (table.GetAttachmentWest(i, j))
+            {
+                _verticalPanels[i, j].Visible = true;
+            }
+            else
+            {
+                _verticalPanels[i, j].Visible = false;
+            }
+
+            if (table.GetAttachmentNorth(i, j))
+            {
+                _horizontalPanels[i, j].Visible = true;
+            }
+            else
+            {
+                _horizontalPanels[i, j].Visible = false;
+            }
+
+            if (table.GetAttachmentSouth(i, j))
+            {
+                _horizontalPanels[i + 1, j].Visible = true;
+            }
+            else
+            {
+                _horizontalPanels[i + 1, j].Visible = false;
+            }
+        }
+
+        // Panelek törlése a játékos nézeten
+        public void ClearAttachments(int i, int j, RobotokTable table)
+        {
+            if (table.GetAttachmentEast(i, j))
+            {
+                _verticalPanels[i, j + 1].Visible = false;
+            }
+
+            if (table.GetAttachmentWest(i, j))
+            {
+                _verticalPanels[i, j].Visible = false;
+            }
+
+            if (table.GetAttachmentNorth(i, j))
+            {
+                _horizontalPanels[i , j].Visible = false;
+            }
+
+            if (table.GetAttachmentSouth(i, j))
+            {
+                _horizontalPanels[i + 1, j].Visible = false;
+            }
         }
 
         // Robotok képeinek forgatása 
-        public void RotateImage(int i, int j)
+        public void RotateImage(int i, int j, RobotokTable table)
         {
-            if (GameMenuForm.instance._model.Table.GetFaceNorth(i, j))            // Megnézzük, hogy a robot melyik irányba néz          
+            if (table.GetFaceNorth(i, j))            // Megnézzük, hogy a robot melyik irányba néz          
             {
-                _buttonGridPlayer[i - 3, j - 4].BackgroundImage.RotateFlip(RotateFlipType.Rotate180FlipX);    // Abba az irányba forgatjuk a képet, amerre a robot néz
+                _buttonGridPlayer[i, j].BackgroundImage.RotateFlip(RotateFlipType.Rotate180FlipX);    // Abba az irányba forgatjuk a képet, amerre a robot néz
             }
-            else if (GameMenuForm.instance._model.Table.GetFaceWest(i, j))
+            else if (table.GetFaceWest(i, j))
             {
-                _buttonGridPlayer[i - 3, j - 4].BackgroundImage.RotateFlip(RotateFlipType.Rotate270FlipXY);
+                _buttonGridPlayer[i, j].BackgroundImage.RotateFlip(RotateFlipType.Rotate270FlipXY);
             }
-            else if (GameMenuForm.instance._model.Table.GetFaceEast(i, j))
+            else if (table.GetFaceEast(i, j))
             {
-                _buttonGridPlayer[i - 3, j - 4].BackgroundImage.RotateFlip(RotateFlipType.Rotate90FlipXY);
+                _buttonGridPlayer[i, j].BackgroundImage.RotateFlip(RotateFlipType.Rotate90FlipXY);
             }
         }
 
@@ -963,6 +1172,7 @@ namespace ELTE.Robotok.View
                     _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                 }
             }
+
         }
 
         // Letiltja a műveletek használatát
