@@ -519,11 +519,18 @@ namespace ELTE.Robotok.View
                     {
                         if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                         {
-                            if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 10) // Kapcsolatok megjelenítésének frissítése
-                            {
-                                RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
-                            }
-                            
+                            ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
+                        }
+
+                    }
+                }
+                for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
+                {
+                    for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
+                    {
+                        if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                        {
+                            RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
 
                             _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                             if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == -1)
@@ -628,10 +635,18 @@ namespace ELTE.Robotok.View
                     {
                         if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                         {
-                            if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
-                            {
-                                RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerTwo);
-                            }
+                            ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerTwo);
+                        }
+                    }
+                }
+                for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
+                {
+                    for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
+                    {
+                        if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                        {
+                            RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerTwo);
+
                             _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                             if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == -1)
                             {
@@ -725,17 +740,24 @@ namespace ELTE.Robotok.View
                 {
                     nextRoundValueText.Text = "Piros csapat 2. játékos";
                     GameMenuForm.instance._model.ManhattanDistance(_difficulty, 2);
-
                     for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
                     {
                         for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
                         {
                             if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                             {
-                                if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) != 10)
-                                {
-                                    RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerOne);
-                                }
+                                ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerOne);
+                            }
+                        }
+                    }
+                    for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
+                    {
+                        for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
+                        {
+                            if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                            {
+                                RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerOne);
+
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                                 if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == -1)
                                 {
@@ -827,17 +849,24 @@ namespace ELTE.Robotok.View
                 {
                     nextRoundValueText.Text = "Zöld csapat 1. játékos";
                     GameMenuForm.instance._model.ManhattanDistance(_difficulty, 9);
-
+                    for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
+                    {
+                        for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
+                        {
+                            if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                            {
+                                ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
+                            }
+                        }
+                    }
                     for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
                     {
                         for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
                         { 
                             if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                             {
-                                if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
-                                {
-                                    RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
-                                }
+                                RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
+
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                                 if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == -1)
                                 {
@@ -1052,58 +1081,42 @@ namespace ELTE.Robotok.View
             {
                 _verticalPanels[i, j + 1].Visible = true;
             }
-            else
-            {
-                _verticalPanels[i, j + 1].Visible = false;
-            }
 
             if (table.GetAttachmentWest(i, j))
             {
                 _verticalPanels[i, j].Visible = true;
-            }
-            else
-            {
-                _verticalPanels[i, j].Visible = false;
             }
 
             if (table.GetAttachmentNorth(i, j))
             {
                 _horizontalPanels[i, j].Visible = true;
             }
-            else
-            {
-                _horizontalPanels[i, j].Visible = false;
-            }
 
             if (table.GetAttachmentSouth(i, j))
             {
                 _horizontalPanels[i + 1, j].Visible = true;
-            }
-            else
-            {
-                _horizontalPanels[i + 1, j].Visible = false;
             }
         }
 
         // Panelek törlése a játékos nézeten
         public void ClearAttachments(int i, int j, RobotokTable table)
         {
-            if (table.GetAttachmentEast(i, j))
+            if (!table.GetAttachmentEast(i, j))
             {
                 _verticalPanels[i, j + 1].Visible = false;
             }
 
-            if (table.GetAttachmentWest(i, j))
+            if (!table.GetAttachmentWest(i, j))
             {
                 _verticalPanels[i, j].Visible = false;
             }
 
-            if (table.GetAttachmentNorth(i, j))
+            if (!table.GetAttachmentNorth(i, j))
             {
                 _horizontalPanels[i , j].Visible = false;
             }
 
-            if (table.GetAttachmentSouth(i, j))
+            if (!table.GetAttachmentSouth(i, j))
             {
                 _horizontalPanels[i + 1, j].Visible = false;
             }
