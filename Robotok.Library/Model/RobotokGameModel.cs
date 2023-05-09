@@ -59,7 +59,7 @@ namespace ELTE.Robotok.Model
     {
         #region Difficulty constants
         private Int32 _ManhattanDistanceEasy = 6;
-        private Int32 _ManhattanDistanceMedium = 3;
+        private Int32 _ManhattanDistanceMedium = 5;
         private Int32 _ManhattanDistanceHard = 4;
 
         #endregion
