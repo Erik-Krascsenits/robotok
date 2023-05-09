@@ -18,6 +18,7 @@ namespace ELTE.Robotok.Persistence
             public Int32 _remainingCleaningOperations;
             public bool _attachmentNorth, _attachmentSouth, _attachmentEast, _attachmentWest;
             public bool _faceNorth, _faceSouth, _faceEast, _faceWest;
+            public bool _inDistance;
         }
 
         #region Fields
@@ -231,7 +232,6 @@ namespace ELTE.Robotok.Persistence
             return _fields[x, y]._remainingCleaningOperations;
         }
 
-
         /// <summary>
         /// Visszaadja hogy a mezőhöz van-e csatolva valami
         /// </summary>
@@ -249,7 +249,6 @@ namespace ELTE.Robotok.Persistence
                 return true;
             }
         }
-
 
         /// <summary>
         /// Visszaadja egy mező északi csatolási részéről, hogy van-e valami hozzá csatolva
@@ -526,6 +525,33 @@ namespace ELTE.Robotok.Persistence
             _fields[x, y]._faceWest = west;
         }
 
+        public void SetInDistance(Int32 x, Int32 y, Boolean inDistance)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            _fields[x, y]._inDistance = inDistance;
+        }
+
+        public Boolean GetInDistance(Int32 x, Int32 y)
+        {
+            if (x < 0 || x >= _fields.GetLength(0))
+            {
+                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
+            }
+            if (y < 0 || y >= _fields.GetLength(1))
+            {
+                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
+            }
+
+            return _fields[x, y]._inDistance;
+        }
         #endregion
 
         #region Private methods

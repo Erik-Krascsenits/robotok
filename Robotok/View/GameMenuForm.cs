@@ -181,31 +181,44 @@ public partial class GameMenuForm : Form
             if (actualPlayer == 1)
             {
                 _gameFormGreenTeamPlayerOne.stepsLeftValueText.Text = (_model.GameStepCount - 1).ToString(); // ha elfogyott a gondolkodási idõ, csökkenti a hátralevõ lépések számát
+                _gameFormGreenTeamPlayerOne.taskOneDeadlineValueText.Text = (_model.FirstTaskDeadline - 1).ToString() + " lépés van hátra";
+                _gameFormGreenTeamPlayerOne.taskTwoDeadlineValueText.Text = (_model.SecondTaskDeadline - 1).ToString() + " lépés van hátra";
                 _gameFormGreenTeamPlayerTwo.stepsLeftValueText.Text = (_model.GameStepCount - 1).ToString();
+                _gameFormGreenTeamPlayerTwo.taskOneDeadlineValueText.Text = (_model.FirstTaskDeadline - 1).ToString() + " lépés van hátra";
+                _gameFormGreenTeamPlayerTwo.taskTwoDeadlineValueText.Text = (_model.SecondTaskDeadline - 1).ToString() + " lépés van hátra";
 
                 if (selectedGroupCount == 2) // 2 csapat esetén a pirosakét is frissíteni kell
                 {
                     _gameFormRedTeamPlayerOne.stepsLeftValueText.Text = (_model.GameStepCount - 1).ToString();
+                    _gameFormRedTeamPlayerOne.taskOneDeadlineValueText.Text = (_model.FirstTaskDeadline - 1).ToString() + " lépés van hátra";
+                    _gameFormRedTeamPlayerOne.taskTwoDeadlineValueText.Text = (_model.SecondTaskDeadline - 1).ToString() + " lépés van hátra";
                     _gameFormRedTeamPlayerTwo.stepsLeftValueText.Text = (_model.GameStepCount - 1).ToString();
-                }
+                    _gameFormRedTeamPlayerTwo.taskOneDeadlineValueText.Text = (_model.FirstTaskDeadline - 1).ToString() + " lépés van hátra";
+                    _gameFormRedTeamPlayerTwo.taskTwoDeadlineValueText.Text = (_model.SecondTaskDeadline - 1).ToString() + " lépés van hátra";
+                }  
             }
             else
             {
                 _gameFormGreenTeamPlayerOne.stepsLeftValueText.Text = _model.GameStepCount.ToString(); // ha elfogyott a gondolkodási idõ, csökkenti a hátralevõ lépések számát
+                _gameFormGreenTeamPlayerOne.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline.ToString() + " lépés van hátra";
+                _gameFormGreenTeamPlayerOne.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString() + " lépés van hátra";
                 _gameFormGreenTeamPlayerTwo.stepsLeftValueText.Text = _model.GameStepCount.ToString();
+                _gameFormGreenTeamPlayerTwo.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline.ToString() + " lépés van hátra";
+                _gameFormGreenTeamPlayerTwo.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString() + " lépés van hátra";
 
                 if (selectedGroupCount == 2) // 2 csapat esetén a pirosakét is frissíteni kell
                 {
                     _gameFormRedTeamPlayerOne.stepsLeftValueText.Text = _model.GameStepCount.ToString();
+                    _gameFormRedTeamPlayerOne.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline.ToString() + " lépés van hátra";
+                    _gameFormRedTeamPlayerOne.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString() + " lépés van hátra";
                     _gameFormRedTeamPlayerTwo.stepsLeftValueText.Text = _model.GameStepCount.ToString();
+                    _gameFormRedTeamPlayerTwo.taskOneDeadlineValueText.Text = _model.FirstTaskDeadline.ToString() + " lépés van hátra";
+                    _gameFormRedTeamPlayerTwo.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString() + " lépés van hátra";
                 }
             }
 
-
-
             UpdatePlayerButtonStatuses();
             ShowNextPlayerForm();
-
 
             if (refereeModeCheckbox.Checked)
             {
