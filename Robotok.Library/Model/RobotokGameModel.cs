@@ -237,7 +237,7 @@ namespace ELTE.Robotok.Model
                 _tableRedPlayerTwo = new RobotokTable(11, 20);
             }
             _remainingSeconds = 5; // műveletek közötti gondolkodási idő
-            _gameStepCount = 300; // játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
+            _gameStepCount = 3; // játék kezdeti lépésszáma, folyamatosan csökken, 0-nál játék vége
 
             _SyncGreenPlayerOne = false;
             _SyncGreenPlayerTwo = false;

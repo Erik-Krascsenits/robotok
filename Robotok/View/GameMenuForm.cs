@@ -141,6 +141,7 @@ public partial class GameMenuForm : Form
 
     private void Timer_Tick(Object? sender, EventArgs e)
     {
+        GameOver();
         _model.AdvanceTime(actualPlayer); // Játék léptetése
 
         _gameFormGreenTeamPlayerOne.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc"; // frissítjük a hátralevõ másodpercek számának kijelzését
@@ -212,6 +213,11 @@ public partial class GameMenuForm : Form
             }
 
         }
+        else if(_model.RemainingSeconds == 5)
+        {
+            UpdatePlayerButtonStatuses();
+        }
+           
     }
 
     #endregion
@@ -298,15 +304,22 @@ public partial class GameMenuForm : Form
     {
         if (selectedGroupCount == 1)
         {
+            
             if (actualPlayer == 1)
             {
-                _gameFormGreenTeamPlayerOne.EnableButtons();
+                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0) 
+                {
+                    _gameFormGreenTeamPlayerOne.EnableButtons();
+                }
                 _gameFormGreenTeamPlayerTwo.DisableButtons();
 
             }
             else
             {
-                _gameFormGreenTeamPlayerOne.DisableButtons();
+                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0)
+                {
+                    _gameFormGreenTeamPlayerOne.DisableButtons();
+                }
                 _gameFormGreenTeamPlayerTwo.EnableButtons();
             }
         }
@@ -314,7 +327,10 @@ public partial class GameMenuForm : Form
         {
             if (actualPlayer == 1)
             {
-                _gameFormGreenTeamPlayerOne.EnableButtons();
+                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0)
+                {
+                    _gameFormGreenTeamPlayerOne.EnableButtons();
+                }
                 _gameFormGreenTeamPlayerTwo.DisableButtons();
                 _gameFormRedTeamPlayerOne.DisableButtons();
                 _gameFormRedTeamPlayerTwo.DisableButtons();
@@ -322,7 +338,10 @@ public partial class GameMenuForm : Form
             if (actualPlayer == 2)
             {
                 _gameFormGreenTeamPlayerOne.DisableButtons();
-                _gameFormGreenTeamPlayerTwo.EnableButtons();
+                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0)
+                {
+                    _gameFormGreenTeamPlayerTwo.EnableButtons();
+                }
                 _gameFormRedTeamPlayerOne.DisableButtons();
                 _gameFormRedTeamPlayerTwo.DisableButtons();
             }
@@ -330,7 +349,10 @@ public partial class GameMenuForm : Form
             {
                 _gameFormGreenTeamPlayerOne.DisableButtons();
                 _gameFormGreenTeamPlayerTwo.DisableButtons();
-                _gameFormRedTeamPlayerOne.EnableButtons();
+                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0)
+                {
+                    _gameFormRedTeamPlayerOne.EnableButtons();
+                }
                 _gameFormRedTeamPlayerTwo.DisableButtons();
             }
             if (actualPlayer == 4)
@@ -338,7 +360,10 @@ public partial class GameMenuForm : Form
                 _gameFormGreenTeamPlayerOne.DisableButtons();
                 _gameFormGreenTeamPlayerTwo.DisableButtons();
                 _gameFormRedTeamPlayerOne.DisableButtons();
-                _gameFormRedTeamPlayerTwo.EnableButtons();
+                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0)
+                {
+                    _gameFormRedTeamPlayerTwo.EnableButtons();
+                }
             }
         }
     }
@@ -390,6 +415,16 @@ public partial class GameMenuForm : Form
         difficultyChoice.Enabled = true;
         groupChoice.Enabled = true;
         refereeModeCheckbox.Enabled = true;
+    }
+
+    private void GameOver()
+    {
+        if (_model.IsGameOver)
+        {
+            _timer.Enabled = false;
+            MessageBox.Show("This is the place of the message", "Game over!", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            DisposeAllForms();
+        }
     }
 
     #endregion
