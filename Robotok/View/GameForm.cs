@@ -447,6 +447,7 @@ namespace ELTE.Robotok.View
 
                 if (GameMenuForm.instance._model.Move(operationParameter.Text, _activePlayer))
                 {
+                    GameMenuForm.instance._model.MovePlayerView(operationParameter.Text, _activePlayer);
                     _successText = "Sikeres mozgás!";
                 }
                 else
@@ -830,13 +831,13 @@ namespace ELTE.Robotok.View
                     for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
                     {
                         for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
-                        {
-                            if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
-                            {
-                                RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
-                            }
+                        { 
                             if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
                             {
+                                if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
+                                {
+                                    RefreshAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
+                                }
                                 _buttonGridPlayer[i - 3, j - 4].BackgroundImage = null;
                                 if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == -1)
                                 {

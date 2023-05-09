@@ -104,8 +104,11 @@ namespace ELTE.Robotok.Model
         private List<CubeToMove> _improvedObservationGreenPlayerTwo = new List<CubeToMove>();
         private List<CubeToMove> _improvedObservationRedPlayerOne = new List<CubeToMove>();
         private List<CubeToMove> _improvedObservationRedPlayerTwo = new List<CubeToMove>();
-        private List<CubeToMove> _cubesPlayerOldPosition = new List<CubeToMove>(); // lépés végrehajtásakor a régi helyek eltárolása
-        private List<CubeToMove> _cubesPlayerNewPosition = new List<CubeToMove>(); // lépés végrehajtásakor az új helyek eltárolása
+
+        private List<CubeToMove> _outOfTableGreenPlayerOne = new List<CubeToMove>();
+        private List<CubeToMove> _outOfTableGreenPlayerTwo = new List<CubeToMove>();
+        private List<CubeToMove> _outOfTableRedPlayerOne = new List<CubeToMove>();
+        private List<CubeToMove> _outOfTableRedPlayerTwo = new List<CubeToMove>();
 
 
         /* Eltároljuk minden játékosról, hogy milyen műveletet végzet legutoljára sikerességtől függetlenül
@@ -459,7 +462,10 @@ namespace ELTE.Robotok.Model
             }
             if (toMerge) //Ha volt Manhattan távolságon belül csapattárs, akkor belépünk az if-be, és egyesítünk
             {
-                Merge(player);
+                if(!(player == 1 && _SyncGreenPlayerOne) || !(player == 8 && _SyncGreenPlayerTwo) || !(player == 2 && _SyncRedPlayerOne) || !(player == 9 && _SyncRedPlayerTwo))
+                {
+                    Merge(player);
+                }
             }
 
             switch (player) //Ha az egyik játékos már látta a másikat, akkor frissítjük a másik csapattárs területét a jelenleg észlelt területtel
@@ -960,23 +966,10 @@ namespace ELTE.Robotok.Model
 
         public void RotatePlayerView(string direction,int playerNumber)
         {
-            if (playerNumber == 1 || playerNumber == 2)
-            {
-                if (greenTeamCubeAttachState != 0)
-                {
-                    greenTeamCubeAttachState++;
-                }
-            }
-            else
-            {
-                if (redTeamCubeAttachState != 0)
-                {
-                    redTeamCubeAttachState++;
-                }
-            }
 
             int playerFieldValue = 0;
             RobotokTable table = TableGreenPlayerOne;
+            List<CubeToMove> outOfTableList = new List<CubeToMove>(_outOfTableGreenPlayerOne);
             switch (playerNumber)
             {
                 case 1:
@@ -985,15 +978,18 @@ namespace ELTE.Robotok.Model
                 case 2:
                     playerFieldValue = 8;
                     table = TableGreenPlayerTwo;
+                    outOfTableList = new List<CubeToMove>(_outOfTableGreenPlayerTwo);
                     break;
                 case 3:
                     playerFieldValue = 2;
                     table = TableRedPlayerOne;
+                    outOfTableList = new List<CubeToMove>(_outOfTableRedPlayerOne);
                     break;
 
                 case 4:
                     playerFieldValue = 9;
                     table = TableRedPlayerTwo;
+                    outOfTableList = new List<CubeToMove>(_outOfTableRedPlayerTwo);
                     break;
             }
 
@@ -1040,14 +1036,14 @@ namespace ELTE.Robotok.Model
 
                 if (direction == "óramutatóval megegyező")     // Iránytól függően forgatunk 
                 {
-                    RotatePlayerRight(playerCoordinateX, playerCoordinateY, playerNumber, table);
+                    RotatePlayerRight(playerCoordinateX, playerCoordinateY, playerNumber, table, outOfTableList);
                 }
                 else
                 {
-                    RotatePlayerLeft(playerCoordinateX, playerCoordinateY, playerNumber, table);
+                    RotatePlayerLeft(playerCoordinateX, playerCoordinateY, playerNumber, table, outOfTableList);
                 }
            
-            for(int i=0; i<_cubesNewPosition.Count; i++)
+            for(int i=0; i< _cubesOldPosition.Count; i++)
             {
                 if (playerNumber == 1)
                 {
@@ -1095,13 +1091,35 @@ namespace ELTE.Robotok.Model
 
         }
 
-        void RotatePlayerLeft(int playerCoordinateX, int playerCoordinateY, int playerNumber, RobotokTable table)
+        void RotatePlayerLeft(int playerCoordinateX, int playerCoordinateY, int playerNumber, RobotokTable table, List<CubeToMove> outOfTableList)
         {
             //eltároljuk, hogy a játékos melyik oldalon van kockához csatlakozva
             _cubesNewPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, _cubesOldPosition[0].value, _cubesOldPosition[0].eastAttachment, _cubesOldPosition[0].westAttachment, _cubesOldPosition[0].southAttachment, _cubesOldPosition[0].northAttachment, "", _cubesOldPosition[0].remainingCleaningOperations));
+        
+            int i = 0;
+            List<CubeToMove> temp = new List<CubeToMove>(); //létrehozunk egy segédlistát
+            
+            while (i < outOfTableList.Count)
+            {
+                int x = _cubesOldPosition[0].x - (outOfTableList[i].y - _cubesOldPosition[0].y);
+                int y = _cubesOldPosition[0].y + (outOfTableList[i].x - _cubesOldPosition[0].x);
 
-            int i = 1;
+                if (x >= 0 && x <= 10 && y >= 0 && y <= 19) // ha a kocka forgatás után a táblára esik, akkor eltároljuk
+                {
+                    _cubesNewPosition.Add(new CubeToMove(x, y, outOfTableList[i].value, outOfTableList[i].eastAttachment, outOfTableList[i].westAttachment, outOfTableList[i].southAttachment, outOfTableList[i].northAttachment, "", outOfTableList[i].remainingCleaningOperations));
+                }
+                else // ha a kocka forgatás után szintén pályán kívülre esne, akkor belerakjuk a segédlistába
+                {
+                    temp.Add(new CubeToMove(x, y, outOfTableList[i].value, outOfTableList[i].eastAttachment, outOfTableList[i].westAttachment, outOfTableList[i].southAttachment, outOfTableList[i].northAttachment, "", outOfTableList[i].remainingCleaningOperations));
+                }
+                i++;
+            }
+            outOfTableList.Clear();
+            outOfTableList = new List<CubeToMove>(temp);
+
             // Minden régi mezőnek eltároljuk az elforgatott állapotát 
+
+            i = 1;
             while (i < _cubesOldPosition.Count)
             {
                 int x = _cubesOldPosition[0].x - (_cubesOldPosition[i].y - _cubesOldPosition[0].y);
@@ -1109,14 +1127,29 @@ namespace ELTE.Robotok.Model
 
                 if (x >= 0 && x <= 10 && y >= 0 && y <= 19) 
                 {
-                    _cubesNewPosition.Add(new CubeToMove(x, y, _cubesOldPosition[i].value, _cubesOldPosition[i].eastAttachment, _cubesOldPosition[i].westAttachment, _cubesOldPosition[i].southAttachment, _cubesOldPosition[i].northAttachment, "", _cubesOldPosition[i].remainingCleaningOperations));
+                    if (_cubesOldPosition[i].value == 10)
+                    {
+                        _cubesNewPosition.Add(new CubeToMove(x, y, _table.GetFieldValue(x + 3, y + 4), _cubesOldPosition[i].eastAttachment, _cubesOldPosition[i].westAttachment, _cubesOldPosition[i].southAttachment, _cubesOldPosition[i].northAttachment, "", _cubesOldPosition[i].remainingCleaningOperations));
+                    }
+                    else
+                    {
+                        _cubesNewPosition.Add(new CubeToMove(x, y, _cubesOldPosition[i].value, _cubesOldPosition[i].eastAttachment, _cubesOldPosition[i].westAttachment, _cubesOldPosition[i].southAttachment, _cubesOldPosition[i].northAttachment, "", _cubesOldPosition[i].remainingCleaningOperations));
+                    }
+                       
+                }
+                else
+                {
+                    outOfTableList.Add(new CubeToMove(x, y, _cubesOldPosition[i].value, _cubesOldPosition[i].eastAttachment, _cubesOldPosition[i].westAttachment, _cubesOldPosition[i].southAttachment, _cubesOldPosition[i].northAttachment, "", _cubesOldPosition[i].remainingCleaningOperations));
+                    
                 }
                 i++;
             }
 
+            
+
             // Ha idáig elértünk, akkor minden rendben volt a forgatás során, már csak el kell tárolni a táblán az új kapcsolatokkal együtt
             i = 0;
-            while (i < _cubesNewPosition.Count)
+            while (i < _cubesOldPosition.Count)
             {
                 table.SetAttachmentValues(_cubesOldPosition[i].x, _cubesOldPosition[i].y, false, false, false, false); //kitöröljük az összes régi mező kapcsolatát
 
@@ -1134,21 +1167,65 @@ namespace ELTE.Robotok.Model
             {
                 if (i != 0)
                 {
-                    table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].remainingCleaningOperations);   //beállítjuk az új mező értékeket        
+                        table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].remainingCleaningOperations);
+                       //beállítjuk az új mező értékeket        
                 }
                 table.SetAttachmentValues(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment);  //beállítjuk az új kapcsolatokat
 
 
                 i++;
             }
+
+            switch (playerNumber)
+            {
+                case 1:
+                    _outOfTableGreenPlayerOne = new List<CubeToMove>(outOfTableList);
+                    break;
+                case 2:
+
+
+                    _outOfTableGreenPlayerTwo = new List<CubeToMove>(outOfTableList);
+                    break;
+                case 3:
+
+
+                    _outOfTableRedPlayerOne = new List<CubeToMove>(outOfTableList);
+                    break;
+
+                case 4:
+
+
+                    _outOfTableRedPlayerTwo = new List<CubeToMove>(outOfTableList);
+                    break;
+            }
         }
 
-        void RotatePlayerRight(int playerCoordinateX, int playerCoordinateY, int playerNumber, RobotokTable table)
+        void RotatePlayerRight(int playerCoordinateX, int playerCoordinateY, int playerNumber, RobotokTable table, List<CubeToMove> outOfTableList)
         {
             //eltároljuk, hogy a játékos melyik oldalon van kockához csatlakozva
             _cubesNewPosition.Add(new CubeToMove(playerCoordinateX, playerCoordinateY, _cubesOldPosition[0].value, _cubesOldPosition[0].westAttachment, _cubesOldPosition[0].eastAttachment, _cubesOldPosition[0].northAttachment, _cubesOldPosition[0].southAttachment, "", _cubesOldPosition[0].remainingCleaningOperations));
+           
+            int i = 0;
+            List<CubeToMove> temp = new List<CubeToMove>(); //létrehozunk egy segédlistát
+            while (i < outOfTableList.Count) // végig megyünk a kinti kockákon
+            {
+                int x = _cubesOldPosition[0].x - (_cubesOldPosition[0].y - outOfTableList[i].y);
+                int y = _cubesOldPosition[0].y + (_cubesOldPosition[0].x - outOfTableList[i].x);
+                if (x >= 0 && x <= 10 && y >= 0 && y <= 19) // ha a kocka forgatás utána  táblára esik, akkor eltároljuk
+                {
+                    _cubesNewPosition.Add(new CubeToMove(x, y, outOfTableList[i].value, outOfTableList[i].westAttachment, outOfTableList[i].eastAttachment, outOfTableList[i].northAttachment, outOfTableList[i].southAttachment, "", outOfTableList[i].remainingCleaningOperations));
+                }
+                else // ha a kocka forgatás után szintén pályán kívülre esne, akkor belerakjuk a segédlistába
+                {
+                    temp.Add(new CubeToMove(x, y, outOfTableList[i].value, outOfTableList[i].westAttachment, outOfTableList[i].eastAttachment, outOfTableList[i].northAttachment, outOfTableList[i].southAttachment, "", outOfTableList[i].remainingCleaningOperations));
+                    throw new Exception("eljut");
+                }
+                i++;
+            }
+            outOfTableList.Clear(); // kiürítjük az eredeti listát
+            outOfTableList = new List<CubeToMove>(temp); // Majd felülírjuk a segédlista elemeivel
 
-            int i = 1;
+            i = 1;
             // Minden régi mezőnek eltároljuk az elforgatott állapotát 
             while (i < _cubesOldPosition.Count)
             {
@@ -1157,7 +1234,18 @@ namespace ELTE.Robotok.Model
 
                 if (x >= 0 && x <= 10 && y >= 0 && y <= 19)
                 {
-                    _cubesNewPosition.Add(new CubeToMove(x, y, _cubesOldPosition[i].value, _cubesOldPosition[i].westAttachment, _cubesOldPosition[i].eastAttachment, _cubesOldPosition[i].northAttachment, _cubesOldPosition[i].southAttachment, "", _cubesOldPosition[i].remainingCleaningOperations));
+                    if (_cubesOldPosition[i].value == 10)
+                    {
+                        _cubesNewPosition.Add(new CubeToMove(x, y, _table.GetFieldValue(x + 3, y + 4), _cubesOldPosition[i].westAttachment, _cubesOldPosition[i].eastAttachment, _cubesOldPosition[i].northAttachment, _cubesOldPosition[i].southAttachment, "", _cubesOldPosition[i].remainingCleaningOperations));
+                    }
+                    else
+                    {
+                        _cubesNewPosition.Add(new CubeToMove(x, y, _cubesOldPosition[i].value, _cubesOldPosition[i].westAttachment, _cubesOldPosition[i].eastAttachment, _cubesOldPosition[i].northAttachment, _cubesOldPosition[i].southAttachment, "", _cubesOldPosition[i].remainingCleaningOperations));
+                    }
+                }
+                else // Ha a forgatás táblán kívülre esne, akkor eltároljuk
+                {
+                    outOfTableList.Add(new CubeToMove(x, y, _cubesOldPosition[i].value, _cubesOldPosition[i].westAttachment, _cubesOldPosition[i].eastAttachment, _cubesOldPosition[i].northAttachment, _cubesOldPosition[i].southAttachment, "", _cubesOldPosition[i].remainingCleaningOperations));
                 }
                 i++;
             }
@@ -1165,7 +1253,7 @@ namespace ELTE.Robotok.Model
 
 
             i = 0;
-            while (i < _cubesNewPosition.Count)
+            while (i < _cubesOldPosition.Count)
             {
                 table.SetAttachmentValues(_cubesOldPosition[i].x, _cubesOldPosition[i].y, false, false, false, false); //kitöröljük az összes régi mező kapcsolatát
 
@@ -1183,12 +1271,35 @@ namespace ELTE.Robotok.Model
             {
                 if (i != 0)
                 {
-                    table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].remainingCleaningOperations);   //beállítjuk az új mező értékeket        
+                        table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].remainingCleaningOperations);     
                 }
                 table.SetAttachmentValues(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment);  //beállítjuk az új kapcsolatokat
 
 
                 i++;
+            }
+
+            switch (playerNumber)
+            {
+                case 1:
+                    _outOfTableGreenPlayerOne = new List<CubeToMove>(outOfTableList);
+                    break;
+                case 2:
+
+
+                    _outOfTableGreenPlayerTwo = new List<CubeToMove>(outOfTableList);
+                    break;
+                case 3:
+
+
+                    _outOfTableRedPlayerOne = new List<CubeToMove>(outOfTableList);
+                    break;
+
+                case 4:
+
+
+                    _outOfTableRedPlayerTwo = new List<CubeToMove>(outOfTableList);
+                    break;
             }
         }
         
@@ -1218,7 +1329,7 @@ namespace ELTE.Robotok.Model
                     }
                     if (!contains)
                     {
-                        if (_cubesOldPosition[i].x - 1 >= 0 && _cubesOldPosition[i].x - 1 < table.SizeX && _cubesOldPosition[i].y >= 0 && _cubesOldPosition[i].y <= table.SizeY)
+                        if (_cubesOldPosition[i].x - 1 >= 0 && _cubesOldPosition[i].x - 1 < table.SizeX && _cubesOldPosition[i].y >= 0 && _cubesOldPosition[i].y < table.SizeY)
                         {
                             _cubesOldPosition.Add(new CubeToMove(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y, table.GetFieldValue(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y), table.GetAttachmentNorth(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y), "észak", table.GetFieldRemainingCleaningOperations(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y)));
                         }
@@ -1237,7 +1348,7 @@ namespace ELTE.Robotok.Model
                     }
                     if (!contains)
                     {
-                        if (_cubesOldPosition[i].x + 1 >= 0 && _cubesOldPosition[i].x + 1 < table.SizeX && _cubesOldPosition[i].y >= 0 && _cubesOldPosition[i].y <= table.SizeY)
+                        if (_cubesOldPosition[i].x + 1 >= 0 && _cubesOldPosition[i].x + 1 < table.SizeX && _cubesOldPosition[i].y >= 0 && _cubesOldPosition[i].y < table.SizeY)
                         {
                             _cubesOldPosition.Add(new CubeToMove(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y, table.GetFieldValue(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y), table.GetAttachmentNorth(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y), "dél", table.GetFieldRemainingCleaningOperations(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y)));
                         }
@@ -1256,7 +1367,7 @@ namespace ELTE.Robotok.Model
                     }
                     if (!contains)
                     {
-                        if (_cubesOldPosition[i].x >= 0 && _cubesOldPosition[i].x < table.SizeX && _cubesOldPosition[i].y + 1 >= 0 && _cubesOldPosition[i].y + 1 <= table.SizeY)
+                        if (_cubesOldPosition[i].x >= 0 && _cubesOldPosition[i].x < table.SizeX && _cubesOldPosition[i].y + 1 >= 0 && _cubesOldPosition[i].y + 1 < table.SizeY)
                         {
                             _cubesOldPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1, table.GetFieldValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1), table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1), "kelet", table.GetFieldRemainingCleaningOperations(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1)));
                         }
@@ -1275,7 +1386,7 @@ namespace ELTE.Robotok.Model
                     }
                     if (!contains)
                     {
-                        if (_cubesOldPosition[i].x >= 0 && _cubesOldPosition[i].x < table.SizeX && _cubesOldPosition[i].y - 1 >= 0 && _cubesOldPosition[i].y - 1 <= table.SizeY)
+                        if (_cubesOldPosition[i].x >= 0 && _cubesOldPosition[i].x < table.SizeX && _cubesOldPosition[i].y - 1 >= 0 && _cubesOldPosition[i].y - 1 < table.SizeY)
                         {
                             _cubesOldPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1, table.GetFieldValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1), table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1), "nyugat", table.GetFieldRemainingCleaningOperations(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1)));
                         }
@@ -1345,7 +1456,15 @@ namespace ELTE.Robotok.Model
 
                 if (i != 0)
                 {
-                    _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, -1);  //kitöröljük az összes régi mezőt, ami nem a játékos
+                    if (_cubesOldPosition[i].x < 3 || _cubesOldPosition[i].x > 13 || _cubesOldPosition[i].y < 4 || _cubesOldPosition[i].y > 23)
+                    {
+                        _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, -2, -1);  //A kinti mezőket szürkére állítjuk
+                    }
+                    else
+                    {
+                        _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, -1);  //kitöröljük az összes régi mezőt, ami nem a játékos
+                    }
+                       
                 }
 
                 i++;
@@ -1427,10 +1546,17 @@ namespace ELTE.Robotok.Model
 
                 if (i != 0)
                 {
-                    _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, -1);  //kitöröljük az összes régi mezőt, ami nem a játékos
+                    if (_cubesOldPosition[i].x < 3 || _cubesOldPosition[i].x > 13 || _cubesOldPosition[i].y < 4 || _cubesOldPosition[i].y > 23)
+                    {
+                        _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, -2, -1);  //A kinti mezőket szürkére állítjuk
+                    }
+                    else
+                    {
+                        _table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, -1);  //kitöröljük az összes régi mezőt, ami nem a játékos
+                    }
                 }
 
-                i++;
+                    i++;
             }
 
             i = 0;
@@ -2098,44 +2224,7 @@ namespace ELTE.Robotok.Model
                 {
                     ExecuteSafeSteps(direction);
                 }
-         /*       for(int i=0; i<_cubesOldPosition.Count; i++)
-                {
-                    if (playerNumber == 1)
-                    {
-                        _improvedObservationGreenPlayerOne.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, false, false, false, false, _cubesOldPosition[i].direction, _cubesOldPosition[i].remainingCleaningOperations)); // Elmentjük a régi pozíciókat
-                    }
-                    else if (playerNumber == 2)
-                    {
-                        _improvedObservationGreenPlayerTwo.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, false, false, false, false, _cubesOldPosition[i].direction, _cubesOldPosition[i].remainingCleaningOperations));
-                    }
-                    else if (playerNumber == 3)
-                    {
-                        _improvedObservationRedPlayerOne.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, false, false, false, false, _cubesOldPosition[i].direction, _cubesOldPosition[i].remainingCleaningOperations));
-                    }
-                    else
-                    {
-                        _improvedObservationRedPlayerTwo.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, false, false, false, false, _cubesOldPosition[i].direction, _cubesOldPosition[i].remainingCleaningOperations));
-                    }
-                }
-                for(int i=0; i<_cubesNewPosition.Count; i++)
-                {
-                    if (playerNumber == 1)
-                    {
-                        _improvedObservationGreenPlayerOne.Add(new CubeToMove(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment, _cubesNewPosition[i].direction, _cubesNewPosition[i].remainingCleaningOperations)); //Elmentjük az új pozíciókat
-                    }
-                    else if (playerNumber == 2)
-                    {
-                        _improvedObservationGreenPlayerTwo.Add(new CubeToMove(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment, _cubesNewPosition[i].direction, _cubesNewPosition[i].remainingCleaningOperations));
-                    }
-                    else if (playerNumber == 3)
-                    {
-                        _improvedObservationRedPlayerOne.Add(new CubeToMove(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment, _cubesNewPosition[i].direction, _cubesNewPosition[i].remainingCleaningOperations));
-                    }
-                    else
-                    {
-                        _improvedObservationRedPlayerTwo.Add(new CubeToMove(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment, _cubesNewPosition[i].direction, _cubesNewPosition[i].remainingCleaningOperations));
-                    }
-                }*/
+
                 // Sikerességtől függetlenül a lépés után kitisztítjuk a listákat (hiszen pl. a játékos kockája minden esetben szerepel a régi pozíciókban)
                 _cubesOldPosition.Clear();
                 _cubesNewPosition.Clear();
@@ -2143,6 +2232,302 @@ namespace ELTE.Robotok.Model
                 return validStep;
             }
         }
+
+        public void MovePlayerView(String direction, int playerNumber)
+        {
+            int playerFieldValue = 0;
+            RobotokTable table = TableGreenPlayerOne;
+            List<CubeToMove> outOfTableList = new List<CubeToMove>(_outOfTableGreenPlayerOne);
+            switch (playerNumber)
+            {
+                case 1:
+                    playerFieldValue = 1;
+                    break;
+                case 2:
+                    playerFieldValue = 8;
+                    table = TableGreenPlayerTwo;
+                    outOfTableList = new List<CubeToMove>(_outOfTableGreenPlayerTwo);
+                    break;
+                case 3:
+                    playerFieldValue = 2;
+                    table = TableRedPlayerOne;
+                    outOfTableList = new List<CubeToMove>(_outOfTableRedPlayerOne);
+                    break;
+
+                case 4:
+                    playerFieldValue = 9;
+                    table = TableRedPlayerTwo;
+                    outOfTableList = new List<CubeToMove>(_outOfTableRedPlayerTwo);
+                    break;
+            }
+            // Megkeressük a játékos koordinátáit a térképen (meghatározásához a színét használjuk)
+
+            int playerCoordinateX = 0, playerCoordinateY = 0; // 0-val van inicializálva, de a keresés után biztosan helyes értéket kap
+
+                    for (int i = 0; i < table.SizeX; i++)
+                    {
+                        for (int j = 0; j < table.SizeY; j++)
+                        {
+                            if (table.GetFieldValue(i, j) == playerFieldValue)
+                            {
+                                playerCoordinateX = i;
+                                playerCoordinateY = j;
+                            }
+                        }
+                    }
+
+                    // A játékost és a hozzákapcsolt kockákat eltároljuk a régi pozíciók listájában
+                    if (table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY))
+                    {
+                        AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "észak", table);
+                    }
+                    else if (table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
+                    {
+                        AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "dél", table);
+                    }
+                    else if (table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
+                    {
+                        AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "kelet", table);
+                    }
+                    else
+                    {
+                        AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerFieldValue, "nyugat", table);
+                    }
+
+            ExecutePlayerSteps(direction, table, outOfTableList, playerNumber);
+
+
+            for (int i = 0; i < _cubesOldPosition.Count; i++)
+            {
+                if (playerNumber == 1)
+                {
+                    _improvedObservationGreenPlayerOne.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, false, false, false, false, _cubesOldPosition[i].direction, _cubesOldPosition[i].remainingCleaningOperations)); //elmentjük azokat a mezőket, ahonnan forgattunk
+                }
+                else if (playerNumber == 2)
+                {
+                    _improvedObservationGreenPlayerTwo.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, false, false, false, false, _cubesOldPosition[i].direction, _cubesOldPosition[i].remainingCleaningOperations));
+                }
+                else if (playerNumber == 3)
+                {
+                    _improvedObservationRedPlayerOne.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, false, false, false, false, _cubesOldPosition[i].direction, _cubesOldPosition[i].remainingCleaningOperations));
+                }
+                else
+                {
+                    _improvedObservationRedPlayerTwo.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, false, false, false, false, _cubesOldPosition[i].direction, _cubesOldPosition[i].remainingCleaningOperations));
+                }
+            }
+
+
+            for (int i = 0; i < _cubesNewPosition.Count; i++)
+            {
+                if (playerNumber == 1)
+                {
+                    _improvedObservationGreenPlayerOne.Add(new CubeToMove(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment, _cubesNewPosition[i].direction, _cubesNewPosition[i].remainingCleaningOperations)); //elmentjük azokat a mezőket, ahová forgattunk
+                }
+                else if (playerNumber == 2)
+                {
+                    _improvedObservationGreenPlayerTwo.Add(new CubeToMove(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment, _cubesNewPosition[i].direction, _cubesNewPosition[i].remainingCleaningOperations));
+                }
+                else if (playerNumber == 3)
+                {
+                    _improvedObservationRedPlayerOne.Add(new CubeToMove(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment, _cubesNewPosition[i].direction, _cubesNewPosition[i].remainingCleaningOperations));
+                }
+                else
+                {
+                    _improvedObservationRedPlayerTwo.Add(new CubeToMove(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment, _cubesNewPosition[i].direction, _cubesNewPosition[i].remainingCleaningOperations));
+                }
+            }
+
+            _cubesOldPosition.Clear();
+            _cubesNewPosition.Clear();
+        }
+
+        void ExecutePlayerSteps(string direction, RobotokTable table, List<CubeToMove> outOfTableList, int playerNumber)
+        {
+
+
+            List<CubeToMove> temp = new List<CubeToMove>(); //létrehozunk egy segédlistát
+
+            for (int i=0; i < outOfTableList.Count; i++)
+            {
+
+
+                if (direction == "észak")
+                {
+                    if (outOfTableList[i].x - 1 >= 0 && outOfTableList[i].x - 1 <= 10 && outOfTableList[i].y >= 0 && outOfTableList[i].y <= 19)
+                    {
+                        _cubesNewPosition.Add(new CubeToMove(outOfTableList[i].x - 1, outOfTableList[i].y, outOfTableList[i].value, outOfTableList[i].northAttachment, outOfTableList[i].southAttachment, outOfTableList[i].eastAttachment, outOfTableList[i].westAttachment, outOfTableList[i].direction, outOfTableList[i].remainingCleaningOperations));
+                    }
+                    else
+                    {
+                        temp.Add(new CubeToMove(outOfTableList[i].x - 1, outOfTableList[i].y, outOfTableList[i].value, outOfTableList[i].northAttachment, outOfTableList[i].southAttachment, outOfTableList[i].eastAttachment, outOfTableList[i].westAttachment, outOfTableList[i].direction, outOfTableList[i].remainingCleaningOperations));
+                    }
+                }
+                else if (direction == "dél")
+                {
+                    if (outOfTableList[i].x + 1 >= 0 && outOfTableList[i].x + 1 <= 10 && outOfTableList[i].y >= 0 && outOfTableList[i].y <= 19)
+                    {
+                        _cubesNewPosition.Add(new CubeToMove(outOfTableList[i].x + 1, outOfTableList[i].y, outOfTableList[i].value, outOfTableList[i].northAttachment, outOfTableList[i].southAttachment, outOfTableList[i].eastAttachment, outOfTableList[i].westAttachment, outOfTableList[i].direction, outOfTableList[i].remainingCleaningOperations));
+                    }
+                    else
+                    {
+                        temp.Add(new CubeToMove(outOfTableList[i].x + 1, outOfTableList[i].y, outOfTableList[i].value, outOfTableList[i].northAttachment, outOfTableList[i].southAttachment, outOfTableList[i].eastAttachment, outOfTableList[i].westAttachment, outOfTableList[i].direction, outOfTableList[i].remainingCleaningOperations));
+                    }
+                }
+                else if (direction == "kelet")
+                {
+                    if (outOfTableList[i].x >= 0 && outOfTableList[i].x <= 10 && outOfTableList[i].y + 1 >= 0 && outOfTableList[i].y + 1 <= 19)
+                    {
+                        _cubesNewPosition.Add(new CubeToMove(outOfTableList[i].x, outOfTableList[i].y + 1, outOfTableList[i].value, outOfTableList[i].northAttachment, outOfTableList[i].southAttachment, outOfTableList[i].eastAttachment, outOfTableList[i].westAttachment, outOfTableList[i].direction, outOfTableList[i].remainingCleaningOperations));
+                    }
+                    else
+                    {
+                        temp.Add(new CubeToMove(outOfTableList[i].x, outOfTableList[i].y + 1, outOfTableList[i].value, outOfTableList[i].northAttachment, outOfTableList[i].southAttachment, outOfTableList[i].eastAttachment, outOfTableList[i].westAttachment, outOfTableList[i].direction, outOfTableList[i].remainingCleaningOperations));
+                    }
+
+                }
+                else if (direction == "nyugat")
+                {
+                    if (outOfTableList[i].x >= 0 && outOfTableList[i].x <= 10 && outOfTableList[i].y - 1 >= 0 && outOfTableList[i].y - 1 <= 19)
+                    {
+                        _cubesNewPosition.Add(new CubeToMove(outOfTableList[i].x, outOfTableList[i].y - 1, outOfTableList[i].value, outOfTableList[i].northAttachment, outOfTableList[i].southAttachment, outOfTableList[i].eastAttachment, outOfTableList[i].westAttachment, outOfTableList[i].direction, outOfTableList[i].remainingCleaningOperations));
+                    }
+                    else
+                    {
+                        temp.Add(new CubeToMove(outOfTableList[i].x, outOfTableList[i].y - 1, outOfTableList[i].value, outOfTableList[i].northAttachment, outOfTableList[i].southAttachment, outOfTableList[i].eastAttachment, outOfTableList[i].westAttachment, outOfTableList[i].direction, outOfTableList[i].remainingCleaningOperations));
+                    }
+
+                }
+                i++;
+            }
+            outOfTableList.Clear();
+            outOfTableList = new List<CubeToMove>(temp);
+
+
+
+
+            for (int i = 0; i < _cubesOldPosition.Count; i++)
+            {
+                if (direction == "észak")
+                { 
+                    if(_cubesOldPosition[i].x - 1 >= 0 && _cubesOldPosition[i].x - 1 <= 10 && _cubesOldPosition[i].y >= 0 && _cubesOldPosition[i].y <= 19)
+                    {
+                        if (_cubesOldPosition[i].value == 10)
+                        {
+                            _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y, _table.GetFieldValue(_cubesOldPosition[i].x - 1 + 3, _cubesOldPosition[i].y + 4), table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                        }
+                        else
+                        {
+                            _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y, _cubesOldPosition[i].value, table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                        }
+                        
+                    }
+                    else
+                    {
+                        outOfTableList.Add(new CubeToMove(_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y, _cubesOldPosition[i].value, table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                    }  
+                }
+                else if (direction == "dél")
+                {
+                    if (_cubesOldPosition[i].x + 1 >= 0 && _cubesOldPosition[i].x + 1 <= 10 && _cubesOldPosition[i].y >= 0 && _cubesOldPosition[i].y <= 19)
+                    {
+                        if (_cubesOldPosition[i].value == 10)
+                        {
+                            _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y, _table.GetFieldValue(_cubesOldPosition[i].x + 1 + 3, _cubesOldPosition[i].y + 4), table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                        }
+                        else
+                        {
+                            _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y, _cubesOldPosition[i].value, table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                        }
+                            
+                    }
+                    else
+                    {
+                        outOfTableList.Add(new CubeToMove(_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y, _cubesOldPosition[i].value, table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                    }
+                }
+                else if (direction == "kelet") 
+                {
+                    if (_cubesOldPosition[i].x >= 0 && _cubesOldPosition[i].x <= 10 && _cubesOldPosition[i].y + 1 >= 0 && _cubesOldPosition[i].y + 1 <= 19)
+                    {
+                        if (_cubesOldPosition[i].value == 10)
+                        {
+                            _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1, _table.GetFieldValue(_cubesOldPosition[i].x + 3, _cubesOldPosition[i].y + 1 + 4), table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                        }
+                        else
+                        {
+                            _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1, _cubesOldPosition[i].value, table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                        }
+                    }
+                    else
+                    {
+                        outOfTableList.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1, _cubesOldPosition[i].value, table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                    }
+                        
+                }
+                else if (direction == "nyugat") 
+                {
+                    if (_cubesOldPosition[i].x >= 0 && _cubesOldPosition[i].x <= 10 && _cubesOldPosition[i].y - 1 >= 0 && _cubesOldPosition[i].y - 1 <= 19)
+                    {
+                        if (_cubesOldPosition[i].value == 10)
+                        {
+                            _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1, _table.GetFieldValue(_cubesOldPosition[i].x + 3, _cubesOldPosition[i].y - 1 + 4), table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                        }
+                        else
+                        {
+                            _cubesNewPosition.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1, _cubesOldPosition[i].value, table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                        }
+                    }
+                    else
+                    {
+                        outOfTableList.Add(new CubeToMove(_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1, _cubesOldPosition[i].value, table.GetAttachmentNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), table.GetAttachmentWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y), direction, _cubesOldPosition[i].remainingCleaningOperations));
+                    }
+                       
+                }
+            }
+
+            switch (playerNumber)
+            {
+                case 1:
+                    _outOfTableGreenPlayerOne = new List<CubeToMove>(outOfTableList);
+                    break;
+                case 2:
+
+
+                    _outOfTableGreenPlayerTwo = new List<CubeToMove>(outOfTableList);
+                    break;
+                case 3:
+
+
+                    _outOfTableRedPlayerOne = new List<CubeToMove>(outOfTableList);
+                    break;
+
+                case 4:
+
+
+                    _outOfTableRedPlayerTwo = new List<CubeToMove>(outOfTableList);
+                    break;
+            }
+
+            // Először letöröljük a tábláról a régi pozíciós kockákat
+
+            for (int i = 0; i < _cubesOldPosition.Count; i++)
+            {
+                table.SetValue(_cubesOldPosition[i].x, _cubesOldPosition[i].y, 7, -1);
+                table.SetAttachmentValues(_cubesOldPosition[i].x, _cubesOldPosition[i].y, false, false, false, false);
+            }
+
+
+            // A kockákat újrarajzoljuk a táblán az új pozíciókat tartalmazó lista szerint
+
+            for (int i = 0; i < _cubesNewPosition.Count; i++) 
+            {
+                    table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].remainingCleaningOperations);
+                    table.SetAttachmentValues(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment);
+            }
+        }
+
+        
 
         void ExecuteSafeSteps(string direction)
         {
@@ -3046,7 +3431,7 @@ namespace ELTE.Robotok.Model
 
                             if (player == 1) //Ha csak az egyik játékos látta  a másikat, akkor a másik játékos szürke mezőit nem kell átadnunk
                             {
-                                if (_tableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
+                                if (_tableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != 10  && _tableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != -1)
                                 {
                                     _tableGreenPlayerOne.SetValue(i - 3, j - 4, _tableGreenPlayerTwo.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
                                     _tableGreenPlayerOne.SetAttachmentValues(i - 3, j - 4, _tableGreenPlayerTwo.GetAttachmentNorth(i - 3, j - 4), _tableGreenPlayerTwo.GetAttachmentSouth(i - 3, j - 4), _tableGreenPlayerTwo.GetAttachmentEast(i - 3, j - 4), _tableGreenPlayerTwo.GetAttachmentWest(i - 3, j - 4));
@@ -3055,7 +3440,7 @@ namespace ELTE.Robotok.Model
                             }
                             if (player == 8)
                             {
-                                if (_tableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 10)
+                                if (_tableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 10 && _tableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != -1)
                                 {
                                     _tableGreenPlayerTwo.SetValue(i - 3, j - 4, _tableGreenPlayerOne.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
                                     _tableGreenPlayerTwo.SetAttachmentValues(i - 3, j - 4, _tableGreenPlayerOne.GetAttachmentNorth(i - 3, j - 4), _tableGreenPlayerOne.GetAttachmentSouth(i - 3, j - 4), _tableGreenPlayerOne.GetAttachmentEast(i - 3, j - 4), _tableGreenPlayerOne.GetAttachmentWest(i - 3, j - 4));
@@ -3067,7 +3452,7 @@ namespace ELTE.Robotok.Model
                             {
                                 if (player == 2)
                                 {
-                                    if (_tableRedPlayerOne.GetFieldValue(i - 3, j - 4) != 10)
+                                    if (_tableRedPlayerOne.GetFieldValue(i - 3, j - 4) != 10 && _tableRedPlayerOne.GetFieldValue(i - 3, j - 4) != -1)
                                     {
                                         _tableRedPlayerOne.SetValue(i - 3, j - 4, _tableRedPlayerTwo.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
                                         _tableRedPlayerOne.SetAttachmentValues(i - 3, j - 4, _tableRedPlayerTwo.GetAttachmentNorth(i - 3, j - 4), _tableRedPlayerTwo.GetAttachmentSouth(i - 3, j - 4), _tableRedPlayerTwo.GetAttachmentEast(i - 3, j - 4), _tableRedPlayerTwo.GetAttachmentWest(i - 3, j - 4));
@@ -3078,7 +3463,7 @@ namespace ELTE.Robotok.Model
 
                                 if (player == 9)
                                 {
-                                    if (_tableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
+                                    if (_tableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 10 && _tableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != -1)
                                     {
                                         _tableRedPlayerTwo.SetValue(i - 3, j - 4, _tableRedPlayerOne.GetFieldValue(i - 3, j - 4), _table.GetFieldRemainingCleaningOperations(i, j));
                                         _tableRedPlayerTwo.SetAttachmentValues(i - 3, j - 4, _tableRedPlayerOne.GetAttachmentNorth(i - 3, j - 4), _tableRedPlayerOne.GetAttachmentSouth(i - 3, j - 4), _tableRedPlayerOne.GetAttachmentEast(i - 3, j - 4), _tableRedPlayerOne.GetAttachmentWest(i - 3, j - 4));
