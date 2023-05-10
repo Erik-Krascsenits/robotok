@@ -12,46 +12,40 @@ namespace Robotok.Library.Model
         private Int32 x; // a táblán vízszintes elhelyezkedése
         private Int32 y; // a táblán függőleges elhelyezkedése
         private Int32[,] _shape = null!; // maga az alakzat
-        private Int32[,] _cube = new Int32[4, 4] { // egyszerűség kedvéért, most minden alakzat 4x4 méretű mátrixban lesz, de jövőben ez megváltoztathatjuk
-            {-2, -2, -2, -2},
-            {-2, -2, -2, -2},
-            {-2, 3, 3, -2},
-            {-2, 3, 3, -2}
+        private Int32[,] _cube = new Int32[3, 3] { // egyszerűség kedvéért, most minden alakzat 4x4 méretű mátrixban lesz, de jövőben ez megváltoztathatjuk
+            {-2, -2, -2},
+            {-2, 3, 3},
+            {-2, 3, 3},
         };
 
-        private Int32[,] _triangle = new Int32[4, 4] {
-            {-2, -2, -2, -2},
-            {-2, -2, -2, -2},
-            {-2, -2, 4, -2},
-            {-2, 4, 4, -2}
+        private Int32[,] _triangle = new Int32[3, 3] {
+            {-2, -2, -2},
+            {-2, -2, 4},
+            {-2, 4, 4},
         };
 
-        private Int32[,] _straight = new Int32[4, 4] {
-            {-2, -2, -2, -2},
-            {-2, -2, -2, -2},
-            {-2, -2, -2, -2},
-            {5, 5, 5, 5}
+        private Int32[,] _straight = new Int32[3, 3] {
+            {-2, -2, -2},
+            {-2, -2, -2},
+            {5, 5, 5}
         };
 
-        private Int32[,] _lType = new Int32[4, 4] {
-            {-2, -2, -2, -2},
-            {-2, -2, -2, -2},
-            {-2, 6, -2, -2},
-            {-2, 6, 6, 6}
+        private Int32[,] _lType = new Int32[3, 3] {
+            { -2, -2, -2},
+            { 6, -2, -2},
+            { 6, 6, 6}
         };
 
-        private Int32[,] _rhombus = new Int32[4, 4] {
-            {-2, -2, -2, -2},
-            {-2, -2, 11, -2},
-            {-2, 11, 11, 11},
-            {-2, -2, 11, -2}
+        private Int32[,] _rhombus = new Int32[3, 3] {
+            { -2, 11, -2},
+            { 11, 11, 11},
+            { -2, 11, -2}
         };
 
-        private Int32[,] _piType = new Int32[4, 4] {
-            {-2, -2, -2, -2},
-            {-2, -2, -2, -2},
-            {12, 12, 12, 12},
-            {12, -2, -2, 12}
+        private Int32[,] _piType = new Int32[3, 3] {
+            {-2, -2, -2},
+            {12, 12, 12},
+            {12, -2, 12}
         };
 
         #endregion
@@ -67,8 +61,6 @@ namespace Robotok.Library.Model
         public Int32[,] lType { get { return _lType; } }
         public Int32[,] Rhombus { get { return _rhombus; } }
         public Int32[,] PiType { get { return _piType; } }
-
-
 
         #endregion
 

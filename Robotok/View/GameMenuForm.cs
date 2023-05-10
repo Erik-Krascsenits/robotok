@@ -435,7 +435,23 @@ public partial class GameMenuForm : Form
         if (_model.IsGameOver)
         {
             _timer.Enabled = false;
-            MessageBox.Show("This is the place of the message", "Game over!", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            string winner = "A zöld csapat pontszáma: " + instance._model.GreenTeamPoints.ToString();
+            if (instance._model.Teams == 2)
+            {
+                if (instance._model.GreenTeamPoints > instance._model.RedTeamPoints)
+                {
+                    winner = "A zöld csapat nyert! \nZöld csapat pontszámja: " + instance._model.GreenTeamPoints.ToString() + "\nPiros csapat pontszáma: " + instance._model.RedTeamPoints.ToString() + "\n";
+                }
+                else if (instance._model.GreenTeamPoints < instance._model.RedTeamPoints)
+                {
+                    winner = "A piros csapat nyert! \nPiros csapat pontszámja: " + instance._model.RedTeamPoints.ToString() + "\nZöld csapat pontszáma: " + instance._model.GreenTeamPoints.ToString() + "\n";
+                } else
+                {
+                    winner = "Döntetlen! \nZöld csapat pontszámja: " + instance._model.GreenTeamPoints.ToString() + "\nPiros csapat pontszáma: " + instance._model.RedTeamPoints.ToString() + "\n";
+                }
+            }
+
+            MessageBox.Show(winner, "Game over!" , MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             DisposeAllForms();
         }
     }

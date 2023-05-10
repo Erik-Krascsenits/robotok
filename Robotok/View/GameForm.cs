@@ -33,6 +33,14 @@ namespace ELTE.Robotok.View
             InitializeComponent();
             _difficulty = difficulty;
             _teams = teams;
+            if (GameMenuForm.instance._model.Teams != 2)
+            {
+                this.redGroupPointsValueText.Text = "-";
+            } 
+            else
+            {
+                this.redGroupPointsValueText.Text = GameMenuForm.instance._model.RedTeamPoints.ToString();
+            }
             _activePlayer = activePlayer;
             _operationDone = false;
             // Játéktáblák inicializálása

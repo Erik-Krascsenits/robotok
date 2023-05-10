@@ -250,8 +250,8 @@ namespace ELTE.Robotok.Model
             _figure1 = new Shape();
             _figure2 = new Shape();
 
-            _tableNoticeBoardOne = new RobotokTable(4, 4);
-            _tableNoticeBoardTwo = new RobotokTable(4, 4);
+            _tableNoticeBoardOne = new RobotokTable(3, 3);
+            _tableNoticeBoardTwo = new RobotokTable(3, 3);
 
             _dataAccess = dataAccess;
 
