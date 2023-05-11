@@ -14,7 +14,6 @@ public partial class GameMenuForm : Form
     // A fõmenü példánya, a játékosnézeteken ennek segítségével tudjuk elérni a fõmenü segítségével a modell réteget
     public static GameMenuForm instance = null!;
 
-    private IRobotokDataAccess _dataAccess = null!; // adatelérés
     public RobotokGameModel _model = null!; // játékmodell
 
     private System.Windows.Forms.Timer _timer = null!; // idõzítõ a visszaszámláláshoz
@@ -22,10 +21,10 @@ public partial class GameMenuForm : Form
     /* 
     Azt a játékos tárolja el, akié a jelenlegi lépés,
     1 - zöld csapat 1. játékos
-    2 - zöld csapat 2. játékos
-    3 - piros csapat 1. játékos
-    4 - piros csapat 2. játékos
-    Így változik az értéke: 1 csapat esetén: 1 -> 2 -> 1 -> ... 2 csapat esetén: 1 -> 2 -> 3 -> 4 -> 1 -> ...
+    8 - zöld csapat 2. játékos
+    2 - piros csapat 1. játékos
+    9 - piros csapat 2. játékos
+    Így változik az értéke: 1 csapat esetén: 1 -> 8 -> 1 -> ... 2 csapat esetén: 1 -> 8 -> 2 -> 9 -> 1 -> ...
     */
     public int actualPlayer;
 
@@ -63,8 +62,7 @@ public partial class GameMenuForm : Form
 
     private void startButton_Click(object sender, EventArgs e)
     {
-        _model = new RobotokGameModel(_dataAccess, selectedDifficulty, selectedGroupCount); // amikor a játékos el akarja indítani a játékot a fõmenübõl, akkor példányosítjuk a model-t
-        _model.NewGame(); // új játék kezdete (a modell legenerálja a kezdõ pályát)
+        _model = new RobotokGameModel(selectedDifficulty, selectedGroupCount); // amikor a játékos el akarja indítani a játékot a fõmenübõl, akkor példányosítjuk a model-t
 
         // Példányosítjuk és megjelenítjük a zöld csapat játékosainak ablakait és jelezzük, hogy melyik ablak melyik játékosé
 
@@ -158,9 +156,9 @@ public partial class GameMenuForm : Form
         {
             if (selectedGroupCount == 1)
             {
-                if (actualPlayer < 2)
+                if (actualPlayer == 1)
                 {
-                    actualPlayer++;
+                    actualPlayer = 8;
                 }
                 else
                 {
@@ -169,11 +167,19 @@ public partial class GameMenuForm : Form
             }
             else if (selectedGroupCount == 2)
             {
-                if (actualPlayer < 4)
+                if (actualPlayer == 1)
                 {
-                    actualPlayer++;
+                    actualPlayer = 8;
                 }
-                else
+                else if (actualPlayer == 8)
+                {
+                    actualPlayer = 2;
+                }
+                else if (actualPlayer == 2)
+                {
+                    actualPlayer = 9;
+                }
+                else if (actualPlayer == 9)
                 {
                     actualPlayer = 1;
                 }
@@ -348,7 +354,7 @@ public partial class GameMenuForm : Form
                 _gameFormRedTeamPlayerOne.DisableButtons();
                 _gameFormRedTeamPlayerTwo.DisableButtons();
             }
-            if (actualPlayer == 2)
+            if (actualPlayer == 8)
             {
                 _gameFormGreenTeamPlayerOne.DisableButtons();
                 if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0)
@@ -358,7 +364,7 @@ public partial class GameMenuForm : Form
                 _gameFormRedTeamPlayerOne.DisableButtons();
                 _gameFormRedTeamPlayerTwo.DisableButtons();
             }
-            if (actualPlayer == 3)
+            if (actualPlayer == 2)
             {
                 _gameFormGreenTeamPlayerOne.DisableButtons();
                 _gameFormGreenTeamPlayerTwo.DisableButtons();
@@ -368,7 +374,7 @@ public partial class GameMenuForm : Form
                 }
                 _gameFormRedTeamPlayerTwo.DisableButtons();
             }
-            if (actualPlayer == 4)
+            if (actualPlayer == 9)
             {
                 _gameFormGreenTeamPlayerOne.DisableButtons();
                 _gameFormGreenTeamPlayerTwo.DisableButtons();
@@ -388,17 +394,17 @@ public partial class GameMenuForm : Form
             _gameFormGreenTeamPlayerOne.RefreshTable(actualPlayer);
             _gameFormGreenTeamPlayerOne.BringToFront();
         }
-        else if (actualPlayer == 2)
+        else if (actualPlayer == 8)
         {
             _gameFormGreenTeamPlayerTwo.RefreshTable(actualPlayer);
             _gameFormGreenTeamPlayerTwo.BringToFront();
         }
-        else if (actualPlayer == 3)
+        else if (actualPlayer == 2)
         {
             _gameFormRedTeamPlayerOne.RefreshTable(actualPlayer);
             _gameFormRedTeamPlayerOne.BringToFront();
         }
-        else if (actualPlayer == 4)
+        else if (actualPlayer == 9)
         {
             _gameFormRedTeamPlayerTwo.RefreshTable(actualPlayer);
             _gameFormRedTeamPlayerTwo.BringToFront();

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Robotok.Library.Model
+namespace ELTE.Robotok.Model
 {
     public class Shape
     {
@@ -81,7 +81,7 @@ namespace Robotok.Library.Model
         private void GenerateShape()
         {
             Random temp = new Random();
-            switch (temp.Next(1, 6))
+            switch (temp.Next(1, 7))
             {
                 case 1:
                     _shape = _cube;

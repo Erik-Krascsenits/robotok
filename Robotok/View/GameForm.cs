@@ -57,18 +57,20 @@ namespace ELTE.Robotok.View
 
         #region Grid event handlers
 
-        private void ButtonGrid_Click(object sender, EventArgs e)
+        private void ButtonGrid_Click(object? sender, EventArgs e)
         {
-            Button senderButton = sender as Button;
-            if (_activeCoordinateBox == 1)
+            if (sender is Button senderButton)
             {
-                coordinate1.Text = senderButton.Name;
-                _activeCoordinateBox = 2;
-            }
-            else
-            {
-                coordinate2.Text = senderButton.Name;
-                _activeCoordinateBox = 1;
+                if (_activeCoordinateBox == 1)
+                {
+                    coordinate1.Text = senderButton.Name;
+                    _activeCoordinateBox = 2;
+                }
+                else
+                {
+                    coordinate2.Text = senderButton.Name;
+                    _activeCoordinateBox = 1;
+                }
             }
         }
 
@@ -375,7 +377,7 @@ namespace ELTE.Robotok.View
             {
                 GameMenuForm.instance._model.lastOperationTypePlayer1TeamGreen = 1;
             }
-            else if (_activePlayer == 2)
+            else if (_activePlayer == 8)
             {
                 GameMenuForm.instance._model.lastOperationTypePlayer2TeamGreen = 1;
             }
@@ -626,7 +628,7 @@ namespace ELTE.Robotok.View
                     }
                 }
             }
-            if (active == 2) //másik játékos zöld csapat esetén
+            if (active == 8) //másik játékos zöld csapat esetén
             {
                 if (_teams == 1)
                 {
@@ -744,7 +746,7 @@ namespace ELTE.Robotok.View
             }
             if (_teams == 2)
             {
-                if (active == 3) //első játékos piros csapat esetén
+                if (active == 2) //első játékos piros csapat esetén
                 {
                     nextRoundValueText.Text = "Piros csapat 2. játékos";
                     GameMenuForm.instance._model.ManhattanDistance(_difficulty, 2);
@@ -853,7 +855,7 @@ namespace ELTE.Robotok.View
                         }
                     }
                 }
-                else if (active == 4) //másik játékos piros csapat esetén
+                else if (active == 9) //másik játékos piros csapat esetén
                 {
                     nextRoundValueText.Text = "Zöld csapat 1. játékos";
                     GameMenuForm.instance._model.ManhattanDistance(_difficulty, 9);
@@ -1236,7 +1238,7 @@ namespace ELTE.Robotok.View
 
             if (coordinate1.Text != "" && coordinate2.Text != "")
             {
-                if (_activePlayer == 1 || _activePlayer == 2)
+                if (_activePlayer == 1 || _activePlayer == 8)
                 {
                     // Csapattól függően külön kezeljük a kockaösszekapcsolást
                     if (GameMenuForm.instance._model.greenTeamCubeAttachState == 1)
