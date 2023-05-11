@@ -140,7 +140,7 @@ public partial class GameMenuForm : Form
     private void Timer_Tick(Object? sender, EventArgs e)
     {
         GameOver();
-        _model.AdvanceTime(actualPlayer); // Játék léptetése
+        _model.AdvanceTime(actualPlayer); // játék léptetése
 
         _gameFormGreenTeamPlayerOne.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc"; // frissítjük a hátralevõ másodpercek számának kijelzését
         _gameFormGreenTeamPlayerTwo.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc";

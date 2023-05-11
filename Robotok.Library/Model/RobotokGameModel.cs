@@ -1,4 +1,5 @@
 using ELTE.Robotok.Persistence;
+using System.Numerics;
 
 namespace ELTE.Robotok.Model
 {
@@ -3234,7 +3235,7 @@ namespace ELTE.Robotok.Model
         /// Paraméterül kapott csapat kockaösszekapcsolási állapotának aktualizálása
         /// </summary>
         /// <param name="playerNumber">Játékos egyedi azonosítója</param>
-        private void updateTeamCubeAttachStates (int playerNumber)
+        private void updateTeamCubeAttachStates (Int32 playerNumber)
         {
             if (playerNumber == 1 || playerNumber == 8)
             {
@@ -3311,7 +3312,6 @@ namespace ELTE.Robotok.Model
 
                         _table.SetValue(figureCoordinateX, figureCoordinateY, _figure1.GetColor(), _cleaningOperations);
                     }
-
                 }
             }
 
@@ -3354,7 +3354,6 @@ namespace ELTE.Robotok.Model
 
                         _table.SetValue(figureCoordinateX, figureCoordinateY, _figure2.GetColor(), _cleaningOperations);
                     }
-
                 }
             }
 
@@ -3375,6 +3374,5 @@ namespace ELTE.Robotok.Model
         }
 
         #endregion
-
     }
 }

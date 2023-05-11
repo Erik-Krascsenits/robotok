@@ -134,9 +134,8 @@
             this.taskTwoPointsValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.taskTwoPointsValueText.Location = new System.Drawing.Point(848, 177);
             this.taskTwoPointsValueText.Name = "taskTwoPointsValueText";
-            this.taskTwoPointsValueText.Size = new System.Drawing.Size(32, 25);
+            this.taskTwoPointsValueText.Size = new System.Drawing.Size(0, 25);
             this.taskTwoPointsValueText.TabIndex = 11;
-            this.taskTwoPointsValueText.Text = GameMenuForm.instance._model.SecondTaskPoints.ToString();
             // 
             // taskTwoDeadlineValueText
             // 
@@ -144,7 +143,7 @@
             this.taskTwoDeadlineValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.taskTwoDeadlineValueText.Location = new System.Drawing.Point(848, 148);
             this.taskTwoDeadlineValueText.Name = "taskTwoDeadlineValueText";
-            this.taskTwoDeadlineValueText.Size = new System.Drawing.Size(92, 25);
+            this.taskTwoDeadlineValueText.Size = new System.Drawing.Size(0, 25);
             this.taskTwoDeadlineValueText.TabIndex = 10;
             this.taskTwoDeadlineValueText.Text = GameMenuForm.instance._model.SecondTaskDeadline.ToString() + " lépés van hátra";
             // 
@@ -154,7 +153,7 @@
             this.taskOnePointsValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.taskOnePointsValueText.Location = new System.Drawing.Point(848, 118);
             this.taskOnePointsValueText.Name = "taskOnePointsValueText";
-            this.taskOnePointsValueText.Size = new System.Drawing.Size(32, 25);
+            this.taskOnePointsValueText.Size = new System.Drawing.Size(0, 25);
             this.taskOnePointsValueText.TabIndex = 9;
             this.taskOnePointsValueText.Text = GameMenuForm.instance._model.FirstTaskPoints.ToString();
             // 
@@ -164,7 +163,7 @@
             this.taskOneDeadlineValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.taskOneDeadlineValueText.Location = new System.Drawing.Point(848, 89);
             this.taskOneDeadlineValueText.Name = "taskOneDeadlineValueText";
-            this.taskOneDeadlineValueText.Size = new System.Drawing.Size(92, 25);
+            this.taskOneDeadlineValueText.Size = new System.Drawing.Size(0, 25);
             this.taskOneDeadlineValueText.TabIndex = 8;
             this.taskOneDeadlineValueText.Text = GameMenuForm.instance._model.FirstTaskDeadline.ToString() + " lépés van hátra";
             // 
@@ -194,7 +193,7 @@
             this.redGroupPointsValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.redGroupPointsValueText.Location = new System.Drawing.Point(848, 244);
             this.redGroupPointsValueText.Name = "redGroupPointsValueText";
-            this.redGroupPointsValueText.Size = new System.Drawing.Size(22, 25);
+            this.redGroupPointsValueText.Size = new System.Drawing.Size(0, 25);
             this.redGroupPointsValueText.TabIndex = 17;
 
             // 
@@ -204,7 +203,7 @@
             this.greenGroupPointsValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.greenGroupPointsValueText.Location = new System.Drawing.Point(848, 215);
             this.greenGroupPointsValueText.Name = "greenGroupPointsValueText";
-            this.greenGroupPointsValueText.Size = new System.Drawing.Size(22, 25);
+            this.greenGroupPointsValueText.Size = new System.Drawing.Size(0, 25);
             this.greenGroupPointsValueText.TabIndex = 16;
             this.greenGroupPointsValueText.Text = GameMenuForm.instance._model.GreenTeamPoints.ToString();
             // 
@@ -405,9 +404,9 @@
             this.nextRoundValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.nextRoundValueText.Location = new System.Drawing.Point(848, 317);
             this.nextRoundValueText.Name = "nextRoundValueText";
-            this.nextRoundValueText.Size = new System.Drawing.Size(108, 25);
+            this.nextRoundValueText.Size = new System.Drawing.Size(184, 25);
             this.nextRoundValueText.TabIndex = 36;
-            this.nextRoundValueText.Text = "piros csapat";
+            this.nextRoundValueText.Text = "Zöld csapat 2. játékos";
             // 
             // nextRoundText
             // 
@@ -435,9 +434,9 @@
             this.successfulText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.successfulText.Location = new System.Drawing.Point(848, 356);
             this.successfulText.Name = "successfulText";
-            this.successfulText.Size = new System.Drawing.Size(65, 25);
+            this.successfulText.Size = new System.Drawing.Size(128, 25);
             this.successfulText.TabIndex = 38;
-            this.successfulText.Text = "sikeres";
+            this.successfulText.Text = "Nincs művelet!";
             // 
             // coordinate2
             // 
