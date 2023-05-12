@@ -387,8 +387,8 @@ namespace ELTE.Robotok.View
                     if (i >= 3 && i <= 13 && j >= 4 && j <= 23) // a játékosnézeteken csak a játékterület belső része van megjelenítve
                     {
                         _buttonGridPlayer[i - 3, j - 4] = new Button();
-                        _buttonGridPlayer[i - 3, j - 4].Location = new Point(60 + 25 * (j - 4), 85 + 25 * (i - 3)); // elhelyezkedés
-                        _buttonGridPlayer[i - 3, j - 4].Size = new Size(25, 25); // méret
+                        _buttonGridPlayer[i - 3, j - 4].Location = new Point(Convert.ToInt32(60 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * (j - 4), Convert.ToInt32(85 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * (i - 3)); // elhelyezkedés
+                        _buttonGridPlayer[i - 3, j - 4].Size = new Size(Convert.ToInt32(25 * GetScalingFactor()), Convert.ToInt32(25 * GetScalingFactor())); // méret
                         _buttonGridPlayer[i - 3, j - 4].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold);
                         _buttonGridPlayer[i - 3, j - 4].Enabled = true;
                         _buttonGridPlayer[i - 3, j - 4].Visible = true;
@@ -480,8 +480,8 @@ namespace ELTE.Robotok.View
                 for (Int32 j = 0; j < GameMenuForm.instance._model.TableNoticeBoardOne.SizeY; j++)
                 {
                     _buttonGridNoticeBoardOne[i, j] = new Button();
-                    _buttonGridNoticeBoardOne[i, j].Location = new Point(215 + 25 * j, 400 + 25 * i);
-                    _buttonGridNoticeBoardOne[i, j].Size = new Size(25, 25);
+                    _buttonGridNoticeBoardOne[i, j].Location = new Point(Convert.ToInt32(215 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * j, Convert.ToInt32(400 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * i);
+                    _buttonGridNoticeBoardOne[i, j].Size = new Size(Convert.ToInt32(25 * GetScalingFactor()), Convert.ToInt32(25 * GetScalingFactor()));
                     _buttonGridNoticeBoardOne[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold);
                     _buttonGridNoticeBoardOne[i, j].Enabled = false;
                     _buttonGridNoticeBoardOne[i, j].Visible = true;
@@ -526,8 +526,8 @@ namespace ELTE.Robotok.View
                 for (Int32 j = 0; j < GameMenuForm.instance._model.TableNoticeBoardTwo.SizeY; j++)
                 {
                     _buttonGridNoticeBoardTwo[i, j] = new Button();
-                    _buttonGridNoticeBoardTwo[i, j].Location = new Point(365 + 25 * j, 400 + 25 * i);
-                    _buttonGridNoticeBoardTwo[i, j].Size = new Size(25, 25);
+                    _buttonGridNoticeBoardTwo[i, j].Location = new Point(Convert.ToInt32(365 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * j, Convert.ToInt32(400 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * i);
+                    _buttonGridNoticeBoardTwo[i, j].Size = new Size(Convert.ToInt32(25 * GetScalingFactor()), Convert.ToInt32(25 * GetScalingFactor()));
                     _buttonGridNoticeBoardTwo[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold);
                     _buttonGridNoticeBoardTwo[i, j].Enabled = false;
                     _buttonGridNoticeBoardTwo[i, j].Visible = true;
@@ -578,14 +578,14 @@ namespace ELTE.Robotok.View
                 for (Int32 j = 0; j <= GameMenuForm.instance._model.TableGreenPlayerOne.SizeY; j++)
                 {
                     _verticalPanels[i, j] = new Panel();
-                    _verticalPanels[i, j].Location = new Point(63 + 25 * j - 4, 88 + 25 * i - 3); // elhelyezés két kocka határára
-                    _verticalPanels[i, j].Size = new Size(5, 25);
+                    _verticalPanels[i, j].Location = new Point(Convert.ToInt32(63 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * j - 4, Convert.ToInt32(88 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * i - 3); // elhelyezés két kocka határára
+                    _verticalPanels[i, j].Size = new Size(Convert.ToInt32(5 * GetScalingFactor()), Convert.ToInt32(25 * GetScalingFactor()));
                     _verticalPanels[i, j].BackColor = Color.Red;
                     _verticalPanels[i, j].Visible = false;
 
                     _horizontalPanels[i, j] = new Panel();
-                    _horizontalPanels[i, j].Location = new Point(64 + 25 * j - 4, 87 + 25 * i - 3);
-                    _horizontalPanels[i, j].Size = new Size(25, 5);
+                    _horizontalPanels[i, j].Location = new Point(Convert.ToInt32(64 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * j - 4, Convert.ToInt32(87 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * i - 3);
+                    _horizontalPanels[i, j].Size = new Size(Convert.ToInt32(25 * GetScalingFactor()), Convert.ToInt32(5 * GetScalingFactor()));
                     _horizontalPanels[i, j].BackColor = Color.Red;
                     _horizontalPanels[i, j].Visible = false;
 
@@ -774,6 +774,18 @@ namespace ELTE.Robotok.View
             taskTwoPointsValueText.Text = GameMenuForm.instance._model.SecondTaskPoints.ToString();
 
             greenGroupPointsValueText.Text = GameMenuForm.instance._model.GreenTeamPoints.ToString();
+        }
+
+        /// <summary>
+        /// Kiszámít egy relatív értéket, hogy milyen arányú felbontásváltozás történt az 1920*1080 125%-os nagyítású nézethez képest
+        /// </summary>
+        /// <returns>Relatív felbontáskülönbség</returns>
+        private float GetScalingFactor()
+        {
+            using (Graphics graphics = CreateGraphics())
+            {
+                return graphics.DpiX / 120f;
+            }
         }
 
         #endregion

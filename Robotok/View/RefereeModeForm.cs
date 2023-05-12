@@ -1,14 +1,5 @@
 ﻿using ELTE.Robotok.View;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using ELTE.Robotok.Model;
 using Robotok.WinForms.Properties;
 
 namespace Robotok.WinForms.View
@@ -46,8 +37,8 @@ namespace Robotok.WinForms.View
                 for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
                 {
                     _buttonGrid[i, j] = new Button();
-                    _buttonGrid[i, j].Location = new Point(115 + 22 * j, 85 + 22 * i); // elhelyezkedés
-                    _buttonGrid[i, j].Size = new Size(22, 22); // méret
+                    _buttonGrid[i, j].Location = new Point(Convert.ToInt32(115 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * j, Convert.ToInt32(85 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * i); // elhelyezkedés
+                    _buttonGrid[i, j].Size = new Size(Convert.ToInt32(22 * GetScalingFactor()), Convert.ToInt32(22 * GetScalingFactor())); // méret
                     _buttonGrid[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
                     _buttonGrid[i, j].Enabled = false; // kikapcsolt állapot
                     _buttonGrid[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
@@ -137,14 +128,14 @@ namespace Robotok.WinForms.View
                 for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
                 {
                     _verticalPanels[i, j] = new Panel();
-                    _verticalPanels[i, j].Location = new Point(113 + 22 * j, 85 + 22 * i); // elhelyezkedés
-                    _verticalPanels[i, j].Size = new Size(5, 22); // méret
+                    _verticalPanels[i, j].Location = new Point(Convert.ToInt32(113 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * j, Convert.ToInt32(85 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * i); // elhelyezkedés
+                    _verticalPanels[i, j].Size = new Size(Convert.ToInt32(5 * GetScalingFactor()), Convert.ToInt32(22 * GetScalingFactor())); // méret
                     _verticalPanels[i, j].BackColor = Color.Red; // debuggolás miatt piros, hogy a határoknál ne olvadjon bele a fekete színbe, később át lehet írni
                     _verticalPanels[i, j].Visible = false;
 
                     _horizontalPanels[i, j] = new Panel();
-                    _horizontalPanels[i, j].Location = new Point(115 + 22 * j, 83 + 22 * i);
-                    _horizontalPanels[i, j].Size = new Size(22, 5);
+                    _horizontalPanels[i, j].Location = new Point(Convert.ToInt32(115 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * j, Convert.ToInt32(83 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * i);
+                    _horizontalPanels[i, j].Size = new Size(Convert.ToInt32(22 * GetScalingFactor()), Convert.ToInt32(5 * GetScalingFactor()));
                     _horizontalPanels[i, j].BackColor = Color.Red;
                     _horizontalPanels[i, j].Visible = false;
 
@@ -166,6 +157,18 @@ namespace Robotok.WinForms.View
                 {
                     e.Cancel = true;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Kiszámít egy relatív értéket, hogy milyen arányú felbontásváltozás történt az 1920*1080 125%-os nagyítású nézethez képest
+        /// </summary>
+        /// <returns>Relatív felbontáskülönbség</returns>
+        private float GetScalingFactor()
+        {
+            using (Graphics graphics = CreateGraphics())
+            {
+                return graphics.DpiX / 120f;
             }
         }
         #endregion
@@ -294,7 +297,7 @@ namespace Robotok.WinForms.View
 
         public void RefreshRefereeCleaningOperationImage(int i, int j)
         {
-            if(GameMenuForm.instance._model.GameDifficulty  == ELTE.Robotok.Model.GameDifficulty.Easy)
+            if(GameMenuForm.instance._model.GameDifficulty  == GameDifficulty.Easy)
             {
                 if(GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
                 {
@@ -305,7 +308,7 @@ namespace Robotok.WinForms.View
                     _buttonGrid[i, j].BackgroundImage = null;
                 }
             }
-            else if(GameMenuForm.instance._model.GameDifficulty == ELTE.Robotok.Model.GameDifficulty.Medium)
+            else if(GameMenuForm.instance._model.GameDifficulty == GameDifficulty.Medium)
             {
                 if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 2)
                 {
