@@ -49,6 +49,7 @@ namespace ELTE.Robotok.View
             // Játéktáblák inicializálása
             GenerateTables();
             GenerateAttachments();
+            InitializeTexts();
         }
 
         #endregion
@@ -799,6 +800,20 @@ namespace ELTE.Robotok.View
                     _buttonGridPlayer[coordinateX - 3, coordinateY - 4].BackgroundImage = null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Játéknézet megnyitásakor inicializálja a szövegeket
+        /// </summary>
+        private void InitializeTexts()
+        {
+            taskOneDeadlineValueText.Text = GameMenuForm.instance._model.FirstTaskDeadline.ToString() + " lépés van hátra";
+            taskOnePointsValueText.Text = GameMenuForm.instance._model.FirstTaskPoints.ToString();
+
+            taskTwoDeadlineValueText.Text = GameMenuForm.instance._model.SecondTaskDeadline.ToString() + " lépés van hátra";
+            taskTwoPointsValueText.Text = GameMenuForm.instance._model.SecondTaskPoints.ToString();
+
+            greenGroupPointsValueText.Text = GameMenuForm.instance._model.GreenTeamPoints.ToString();
         }
 
         #endregion
