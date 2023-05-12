@@ -114,16 +114,8 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen tisztítás!";
                 }
             }
-            GameMenuForm.instance._model.Wait();
+            GameMenuForm.instance._model.Wait(_activePlayer, 1);
             _operationDone = true;
-            if (_activePlayer == 1)
-            {
-                GameMenuForm.instance._model.lastOperationTypePlayer1TeamGreen = 8;
-            }
-            else if (_activePlayer == 2)
-            {
-                GameMenuForm.instance._model.lastOperationTypePlayer2TeamGreen = 8;
-            }
             DisableButtons();
         }
 
@@ -133,17 +125,9 @@ namespace ELTE.Robotok.View
         private void waitButton_Click(object sender, EventArgs e)
         {
             _successText = "Sikeres várakozás!";
-            GameMenuForm.instance._model.Wait();
+            GameMenuForm.instance._model.Wait(_activePlayer, 1);
             stepsLeftValueText.Text = GameMenuForm.instance._model.GameStepCount.ToString();
             _operationDone = true;
-            if (_activePlayer == 1)
-            {
-                GameMenuForm.instance._model.lastOperationTypePlayer1TeamGreen = 1;
-            }
-            else if (_activePlayer == 8)
-            {
-                GameMenuForm.instance._model.lastOperationTypePlayer2TeamGreen = 1;
-            }
             DisableButtons();
         }
 
@@ -167,16 +151,8 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen kapcsolódás!";
                 }
             }
-            GameMenuForm.instance._model.Wait();
+            GameMenuForm.instance._model.Wait(_activePlayer, 1);
             _operationDone = true;
-            if (_activePlayer == 1)
-            {
-                GameMenuForm.instance._model.lastOperationTypePlayer1TeamGreen = 4;
-            }
-            else if (_activePlayer == 2)
-            {
-                GameMenuForm.instance._model.lastOperationTypePlayer2TeamGreen = 4;
-            }
             DisableButtons();
         }
 
@@ -200,16 +176,8 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen lekapcsolódás!";
                 }
             }
-            GameMenuForm.instance._model.Wait();
+            GameMenuForm.instance._model.Wait(_activePlayer, 1);
             _operationDone = true;
-            if (_activePlayer == 1)
-            {
-                GameMenuForm.instance._model.lastOperationTypePlayer1TeamGreen = 5;
-            }
-            else if (_activePlayer == 2)
-            {
-                GameMenuForm.instance._model.lastOperationTypePlayer2TeamGreen = 5;
-            }
             DisableButtons();
         }
 
@@ -234,7 +202,7 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen mozgás!";
                 }
             }
-            GameMenuForm.instance._model.Wait();
+            GameMenuForm.instance._model.Wait(_activePlayer, 1);
             _operationDone = true;
             DisableButtons();
         }
@@ -260,16 +228,8 @@ namespace ELTE.Robotok.View
                     _successText = "Sikertelen forgás!";
                 }
             }
-            GameMenuForm.instance._model.Wait();
+            GameMenuForm.instance._model.Wait(_activePlayer, 1);
             _operationDone = true;
-            if (_activePlayer == 1)
-            {
-                GameMenuForm.instance._model.lastOperationTypePlayer1TeamGreen = 2;
-            }
-            else if (_activePlayer == 2)
-            {
-                GameMenuForm.instance._model.lastOperationTypePlayer2TeamGreen = 2;
-            }
             DisableButtons();
         }
 
@@ -280,11 +240,11 @@ namespace ELTE.Robotok.View
         {
             if (_activePlayer == 1 || _activePlayer == 8)
             {
-                GameMenuForm.instance._model.greenTeamCubeAttachState++;
+                GameMenuForm.instance._model.GreenTeamCubeAttachState++;
             }
             else
             {
-                GameMenuForm.instance._model.redTeamCubeAttachState++;
+                GameMenuForm.instance._model.RedTeamCubeAttachState++;
             }
 
             if (coordinate1.Text != "" && coordinate2.Text != "")
@@ -292,72 +252,72 @@ namespace ELTE.Robotok.View
                 if (_activePlayer == 1 || _activePlayer == 8)
                 {
                     // csapattól függően külön kezeljük a kockaösszekapcsolást
-                    if (GameMenuForm.instance._model.greenTeamCubeAttachState == 1)
+                    if (GameMenuForm.instance._model.GreenTeamCubeAttachState == 1)
                     {
                         // amikor az első játékos kezdeményezi az összekapcsolást, elmentjük a megadott koordinátáit
-                        GameMenuForm.instance._model.cube1XPlayer1TeamGreen = Convert.ToInt32(coordinate1.Text.Split(',')[0]);
-                        GameMenuForm.instance._model.cube1YPlayer1TeamGreen = Convert.ToInt32(coordinate1.Text.Split(',')[1]);
-                        GameMenuForm.instance._model.cube2XPlayer1TeamGreen = Convert.ToInt32(coordinate2.Text.Split(',')[0]);
-                        GameMenuForm.instance._model.cube2YPlayer1TeamGreen = Convert.ToInt32(coordinate2.Text.Split(',')[1]);
+                        GameMenuForm.instance._model.Cube1XPlayer1TeamGreen = Convert.ToInt32(coordinate1.Text.Split(',')[0]);
+                        GameMenuForm.instance._model.Cube1YPlayer1TeamGreen = Convert.ToInt32(coordinate1.Text.Split(',')[1]);
+                        GameMenuForm.instance._model.Cube2XPlayer1TeamGreen = Convert.ToInt32(coordinate2.Text.Split(',')[0]);
+                        GameMenuForm.instance._model.Cube2YPlayer1TeamGreen = Convert.ToInt32(coordinate2.Text.Split(',')[1]);
                         _successText = "Sikeres részművelet!";
                     }
-                    else if (GameMenuForm.instance._model.greenTeamCubeAttachState == 2)
+                    else if (GameMenuForm.instance._model.GreenTeamCubeAttachState == 2)
                     {
                         // amikor a második játékos kezdeményezi az összekapcsolást, elmentjük a megadott koordinátáit, és meghívjuk az összekapcsolás műveletet
-                        GameMenuForm.instance._model.cube1XPlayer2TeamGreen = Convert.ToInt32(coordinate1.Text.Split(',')[0]);
-                        GameMenuForm.instance._model.cube1YPlayer2TeamGreen = Convert.ToInt32(coordinate1.Text.Split(',')[1]);
-                        GameMenuForm.instance._model.cube2XPlayer2TeamGreen = Convert.ToInt32(coordinate2.Text.Split(',')[0]);
-                        GameMenuForm.instance._model.cube2YPlayer2TeamGreen = Convert.ToInt32(coordinate2.Text.Split(',')[1]);
+                        GameMenuForm.instance._model.Cube1XPlayer2TeamGreen = Convert.ToInt32(coordinate1.Text.Split(',')[0]);
+                        GameMenuForm.instance._model.Cube1YPlayer2TeamGreen = Convert.ToInt32(coordinate1.Text.Split(',')[1]);
+                        GameMenuForm.instance._model.Cube2XPlayer2TeamGreen = Convert.ToInt32(coordinate2.Text.Split(',')[0]);
+                        GameMenuForm.instance._model.Cube2YPlayer2TeamGreen = Convert.ToInt32(coordinate2.Text.Split(',')[1]);
 
                         if (GameMenuForm.instance._model.AttachCubes("green") == true)
                         {
                             _successText = "Sikeres összekapcsolás!";
-                            GameMenuForm.instance._model.greenTeamCubeAttachState = 0;
+                            GameMenuForm.instance._model.GreenTeamCubeAttachState = 0;
                         }
                         else
                         {
                             _successText = "Sikertelen összekapcsolás!";
-                            GameMenuForm.instance._model.greenTeamCubeAttachState = 0;
+                            GameMenuForm.instance._model.GreenTeamCubeAttachState = 0;
                         }
                     }
-                    else if (GameMenuForm.instance._model.greenTeamCubeAttachState > 2)
+                    else if (GameMenuForm.instance._model.GreenTeamCubeAttachState > 2)
                     {
                         _successText = "Sikertelen összekapcsolás!";
-                        GameMenuForm.instance._model.greenTeamCubeAttachState = 0;
+                        GameMenuForm.instance._model.GreenTeamCubeAttachState = 0;
                     }
                 }
                 else
                 {
-                    if (GameMenuForm.instance._model.redTeamCubeAttachState == 1)
+                    if (GameMenuForm.instance._model.RedTeamCubeAttachState == 1)
                     {
-                        GameMenuForm.instance._model.cube1XPlayer1TeamRed = Convert.ToInt32(coordinate1.Text.Split(',')[0]);
-                        GameMenuForm.instance._model.cube1YPlayer1TeamRed = Convert.ToInt32(coordinate1.Text.Split(',')[1]);
-                        GameMenuForm.instance._model.cube2XPlayer1TeamRed = Convert.ToInt32(coordinate2.Text.Split(',')[0]);
-                        GameMenuForm.instance._model.cube2YPlayer1TeamRed = Convert.ToInt32(coordinate2.Text.Split(',')[1]);
+                        GameMenuForm.instance._model.Cube1XPlayer1TeamRed = Convert.ToInt32(coordinate1.Text.Split(',')[0]);
+                        GameMenuForm.instance._model.Cube1YPlayer1TeamRed = Convert.ToInt32(coordinate1.Text.Split(',')[1]);
+                        GameMenuForm.instance._model.Cube2XPlayer1TeamRed = Convert.ToInt32(coordinate2.Text.Split(',')[0]);
+                        GameMenuForm.instance._model.Cube2YPlayer1TeamRed = Convert.ToInt32(coordinate2.Text.Split(',')[1]);
                         _successText = "Sikeres részművelet!";
                     }
-                    else if (GameMenuForm.instance._model.redTeamCubeAttachState == 2)
+                    else if (GameMenuForm.instance._model.RedTeamCubeAttachState == 2)
                     {
-                        GameMenuForm.instance._model.cube1XPlayer2TeamRed = Convert.ToInt32(coordinate1.Text.Split(',')[0]);
-                        GameMenuForm.instance._model.cube1YPlayer2TeamRed = Convert.ToInt32(coordinate1.Text.Split(',')[1]);
-                        GameMenuForm.instance._model.cube2XPlayer2TeamRed = Convert.ToInt32(coordinate2.Text.Split(',')[0]);
-                        GameMenuForm.instance._model.cube2YPlayer2TeamRed = Convert.ToInt32(coordinate2.Text.Split(',')[1]);
+                        GameMenuForm.instance._model.Cube1XPlayer2TeamRed = Convert.ToInt32(coordinate1.Text.Split(',')[0]);
+                        GameMenuForm.instance._model.Cube1YPlayer2TeamRed = Convert.ToInt32(coordinate1.Text.Split(',')[1]);
+                        GameMenuForm.instance._model.Cube2XPlayer2TeamRed = Convert.ToInt32(coordinate2.Text.Split(',')[0]);
+                        GameMenuForm.instance._model.Cube2YPlayer2TeamRed = Convert.ToInt32(coordinate2.Text.Split(',')[1]);
 
                         if (GameMenuForm.instance._model.AttachCubes("red") == true)
                         {
                             _successText = "Sikeres összekapcsolás!";
-                            GameMenuForm.instance._model.redTeamCubeAttachState = 0;
+                            GameMenuForm.instance._model.RedTeamCubeAttachState = 0;
                         }
                         else
                         {
                             _successText = "Sikertelen összekapcsolás!";
-                            GameMenuForm.instance._model.redTeamCubeAttachState = 0;
+                            GameMenuForm.instance._model.RedTeamCubeAttachState = 0;
                         }
                     }
-                    else if (GameMenuForm.instance._model.redTeamCubeAttachState > 2)
+                    else if (GameMenuForm.instance._model.RedTeamCubeAttachState > 2)
                     {
                         _successText = "Sikertelen összekapcsolás!";
-                        GameMenuForm.instance._model.redTeamCubeAttachState = 0;
+                        GameMenuForm.instance._model.RedTeamCubeAttachState = 0;
                     }
                 }
             }
@@ -366,7 +326,7 @@ namespace ELTE.Robotok.View
                 _successText = "Sikertelen összekapcsolás!";
             }
             _operationDone = true;
-            GameMenuForm.instance._model.Wait();
+            GameMenuForm.instance._model.Wait(_activePlayer, 0);
             DisableButtons();
         }
 
@@ -378,10 +338,10 @@ namespace ELTE.Robotok.View
             if (coordinate1.Text != "" && coordinate2.Text != "")
             {
                 // bekérjük a szétkapcsolandó kockák koordinátáit, és meghívjuk rájuk a szétkapcsolás műveletet
-                GameMenuForm.instance._model.cubeToDetach1X = Convert.ToInt32(coordinate1.Text.Split(',')[0]);
-                GameMenuForm.instance._model.cubeToDetach1Y = Convert.ToInt32(coordinate1.Text.Split(',')[1]);
-                GameMenuForm.instance._model.cubeToDetach2X = Convert.ToInt32(coordinate2.Text.Split(',')[0]);
-                GameMenuForm.instance._model.cubeToDetach2Y = Convert.ToInt32(coordinate2.Text.Split(',')[1]);
+                GameMenuForm.instance._model.CubeToDetach1X = Convert.ToInt32(coordinate1.Text.Split(',')[0]);
+                GameMenuForm.instance._model.CubeToDetach1Y = Convert.ToInt32(coordinate1.Text.Split(',')[1]);
+                GameMenuForm.instance._model.CubeToDetach2X = Convert.ToInt32(coordinate2.Text.Split(',')[0]);
+                GameMenuForm.instance._model.CubeToDetach2Y = Convert.ToInt32(coordinate2.Text.Split(',')[1]);
                 if (GameMenuForm.instance._model.DetachCubes(_activePlayer) == true)
                 {
                     _successText = "Sikeres szétkapcsolás!";
@@ -396,7 +356,7 @@ namespace ELTE.Robotok.View
                 _successText = "Sikertelen szétkapcsolás!";
             }
             _operationDone = true;
-            GameMenuForm.instance._model.Wait();
+            GameMenuForm.instance._model.Wait(_activePlayer, 1);
             DisableButtons();
         }
 

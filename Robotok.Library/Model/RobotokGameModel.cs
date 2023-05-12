@@ -1,5 +1,4 @@
 using ELTE.Robotok.Persistence;
-using System.Numerics;
 
 namespace ELTE.Robotok.Model
 {
@@ -49,20 +48,9 @@ namespace ELTE.Robotok.Model
         private List<Cube> _outOfTableGreenPlayerTwo = new List<Cube>(); // zöld csapat második játékosához kapcsolt, művelet elvégzése után pályán kívülre eső alakzat kockáinak eltárolása
         private List<Cube> _outOfTableRedPlayerOne = new List<Cube>(); // piros csapat első játékosához kapcsolt, művelet elvégzése után pályán kívülre eső alakzat kockáinak eltárolása
         private List<Cube> _outOfTableRedPlayerTwo = new List<Cube>(); // piros csapat második játékosához kapcsolt, művelet elvégzése után pályán kívülre eső alakzat kockáinak eltárolása
-
-        /* Eltároljuk minden játékosról, hogy milyen műveletet végzet legutoljára sikerességtől függetlenül
-        0 - még nem végzett műveletet (alapállapot játék elején), 1 - várakozás, 2 - mozgás, 3 - forgás, 4 - kocka csatolása robothoz, 5 - kocka lecsatolása robotról, 6 - kocka-kocka összekapcsolás, 7 - kocka-kocka szétválasztás, 8 - tisztítás 
-        */
-        public Int32 lastOperationTypePlayer1TeamGreen = 0, lastOperationTypePlayer2TeamGreen = 0, lastOperationTypePlayer1TeamRed = 0, lastOperationTypePlayer2TeamRed = 0;
-
-        /* Eltároljuk mindkét játékos által megadott összekapcsolni kívánt kockák x és y koordinátáját mindkét csapat esetében*/
-        public Int32 cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen, cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen, cube1XPlayer2TeamGreen, cube1YPlayer2TeamGreen, cube2XPlayer2TeamGreen, cube2YPlayer2TeamGreen, cube1XPlayer1TeamRed, cube1YPlayer1TeamRed, cube2XPlayer1TeamRed, cube2YPlayer1TeamRed, cube1XPlayer2TeamRed, cube1YPlayer2TeamRed, cube2XPlayer2TeamRed, cube2YPlayer2TeamRed;
-
-        /* Annak eltárolása, hogy hol tart az összekapcsolás művelet csapatonként, 0 - nincs kezdeményezve, 1 - az első csapattárs megadta a koordinátákat, 2 - a második csapattárs megadta a koordinátákat, >2 - a második csapattárs más műveletet kezdeményezett (így érvénytelen lesz az összekapcsolás)  */
-        public Int32 greenTeamCubeAttachState, redTeamCubeAttachState;
-
-        /* Eltároljuk a szétválasztani kívánt két kocka koordinátáit */
-        public Int32 cubeToDetach1X, cubeToDetach1Y, cubeToDetach2X, cubeToDetach2Y;
+        private Int32 _greenTeamCubeAttachState, _redTeamCubeAttachState; // annak eltárolása, hogy hol tart az összekapcsolás művelet csapatonként, 0 - nincs kezdeményezve, 1 - az első csapattárs megadta a koordinátákat, 2 - a második csapattárs megadta a koordinátákat, >2 - a második csapattárs más műveletet kezdeményezett (így érvénytelen lesz az összekapcsolás)
+        private Int32 _CubeToDetach1X, _CubeToDetach1Y, _CubeToDetach2X, _CubeToDetach2Y; // eltároljuk a szétválasztani kívánt két kocka koordinátáit
+        private Int32 _Cube1XPlayer1TeamGreen, _Cube1YPlayer1TeamGreen, _Cube2XPlayer1TeamGreen, _Cube2YPlayer1TeamGreen, _cube1XPlayer2TeamGreen, _cube1YPlayer2TeamGreen, _cube2XPlayer2TeamGreen, _cube2YPlayer2TeamGreen, _cube1XPlayer1TeamRed, _cube1YPlayer1TeamRed, _Cube2XPlayer1TeamRed, _cube2YPlayer1TeamRed, _Cube1XPlayer2TeamRed, _cube1YPlayer2TeamRed, _Cube2XPlayer2TeamRed, _Cube2YPlayer2TeamRed; // eltároljuk mindkét játékos által megadott összekapcsolni kívánt kockák x és y koordinátáját mindkét csapat esetében
 
         #endregion
 
@@ -162,6 +150,116 @@ namespace ELTE.Robotok.Model
         /// </summary>
         public GameDifficulty GameDifficulty { get { return _gameDifficulty; } set { _gameDifficulty = value; } }
 
+        /// <summary>
+        /// Zöld csapat csatlakozásállapotának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 GreenTeamCubeAttachState { get { return _greenTeamCubeAttachState; } set { _greenTeamCubeAttachState = value; } }
+
+        /// <summary>
+        /// Piros csapat csatlakozásállapotának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 RedTeamCubeAttachState { get { return _redTeamCubeAttachState; } set { _redTeamCubeAttachState = value; } }
+
+        /// <summary>
+        /// Első lecsatolandó kocka X koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 CubeToDetach1X { get { return _CubeToDetach1X; } set { _CubeToDetach1X = value; } }
+
+        /// <summary>
+        /// Első lecsatolandó kocka Y koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 CubeToDetach1Y { get { return _CubeToDetach1Y; } set { _CubeToDetach1Y = value; } }
+
+        /// <summary>
+        /// Második lecsatolandó kocka X koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 CubeToDetach2X { get { return _CubeToDetach2X; } set { _CubeToDetach2X = value; } }
+
+        /// <summary>
+        /// Második lecsatolandó kocka Y koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 CubeToDetach2Y { get { return _CubeToDetach2Y; } set { _CubeToDetach2Y = value; } }
+
+        /// <summary>
+        /// Zöld csapat 1. játékosa által megadott 1. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube1XPlayer1TeamGreen { get { return _Cube1XPlayer1TeamGreen; } set { _Cube1XPlayer1TeamGreen = value; } }
+
+        /// <summary>
+        /// Zöld csapat 1. játékosa által megadott 1. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube1YPlayer1TeamGreen { get { return _Cube1YPlayer1TeamGreen; } set { _Cube1YPlayer1TeamGreen = value; } }
+
+        /// <summary>
+        /// Zöld csapat 1. játékosa által megadott 2. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube2XPlayer1TeamGreen { get { return _Cube2XPlayer1TeamGreen; } set { _Cube2XPlayer1TeamGreen = value; } }
+
+        /// <summary>
+        /// Zöld csapat 1. játékosa által megadott 2. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube2YPlayer1TeamGreen { get { return _Cube2YPlayer1TeamGreen; } set { _Cube2YPlayer1TeamGreen = value; } }
+
+        /// <summary>
+        /// Zöld csapat 2. játékosa által megadott 1. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube1XPlayer2TeamGreen { get { return _cube1XPlayer2TeamGreen; } set { _cube1XPlayer2TeamGreen = value; } }
+
+        /// <summary>
+        /// Zöld csapat 2. játékosa által megadott 1. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube1YPlayer2TeamGreen { get { return _cube1YPlayer2TeamGreen; } set { _cube1YPlayer2TeamGreen = value; } }
+
+        /// <summary>
+        /// Zöld csapat 2. játékosa által megadott 2. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube2XPlayer2TeamGreen { get { return _cube2XPlayer2TeamGreen; } set { _cube2XPlayer2TeamGreen = value; } }
+
+        /// <summary>
+        /// Zöld csapat 2. játékosa által megadott 2. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube2YPlayer2TeamGreen { get { return _cube2YPlayer2TeamGreen; } set { _cube2YPlayer2TeamGreen = value; } }
+
+        /// <summary>
+        /// Piros csapat 1. játékosa által megadott 1. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube1XPlayer1TeamRed { get { return _cube1XPlayer1TeamRed; } set { _cube1XPlayer1TeamRed = value; } }
+
+        /// <summary>
+        /// Piros csapat 1. játékosa által megadott 1. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube1YPlayer1TeamRed { get { return _cube1YPlayer1TeamRed; } set { _cube1YPlayer1TeamRed = value; } }
+
+        /// <summary>
+        /// Piros csapat 1. játékosa által megadott 2. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube2XPlayer1TeamRed { get { return _Cube2XPlayer1TeamRed; } set { _Cube2XPlayer1TeamRed = value; } }
+
+        /// <summary>
+        /// Piros csapat 1. játékosa által megadott 2. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube2YPlayer1TeamRed { get { return _cube2YPlayer1TeamRed; } set { _cube2YPlayer1TeamRed = value; } }
+
+        /// <summary>
+        /// Piros csapat 2. játékosa által megadott 1. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube1XPlayer2TeamRed { get { return _Cube1XPlayer2TeamRed; } set { _Cube1XPlayer2TeamRed = value; } }
+
+        /// <summary>
+        /// Piros csapat 2. játékosa által megadott 1. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube1YPlayer2TeamRed { get { return _cube1YPlayer2TeamRed; } set { _cube1YPlayer2TeamRed = value; } }
+
+        /// <summary>
+        /// Piros csapat 2. játékosa által megadott 2. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube2XPlayer2TeamRed { get { return _Cube2XPlayer2TeamRed; } set { _Cube2XPlayer2TeamRed = value; } }
+
+        /// <summary>
+        /// Piros csapat 2. játékosa által megadott 2. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
+        /// </summary>
+        public Int32 Cube2YPlayer2TeamRed { get { return _Cube2YPlayer2TeamRed; } set { _Cube2YPlayer2TeamRed = value; } }
+
         #endregion
 
         #region Constructor
@@ -205,8 +303,8 @@ namespace ELTE.Robotok.Model
             _tableNoticeBoardOne = new RobotokTable(3, 3); // első hirdetőtábla inicializálása
             _tableNoticeBoardTwo = new RobotokTable(3, 3); // második hirdetőtábla inicializálása
 
-            greenTeamCubeAttachState = 0;
-            redTeamCubeAttachState = 0;
+            GreenTeamCubeAttachState = 0;
+            RedTeamCubeAttachState = 0;
 
             _greenTeamPoints = 0;
 
@@ -282,7 +380,7 @@ namespace ELTE.Robotok.Model
         /// <param name="player">Játékos azonosítója</param>
         public void ManhattanDistance(Int32 difficulty, Int32 player)
         {
-            (Int32 playerCoordinateX, Int32 playerCoordinateY) = getActivePlayerCoordinates(player, _table);
+            (Int32 playerCoordinateX, Int32 playerCoordinateY) = GetActivePlayerCoordinates(player, _table);
 
             Int32 maxDistance; // adott konstans szerinti maximális távolság, amelyen belül frissítjük a nézetet
 
@@ -448,6 +546,7 @@ namespace ELTE.Robotok.Model
 
             if (_remainingSeconds == -1) // ha lejárt a lépések közötti idő, újraindítjuk a visszaszámlálást, majd végrehajtjuk a megadott játékműveletet
             {
+
                 switch (GameDifficulty)
                 {
                     case GameDifficulty.Easy:
@@ -551,8 +650,6 @@ namespace ELTE.Robotok.Model
         /// <returns>A művelet sikeressége</returns>
         public Boolean Clear(String direction, Int32 playerNumber)
         {
-            updateTeamCubeAttachStates(playerNumber);
-
             if (direction == "észak") // iránytól függően tisztítást végez az adott kockán
             {
                 for (Int32 i = 4; i < _table.SizeX - 4; i++)
@@ -681,9 +778,7 @@ namespace ELTE.Robotok.Model
         /// <returns>A művelet sikeressége</returns>
         public Boolean Rotate(String direction, Int32 playerNumber)
         {
-            updateTeamCubeAttachStates(playerNumber);
-
-            (Int32 playerCoordinateX, Int32 playerCoordinateY) = getActivePlayerCoordinates(playerNumber, _table);
+            (Int32 playerCoordinateX, Int32 playerCoordinateY) = GetActivePlayerCoordinates(playerNumber, _table);
 
             if (!_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentEast(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentWest(playerCoordinateX, playerCoordinateY)) // megnézzük, hogy a játékoshoz már van-e valami kapcsolva, ha nem, akkor csak a játékos irányát kell megváltoztatni
             {
@@ -848,7 +943,7 @@ namespace ELTE.Robotok.Model
                     break;
             }
 
-            (Int32 playerCoordinateX, Int32 playerCoordinateY) = getActivePlayerCoordinates(playerNumber, table);
+            (Int32 playerCoordinateX, Int32 playerCoordinateY) = GetActivePlayerCoordinates(playerNumber, table);
 
             if (table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY))
             {
@@ -928,9 +1023,7 @@ namespace ELTE.Robotok.Model
         /// <returns>A művelet sikeressége</returns>
         public Boolean Detach(String direction, Int32 playerNumber)
         {
-            updateTeamCubeAttachStates(playerNumber);
-
-            (Int32 playerCoordinateX, Int32 playerCoordinateY) = getActivePlayerCoordinates(playerNumber, _table);
+            (Int32 playerCoordinateX, Int32 playerCoordinateY) = GetActivePlayerCoordinates(playerNumber, _table);
 
             if (direction == "észak")
             {
@@ -1066,9 +1159,7 @@ namespace ELTE.Robotok.Model
         /// <returns>A művelet sikeressége</returns>
         public Boolean Attach(String direction, Int32 playerNumber)
         {
-            updateTeamCubeAttachStates(playerNumber);
-
-            (Int32 playerCoordinateX, Int32 playerCoordinateY) = getActivePlayerCoordinates(playerNumber, _table);
+            (Int32 playerCoordinateX, Int32 playerCoordinateY) = GetActivePlayerCoordinates(playerNumber, _table);
 
             if (_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY) || _table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY) || _table.GetAttachmentEast(playerCoordinateX, playerCoordinateY) || _table.GetAttachmentWest(playerCoordinateX, playerCoordinateY)) // megnézzük, hogy a játékoshoz már van-e valami kapcsolva (ha igen, akkor a művelet sikertelen, hiszen egy játékoshoz nem lehet több irányból több kockát csatolni, csak egy irányból egyet)
             {
@@ -1131,8 +1222,14 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Várakozás logikája
         /// </summary>
-        public void Wait()
+        /// <param name="playerNumber">Játékos azonosítója</param>
+        /// <param name="operationType">Művelet típusa: kockaösszekapcsolásnál - 0, minden más esetben - 1</param>
+        public void Wait(Int32 playerNumber, Int32 operationType)
         {
+            if (operationType == 1)
+            {
+                UpdateTeamCubeAttachStates(playerNumber);
+            }
             _remainingSeconds = 1; // segítségével felgyorsítjuk a következő művelet bekövetkezését
         }
 
@@ -1144,9 +1241,7 @@ namespace ELTE.Robotok.Model
         /// <returns>A művelet sikeressége</returns>
         public Boolean Move(String direction, Int32 playerNumber)
         {
-            updateTeamCubeAttachStates(playerNumber);
-
-            (Int32 playerCoordinateX, Int32 playerCoordinateY) = getActivePlayerCoordinates(playerNumber, _table);
+            (Int32 playerCoordinateX, Int32 playerCoordinateY) = GetActivePlayerCoordinates(playerNumber, _table);
 
             if (!_table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentEast(playerCoordinateX, playerCoordinateY) && !_table.GetAttachmentWest(playerCoordinateX, playerCoordinateY)) // megnézzük, hogy csak a játékost kell-e léptetnünk, vagy vele együtt más kockákat is (először az az eset következik, ha a játékoshoz nincs csatolva semmi)
             {
@@ -1366,7 +1461,7 @@ namespace ELTE.Robotok.Model
                     break;
             }
 
-            (Int32 playerCoordinateX, Int32 playerCoordinateY) = getActivePlayerCoordinates(playerNumber, table);
+            (Int32 playerCoordinateX, Int32 playerCoordinateY) = GetActivePlayerCoordinates(playerNumber, table);
 
             if (table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY)) // a játékost és a hozzákapcsolt kockákat eltároljuk a régi pozíciók listájában
             {
@@ -1440,14 +1535,14 @@ namespace ELTE.Robotok.Model
         {
             if (group == "green") // először ellenőrizzük, hogy a két játékos által megadott kockapozíciók egyeznek-e (csoporttól függően)
             {
-                if (cube1XPlayer1TeamGreen != cube1XPlayer2TeamGreen || cube1YPlayer1TeamGreen != cube1YPlayer2TeamGreen || cube2XPlayer1TeamGreen != cube2XPlayer2TeamGreen || cube2YPlayer1TeamGreen != cube2YPlayer2TeamGreen)
+                if (Cube1XPlayer1TeamGreen != Cube1XPlayer2TeamGreen || Cube1YPlayer1TeamGreen != Cube1YPlayer2TeamGreen || Cube2XPlayer1TeamGreen != Cube2XPlayer2TeamGreen || Cube2YPlayer1TeamGreen != Cube2YPlayer2TeamGreen)
                 {
                     return false;
                 }
             }
             else
             {
-                if (cube1XPlayer1TeamRed != cube1XPlayer2TeamRed || cube1YPlayer1TeamRed != cube1YPlayer2TeamRed || cube2XPlayer1TeamRed != cube2XPlayer2TeamRed || cube2YPlayer1TeamRed != cube2YPlayer2TeamRed)
+                if (Cube1XPlayer1TeamRed != Cube1XPlayer2TeamRed || Cube1YPlayer1TeamRed != Cube1YPlayer2TeamRed || Cube2XPlayer1TeamRed != Cube2XPlayer2TeamRed || Cube2YPlayer1TeamRed != Cube2YPlayer2TeamRed)
                 {
                     return false;
                 }
@@ -1455,14 +1550,14 @@ namespace ELTE.Robotok.Model
 
             if (group == "green") // következő lépésként ellenőrizzük, hogy a két kocka olyan típusú-e, amit lehet csatolni (mindegy melyik játékoséval nézzük, hiszen ha idáig eljutunk akkor a két játékos által megadott kockák egyenlőek)
             {
-                if (!(_table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 3 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 4 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 5 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 6 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 11 || _table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) == 12) || !(_table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 3 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 4 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 5 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 6 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 11 || _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen) == 12))
+                if (!(_table.GetFieldValue(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen) == 3 || _table.GetFieldValue(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen) == 4 || _table.GetFieldValue(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen) == 5 || _table.GetFieldValue(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen) == 6 || _table.GetFieldValue(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen) == 11 || _table.GetFieldValue(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen) == 12) || !(_table.GetFieldValue(Cube2XPlayer1TeamGreen, Cube2YPlayer1TeamGreen) == 3 || _table.GetFieldValue(Cube2XPlayer1TeamGreen, Cube2YPlayer1TeamGreen) == 4 || _table.GetFieldValue(Cube2XPlayer1TeamGreen, Cube2YPlayer1TeamGreen) == 5 || _table.GetFieldValue(Cube2XPlayer1TeamGreen, Cube2YPlayer1TeamGreen) == 6 || _table.GetFieldValue(Cube2XPlayer1TeamGreen, Cube2YPlayer1TeamGreen) == 11 || _table.GetFieldValue(Cube2XPlayer1TeamGreen, Cube2YPlayer1TeamGreen) == 12))
                 {
                     return false;
                 }
             }
             else
             {
-                if (!(_table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 3 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 4 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 5 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 6 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 11 || _table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) == 12) || !(_table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 3 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 4 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 5 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 6 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 11 || _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed) == 12))
+                if (!(_table.GetFieldValue(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed) == 3 || _table.GetFieldValue(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed) == 4 || _table.GetFieldValue(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed) == 5 || _table.GetFieldValue(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed) == 6 || _table.GetFieldValue(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed) == 11 || _table.GetFieldValue(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed) == 12) || !(_table.GetFieldValue(Cube2XPlayer1TeamRed, Cube2YPlayer1TeamRed) == 3 || _table.GetFieldValue(Cube2XPlayer1TeamRed, Cube2YPlayer1TeamRed) == 4 || _table.GetFieldValue(Cube2XPlayer1TeamRed, Cube2YPlayer1TeamRed) == 5 || _table.GetFieldValue(Cube2XPlayer1TeamRed, Cube2YPlayer1TeamRed) == 6 || _table.GetFieldValue(Cube2XPlayer1TeamRed, Cube2YPlayer1TeamRed) == 11 || _table.GetFieldValue(Cube2XPlayer1TeamRed, Cube2YPlayer1TeamRed) == 12))
                 {
                     return false;
                 }
@@ -1470,14 +1565,14 @@ namespace ELTE.Robotok.Model
 
             if (group == "green") // ellenőriznünk kell azt is, hogy az összekapcsolni kívánt két kocka megegyező színű-e
             {
-                if (_table.GetFieldValue(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen) != _table.GetFieldValue(cube2XPlayer1TeamGreen, cube2YPlayer1TeamGreen))
+                if (_table.GetFieldValue(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen) != _table.GetFieldValue(Cube2XPlayer1TeamGreen, Cube2YPlayer1TeamGreen))
                 {
                     return false;
                 }
             }
             else
             {
-                if (_table.GetFieldValue(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed) != _table.GetFieldValue(cube2XPlayer1TeamRed, cube2YPlayer1TeamRed))
+                if (_table.GetFieldValue(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed) != _table.GetFieldValue(Cube2XPlayer1TeamRed, Cube2YPlayer1TeamRed))
                 {
                     return false;
                 }
@@ -1485,28 +1580,28 @@ namespace ELTE.Robotok.Model
 
             if (group == "green") // következő lépésként meghatározzuk a kapcsolás pozícióját (élszomszédosság helye alapján), majd létrehozzuk azt
             {
-                if ((cube1XPlayer1TeamGreen == cube2XPlayer1TeamGreen) && (cube1YPlayer1TeamGreen - 1 == cube2YPlayer1TeamGreen))
+                if ((Cube1XPlayer1TeamGreen == Cube2XPlayer1TeamGreen) && (Cube1YPlayer1TeamGreen - 1 == Cube2YPlayer1TeamGreen))
                 {
-                    _table.SetAttachmentWest(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen, true);
-                    _table.SetAttachmentEast(cube1XPlayer1TeamGreen, cube2YPlayer1TeamGreen, true);
+                    _table.SetAttachmentWest(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
+                    _table.SetAttachmentEast(Cube1XPlayer1TeamGreen, Cube2YPlayer1TeamGreen, true);
                     return true;
                 }
-                if ((cube1XPlayer1TeamGreen == cube2XPlayer1TeamGreen) && (cube1YPlayer1TeamGreen == cube2YPlayer1TeamGreen - 1))
+                if ((Cube1XPlayer1TeamGreen == Cube2XPlayer1TeamGreen) && (Cube1YPlayer1TeamGreen == Cube2YPlayer1TeamGreen - 1))
                 {
-                    _table.SetAttachmentEast(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen, true);
-                    _table.SetAttachmentWest(cube1XPlayer1TeamGreen, cube2YPlayer1TeamGreen, true);
+                    _table.SetAttachmentEast(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
+                    _table.SetAttachmentWest(Cube1XPlayer1TeamGreen, Cube2YPlayer1TeamGreen, true);
                     return true;
                 }
-                if ((cube1XPlayer1TeamGreen - 1 == cube2XPlayer1TeamGreen) && (cube1YPlayer1TeamGreen == cube2YPlayer1TeamGreen))
+                if ((Cube1XPlayer1TeamGreen - 1 == Cube2XPlayer1TeamGreen) && (Cube1YPlayer1TeamGreen == Cube2YPlayer1TeamGreen))
                 {
-                    _table.SetAttachmentSouth(cube2XPlayer1TeamGreen, cube1YPlayer1TeamGreen, true);
-                    _table.SetAttachmentNorth(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen, true);
+                    _table.SetAttachmentSouth(Cube2XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
+                    _table.SetAttachmentNorth(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
                     return true;
                 }
-                if ((cube1XPlayer1TeamGreen == cube2XPlayer1TeamGreen - 1) && (cube1YPlayer1TeamGreen == cube2YPlayer1TeamGreen))
+                if ((Cube1XPlayer1TeamGreen == Cube2XPlayer1TeamGreen - 1) && (Cube1YPlayer1TeamGreen == Cube2YPlayer1TeamGreen))
                 {
-                    _table.SetAttachmentNorth(cube2XPlayer1TeamGreen, cube1YPlayer1TeamGreen, true);
-                    _table.SetAttachmentSouth(cube1XPlayer1TeamGreen, cube1YPlayer1TeamGreen, true);
+                    _table.SetAttachmentNorth(Cube2XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
+                    _table.SetAttachmentSouth(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
                     return true;
                 }
                 else // ez az az eset, amikor a kiválasztott kockák nem élszomszédosak
@@ -1516,28 +1611,28 @@ namespace ELTE.Robotok.Model
             }
             else
             {
-                if ((cube1XPlayer1TeamRed == cube2XPlayer1TeamRed) && (cube1YPlayer1TeamRed - 1 == cube2YPlayer1TeamRed))
+                if ((Cube1XPlayer1TeamRed == Cube2XPlayer1TeamRed) && (Cube1YPlayer1TeamRed - 1 == Cube2YPlayer1TeamRed))
                 {
-                    _table.SetAttachmentWest(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed, true);
-                    _table.SetAttachmentEast(cube1XPlayer1TeamRed, cube2YPlayer1TeamRed, true);
+                    _table.SetAttachmentWest(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
+                    _table.SetAttachmentEast(Cube1XPlayer1TeamRed, Cube2YPlayer1TeamRed, true);
                     return true;
                 }
-                if ((cube1XPlayer1TeamRed == cube2XPlayer1TeamRed) && (cube1YPlayer1TeamRed == cube2YPlayer1TeamRed - 1))
+                if ((Cube1XPlayer1TeamRed == Cube2XPlayer1TeamRed) && (Cube1YPlayer1TeamRed == Cube2YPlayer1TeamRed - 1))
                 {
-                    _table.SetAttachmentEast(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed, true);
-                    _table.SetAttachmentWest(cube1XPlayer1TeamRed, cube2YPlayer1TeamRed, true);
+                    _table.SetAttachmentEast(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
+                    _table.SetAttachmentWest(Cube1XPlayer1TeamRed, Cube2YPlayer1TeamRed, true);
                     return true;
                 }
-                if ((cube1XPlayer1TeamRed - 1 == cube2XPlayer1TeamRed) && (cube1YPlayer1TeamRed == cube2YPlayer1TeamRed))
+                if ((Cube1XPlayer1TeamRed - 1 == Cube2XPlayer1TeamRed) && (Cube1YPlayer1TeamRed == Cube2YPlayer1TeamRed))
                 {
-                    _table.SetAttachmentSouth(cube2XPlayer1TeamRed, cube1YPlayer1TeamRed, true);
-                    _table.SetAttachmentNorth(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed, true);
+                    _table.SetAttachmentSouth(Cube2XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
+                    _table.SetAttachmentNorth(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
                     return true;
                 }
-                if ((cube1XPlayer1TeamRed == cube2XPlayer1TeamRed - 1) && (cube1YPlayer1TeamRed == cube2YPlayer1TeamRed))
+                if ((Cube1XPlayer1TeamRed == Cube2XPlayer1TeamRed - 1) && (Cube1YPlayer1TeamRed == Cube2YPlayer1TeamRed))
                 {
-                    _table.SetAttachmentNorth(cube2XPlayer1TeamRed, cube1YPlayer1TeamRed, true);
-                    _table.SetAttachmentSouth(cube1XPlayer1TeamRed, cube1YPlayer1TeamRed, true);
+                    _table.SetAttachmentNorth(Cube2XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
+                    _table.SetAttachmentSouth(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
                     return true;
                 }
                 else
@@ -1554,19 +1649,17 @@ namespace ELTE.Robotok.Model
         /// <returns>A művelet sikeressége</returns>
         public Boolean DetachCubes(Int32 playerNumber)
         {
-            updateTeamCubeAttachStates(playerNumber);
-
-            if (!(_table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 3 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 4 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 5 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 6 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 11 || _table.GetFieldValue(cubeToDetach1X, cubeToDetach1Y) == 12) || !(_table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 3 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 4 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 5 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 6 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 11 || _table.GetFieldValue(cubeToDetach2X, cubeToDetach2Y) == 12)) // először ellenőrizzük, hogy építőkockákat adtak-e meg a szétválasztáshoz
+            if (!(_table.GetFieldValue(CubeToDetach1X, CubeToDetach1Y) == 3 || _table.GetFieldValue(CubeToDetach1X, CubeToDetach1Y) == 4 || _table.GetFieldValue(CubeToDetach1X, CubeToDetach1Y) == 5 || _table.GetFieldValue(CubeToDetach1X, CubeToDetach1Y) == 6 || _table.GetFieldValue(CubeToDetach1X, CubeToDetach1Y) == 11 || _table.GetFieldValue(CubeToDetach1X, CubeToDetach1Y) == 12) || !(_table.GetFieldValue(CubeToDetach2X, CubeToDetach2Y) == 3 || _table.GetFieldValue(CubeToDetach2X, CubeToDetach2Y) == 4 || _table.GetFieldValue(CubeToDetach2X, CubeToDetach2Y) == 5 || _table.GetFieldValue(CubeToDetach2X, CubeToDetach2Y) == 6 || _table.GetFieldValue(CubeToDetach2X, CubeToDetach2Y) == 11 || _table.GetFieldValue(CubeToDetach2X, CubeToDetach2Y) == 12)) // először ellenőrizzük, hogy építőkockákat adtak-e meg a szétválasztáshoz
             {
                 return false;
             }
 
-            if ((cubeToDetach1X == cubeToDetach2X) && (cubeToDetach1Y - 1 == cubeToDetach2Y)) // következő lépésként élszomszédosság helye alapján töröljük a kapcsolatot
+            if ((CubeToDetach1X == CubeToDetach2X) && (CubeToDetach1Y - 1 == CubeToDetach2Y)) // következő lépésként élszomszédosság helye alapján töröljük a kapcsolatot
             {
-                if (_table.GetAttachmentWest(cubeToDetach1X, cubeToDetach1Y) && _table.GetAttachmentEast(cubeToDetach1X, cubeToDetach2Y)) // ellenőrizzük, hogy a szétkapcsolandó helyen van-e összekapcsolás
+                if (_table.GetAttachmentWest(CubeToDetach1X, CubeToDetach1Y) && _table.GetAttachmentEast(CubeToDetach1X, CubeToDetach2Y)) // ellenőrizzük, hogy a szétkapcsolandó helyen van-e összekapcsolás
                 {
-                    _table.SetAttachmentWest(cubeToDetach1X, cubeToDetach1Y, false);
-                    _table.SetAttachmentEast(cubeToDetach1X, cubeToDetach2Y, false);
+                    _table.SetAttachmentWest(CubeToDetach1X, CubeToDetach1Y, false);
+                    _table.SetAttachmentEast(CubeToDetach1X, CubeToDetach2Y, false);
                     return true;
                 }
                 else
@@ -1574,12 +1667,13 @@ namespace ELTE.Robotok.Model
                     return false;
                 }
             }
-            if ((cubeToDetach1X == cubeToDetach2X) && (cubeToDetach1Y == cubeToDetach2Y - 1))
+
+            if ((CubeToDetach1X == CubeToDetach2X) && (CubeToDetach1Y == CubeToDetach2Y - 1))
             {
-                if (_table.GetAttachmentEast(cubeToDetach1X, cubeToDetach1Y) && _table.GetAttachmentWest(cubeToDetach1X, cubeToDetach2Y))
+                if (_table.GetAttachmentEast(CubeToDetach1X, CubeToDetach1Y) && _table.GetAttachmentWest(CubeToDetach1X, CubeToDetach2Y))
                 {
-                    _table.SetAttachmentEast(cubeToDetach1X, cubeToDetach1Y, false);
-                    _table.SetAttachmentWest(cubeToDetach1X, cubeToDetach2Y, false);
+                    _table.SetAttachmentEast(CubeToDetach1X, CubeToDetach1Y, false);
+                    _table.SetAttachmentWest(CubeToDetach1X, CubeToDetach2Y, false);
                     return true;
                 }
                 else
@@ -1587,12 +1681,13 @@ namespace ELTE.Robotok.Model
                     return false;
                 }
             }
-            if ((cubeToDetach1X - 1 == cubeToDetach2X) && (cubeToDetach1Y == cubeToDetach2Y))
+
+            if ((CubeToDetach1X - 1 == CubeToDetach2X) && (CubeToDetach1Y == CubeToDetach2Y))
             {
-                if (_table.GetAttachmentSouth(cubeToDetach2X, cubeToDetach1Y) && _table.GetAttachmentNorth(cubeToDetach1X, cubeToDetach1Y))
+                if (_table.GetAttachmentSouth(CubeToDetach2X, CubeToDetach1Y) && _table.GetAttachmentNorth(CubeToDetach1X, CubeToDetach1Y))
                 {
-                    _table.SetAttachmentSouth(cubeToDetach2X, cubeToDetach1Y, false);
-                    _table.SetAttachmentNorth(cubeToDetach1X, cubeToDetach1Y, false);
+                    _table.SetAttachmentSouth(CubeToDetach2X, CubeToDetach1Y, false);
+                    _table.SetAttachmentNorth(CubeToDetach1X, CubeToDetach1Y, false);
                     return true;
                 }
                 else
@@ -1600,12 +1695,13 @@ namespace ELTE.Robotok.Model
                     return false;
                 }
             }
-            if ((cubeToDetach1X == cubeToDetach2X - 1) && (cubeToDetach1Y == cubeToDetach2Y))
+
+            if ((CubeToDetach1X == CubeToDetach2X - 1) && (CubeToDetach1Y == CubeToDetach2Y))
             {
-                if (_table.GetAttachmentNorth(cubeToDetach2X, cubeToDetach1Y) && _table.GetAttachmentSouth(cubeToDetach1X, cubeToDetach1Y))
+                if (_table.GetAttachmentNorth(CubeToDetach2X, CubeToDetach1Y) && _table.GetAttachmentSouth(CubeToDetach1X, CubeToDetach1Y))
                 {
-                    _table.SetAttachmentNorth(cubeToDetach2X, cubeToDetach1Y, false);
-                    _table.SetAttachmentSouth(cubeToDetach1X, cubeToDetach1Y, false);
+                    _table.SetAttachmentNorth(CubeToDetach2X, CubeToDetach1Y, false);
+                    _table.SetAttachmentSouth(CubeToDetach1X, CubeToDetach1Y, false);
                     return true;
                 }
                 else
@@ -3212,7 +3308,7 @@ namespace ELTE.Robotok.Model
         /// </summary>
         /// <param name="playerNumber">Játékos egyedi azonosítója</param>
         /// <param name="table">Tábla, amelyen szeretnénk megkeresni a játékos azonosítóját</param>
-        private (Int32, Int32) getActivePlayerCoordinates(Int32 playerNumber, RobotokTable table)
+        private (Int32, Int32) GetActivePlayerCoordinates(Int32 playerNumber, RobotokTable table)
         {
             Int32 playerCoordinateX = 0, playerCoordinateY = 0;
 
@@ -3235,20 +3331,20 @@ namespace ELTE.Robotok.Model
         /// Paraméterül kapott csapat kockaösszekapcsolási állapotának aktualizálása
         /// </summary>
         /// <param name="playerNumber">Játékos egyedi azonosítója</param>
-        private void updateTeamCubeAttachStates (Int32 playerNumber)
+        private void UpdateTeamCubeAttachStates (Int32 playerNumber)
         {
             if (playerNumber == 1 || playerNumber == 8)
             {
-                if (greenTeamCubeAttachState != 0)
+                if (GreenTeamCubeAttachState != 0)
                 {
-                    greenTeamCubeAttachState++;
+                    GreenTeamCubeAttachState++;
                 }
             }
             else
             {
-                if (redTeamCubeAttachState != 0)
+                if (RedTeamCubeAttachState != 0)
                 {
-                    redTeamCubeAttachState++;
+                    RedTeamCubeAttachState++;
                 }
             }
         }
@@ -3304,7 +3400,7 @@ namespace ELTE.Robotok.Model
                         Int32 figureCoordinateX = random.Next(4, 13);
                         Int32 figureCoordinateY = random.Next(5, 23);
 
-                        while (_table.GetFieldValue(figureCoordinateX, figureCoordinateX) != 7)
+                        while (_table.GetFieldValue(figureCoordinateX, figureCoordinateY) != 7)
                         {
                             figureCoordinateX = random.Next(4, 13);
                             figureCoordinateY = random.Next(5, 23);
