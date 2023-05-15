@@ -1,48 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ELTE.Robotok.Model
+﻿namespace ELTE.Robotok.Model
 {
+    /// <summary>
+    /// Játékban szereplő alakzatok típusa.
+    /// </summary>
     public class Shape
     {
         #region Fields
-        private Int32 x; // a táblán vízszintes elhelyezkedése
-        private Int32 y; // a táblán függőleges elhelyezkedése
+
         private Int32[,] _shape = null!; // maga az alakzat
-        private Int32[,] _cube = new Int32[3, 3] { // egyszerűség kedvéért, most minden alakzat 4x4 méretű mátrixban lesz, de jövőben ez megváltoztathatjuk
+        private Int32[,] _cube = new Int32[3, 3] { // kocka típusú alakzat
             {-2, -2, -2},
             {-2, 3, 3},
             {-2, 3, 3},
         };
-
-        private Int32[,] _triangle = new Int32[3, 3] {
+        private Int32[,] _triangle = new Int32[3, 3] { // háromszög típusú alakzat
             {-2, -2, -2},
             {-2, -2, 4},
             {-2, 4, 4},
         };
-
-        private Int32[,] _straight = new Int32[3, 3] {
+        private Int32[,] _straight = new Int32[3, 3] { // egyenes típusú alakzat
             {-2, -2, -2},
             {-2, -2, -2},
             {5, 5, 5}
         };
-
-        private Int32[,] _lType = new Int32[3, 3] {
+        private Int32[,] _lType = new Int32[3, 3] { // l-betű féle alakzat
             { -2, -2, -2},
             { 6, -2, -2},
             { 6, 6, 6}
         };
-
-        private Int32[,] _rhombus = new Int32[3, 3] {
+        private Int32[,] _rhombus = new Int32[3, 3] { // rombusz típusú alakzat
             { -2, 11, -2},
             { 11, 11, 11},
             { -2, 11, -2}
         };
-
-        private Int32[,] _piType = new Int32[3, 3] {
+        private Int32[,] _bridge = new Int32[3, 3] { // híd típusú alakzat
             {-2, -2, -2},
             {12, 12, 12},
             {12, -2, 12}
@@ -52,31 +43,59 @@ namespace ELTE.Robotok.Model
 
         #region Properties
 
-        public Int32 X { get { return x; } }
-        public Int32 Y { get { return y; } }
+        /// <summary>
+        /// Alakzat lekérdezése
+        /// </summary>
         public Int32[,] Figure { get { return _shape; } }
+
+        /// <summary>
+        /// Kocka típusú alakzat lekérdezése
+        /// </summary>
         public Int32[,] Cube { get { return _cube; } }
+
+        /// <summary>
+        /// Háromszög típusú alakzat lekérdezése
+        /// </summary>
         public Int32[,] Triangle { get { return _triangle; } }
+
+        /// <summary>
+        /// Egyenes típusú alakzat lekérdezése
+        /// </summary>
         public Int32[,] Straight { get { return _straight; } }
+
+        /// <summary>
+        /// Háromszög típusú alakzat lekérdezése
+        /// </summary>
         public Int32[,] lType { get { return _lType; } }
+
+        /// <summary>
+        /// Rhombusz típusú alakzat lekérdezése
+        /// </summary>
         public Int32[,] Rhombus { get { return _rhombus; } }
-        public Int32[,] PiType { get { return _piType; } }
+
+        /// <summary>
+        /// Híd típusú alakzat lekérdezése
+        /// </summary>
+        public Int32[,] Bridge { get { return _bridge; } }
 
         #endregion
 
         #region Constructor
+
+        /// <summary>
+        /// Véletlen alakzatot létrehozó konstruktor
+        /// </summary>
         public Shape() 
         {
             GenerateShape();
-            x = _shape.GetLength(0);
-            y = _shape.GetLength(1);
         }
 
         #endregion
 
         #region Private methods
+
         /// <summary>
-        /// Új alakzat létrehozása.
+        /// Új alakzat létrehozása
         /// </summary>
         private void GenerateShape()
         {
@@ -99,56 +118,29 @@ namespace ELTE.Robotok.Model
                     _shape = _rhombus;
                     break;
                 case 6:
-                    _shape = _piType;
+                    _shape = _bridge;
                     break;
             }
         }
+
         #endregion
 
         #region Public methods
         /// <summary>
-        /// Mező értékének lekérdezése.
+        /// Mező értékének lekérdezése
         /// </summary>
-        /// <param name="x">Vízszintes koordináta.</param>
-        /// <param name="y">Függőleges koordináta.</param>
+        /// <param name="x">Vízszintes koordináta</param>
+        /// <param name="y">Függőleges koordináta</param>
         /// <returns>A mező értéke.</returns>
         public Int32 GetFieldValue(Int32 x, Int32 y)
         {
-            if (x < 0 || x >= this.x)
-            {
-                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range: " + x.ToString());
-            }
-            if (y < 0 || y >= this.y)
-            {
-                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range: " + y.ToString());
-            }
-
             return _shape[x, y];
         }
-        /// <summary>
-        /// Mező értékének beállítása.
-        /// </summary>
-        /// <param name="x">Vízszintes koordináta.</param>
-        /// <param name="y">Függőleges koordináta.</param>
-        /// <param name="value">Érték.</param>
-        public void SetValue(Int32 x, Int32 y, Int32 value)
-        {
-            if (x < 0 || x >= _shape.GetLength(0))
-            {
-                throw new ArgumentOutOfRangeException(nameof(x), "The X coordinate is out of range.");
-            }
-            if (y < 0 || y >= _shape.GetLength(1))
-            {
-                throw new ArgumentOutOfRangeException(nameof(y), "The Y coordinate is out of range.");
-            }
-
-            _shape[x, y] = value;
-        }
 
         /// <summary>
-        /// Szín lekérdezése.
+        /// Alakzat színének a lekérdezése
         /// </summary>
-        public int GetColor()
+        public Int32 GetColor()
         {
             if (this._shape == _cube)
             {
@@ -178,6 +170,7 @@ namespace ELTE.Robotok.Model
             return 12;
 
         }
+
         #endregion
     }
 }
