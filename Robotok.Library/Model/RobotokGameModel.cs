@@ -70,6 +70,7 @@ namespace ELTE.Robotok.Model
         /// Második feladat határideje
         /// </summary>
         public Int32 SecondTaskDeadline { get { return _secondTaskDeadline; } }
+        
         /// <summary>
         /// Első feladatért járó pontszám
         /// </summary>
@@ -1219,6 +1220,7 @@ namespace ELTE.Robotok.Model
                 }
             }
         }
+
         /// <summary>
         /// Várakozás logikája
         /// </summary>
@@ -2184,7 +2186,7 @@ namespace ELTE.Robotok.Model
                     _firstTaskPoints = 65;
                     _firstTaskDeadline = 77;
                 }
-                else if (_figure1.Figure == _figure1.PiType || _figure1.Figure == _figure1.Rhombus)
+                else if (_figure1.Figure == _figure1.Bridge || _figure1.Figure == _figure1.Rhombus)
                 {
                     _firstTaskPoints = 80;
                     _firstTaskDeadline = 100;
@@ -2212,7 +2214,7 @@ namespace ELTE.Robotok.Model
                     _secondTaskPoints = 65;
                     _secondTaskDeadline = 77;
                 }
-                else if (_figure2.Figure == _figure2.PiType || _figure2.Figure == _figure2.Rhombus)
+                else if (_figure2.Figure == _figure2.Bridge || _figure2.Figure == _figure2.Rhombus)
                 {
                     _secondTaskPoints = 80;
                     _secondTaskDeadline = 100;
@@ -2437,6 +2439,7 @@ namespace ELTE.Robotok.Model
                     break;
             }
         }
+
         /// <summary>
         /// Alakzat összes elemének eltárolása
         /// </summary>
@@ -2708,7 +2711,7 @@ namespace ELTE.Robotok.Model
         /// </summary>
         /// <param name="direction">Játékos X koordinátája</param>
         /// <param name="table">Játékos Y koordinátája</param>
-        /// /// <param name="outOfTableList">Játékos X koordinátája</param>
+        /// <param name="outOfTableList">Játékos X koordinátája</param>
         /// <param name="playerNumber">Játékos Y koordinátája</param>
         private void ExecutePlayerSteps(String direction, RobotokTable table, List<Cube> outOfTableList, Int32 playerNumber)
         {
