@@ -1,55 +1,39 @@
 using ELTE.Robotok.Model;
-using ELTE.Robotok.Persistence;
 using Robotok.WinForms.View;
 
 namespace ELTE.Robotok.View;
 
 public partial class GameMenuForm : Form
 {
-    #region Fields
+    #region Private fields
 
-    Int32 selectedDifficulty; // játék nehézsége 1 - könnyû, 2 - közepes, 3 - nehéz
-    Int32 selectedGroupCount; // csapatok száma 1 - (1 csoport, 2 játékos), 2 - (2 csoport, 2-2 játékos)
-
-    // A fõmenü példánya, a játékosnézeteken ennek segítségével tudjuk elérni a fõmenü segítségével a modell réteget
-    public static GameMenuForm instance = null!;
-
-    public RobotokGameModel _model = null!; // játékmodell
-
+    private Int32 selectedDifficulty; // játék nehézsége 1 - könnyû, 2 - közepes, 3 - nehéz
+    private Int32 selectedGroupCount; // csapatok száma 1 - (1 csoport, 2 játékos), 2 - (2 csoport, 2-2 játékos)
     private System.Windows.Forms.Timer _timer = null!; // idõzítõ a visszaszámláláshoz
+    private Int32 actualPlayer; //  a jelenlegi játékos azonosítója 1 - zöld csapat 1. játékos, 8 - zöld csapat 2. játékos, 2 - piros csapat 1. játékos, 9 - piros csapat 2. játékos
+    private GameForm _gameFormGreenTeamPlayerOne = null!;  // formok a különbözõ nézetek megjelenítéséhez (a piros csapat nézetei és a játékvezetõi nézet csak opcionálisan van példányosítva) 
+    private GameForm _gameFormGreenTeamPlayerTwo = null!;
+    private GameForm _gameFormRedTeamPlayerOne = null!;
+    private GameForm _gameFormRedTeamPlayerTwo = null!;
+    private RefereeModeForm _refereeModeForm = null!;
 
-    /* 
-    Azt a játékos tárolja el, akié a jelenlegi lépés,
-    1 - zöld csapat 1. játékos
-    8 - zöld csapat 2. játékos
-    2 - piros csapat 1. játékos
-    9 - piros csapat 2. játékos
-    Így változik az értéke: 1 csapat esetén: 1 -> 8 -> 1 -> ... 2 csapat esetén: 1 -> 8 -> 2 -> 9 -> 1 -> ...
-    */
-    public int actualPlayer;
+    #endregion
 
-    // Formok a különbözõ nézetek megjelenítéségez (a piros csapat nézetei és a játékvezetõi nézet csak opcionálisan van példányosítva) 
+    #region Public fields
 
-    GameForm _gameFormGreenTeamPlayerOne = null!;
-    GameForm _gameFormGreenTeamPlayerTwo = null!;
-
-    GameForm _gameFormRedTeamPlayerOne = null!;
-    GameForm _gameFormRedTeamPlayerTwo = null!;
-
-    RefereeModeForm _refereeModeForm = null!;
+    public static GameMenuForm instance = null!;  // a fõmenü példánya, a játékosnézeteken ennek segítségével tudjuk elérni a modell réteget
+    public RobotokGameModel _model = null!; // játékmodell
 
     #endregion
 
     #region Constructor
 
+    /// <summary>
+    /// Menüablak példányosítása
+    /// </summary>
     public GameMenuForm()
     {
-        /*
-        Felvesszük a jelenlegi formot instancenek (azért van rá szükség, hogy a közvetlen
-        és közvetett elemei (mint például a modell réteg) elérhetõ legyen a nézetekbõl
-        (például le tudják kérdezni a játéktábla tartalmát)
-        */
-        instance = this;
+        instance = this; // felvesszük a jelenlegi formot instancenek, hogy a közvetlen és közvetett elemei elérhetõek legyenek a nézetekbõl
         selectedDifficulty = 2; // alapértelmezetten közepes nehézséget állítunk be
         selectedGroupCount = 1; // alapértelmezetten egy csoportos játékos állítunk be
         actualPlayer = 1; // beállítjuk a zöld csapat 1. játékosát kezdõ játékosnak
@@ -60,71 +44,66 @@ public partial class GameMenuForm : Form
 
     #region Menu button events
 
-    private void startButton_Click(object sender, EventArgs e)
+    /// <summary>
+    /// Játék elindítása
+    /// </summary>
+    private void StartButton_Click(object sender, EventArgs e)
     {
-        _model = new RobotokGameModel(selectedDifficulty, selectedGroupCount); // amikor a játékos el akarja indítani a játékot a fõmenübõl, akkor példányosítjuk a model-t
-
-        // Példányosítjuk és megjelenítjük a zöld csapat játékosainak ablakait és jelezzük, hogy melyik ablak melyik játékosé
-
-        _gameFormGreenTeamPlayerOne = new GameForm(selectedDifficulty, selectedGroupCount, actualPlayer);
+        _model = new RobotokGameModel(selectedDifficulty, selectedGroupCount); // példányosítjuk a model-t
+        _gameFormGreenTeamPlayerOne = new GameForm(selectedDifficulty, selectedGroupCount, 1); // példányosítjuk és megjelenítjük a zöld csapat játékosainak ablakait és jelezzük, hogy melyik ablak melyik játékosé
         _gameFormGreenTeamPlayerOne.Text = "Robotok - Zöld csapat - 1. játékos nézet";
         _gameFormGreenTeamPlayerOne.playerViewText.Text = "Zöld csapat - 1. játékos nézet:";
         _gameFormGreenTeamPlayerOne.Show();
-        _gameFormGreenTeamPlayerTwo = new GameForm(selectedDifficulty, selectedGroupCount, actualPlayer);
+        _gameFormGreenTeamPlayerTwo = new GameForm(selectedDifficulty, selectedGroupCount, 8);
         _gameFormGreenTeamPlayerTwo.Text = "Robotok - Zöld csapat - 2. játékos nézet";
         _gameFormGreenTeamPlayerTwo.playerViewText.Text = "Zöld csapat - 2. játékos nézet:";
         _gameFormGreenTeamPlayerTwo.Show();
 
-        //Ha 2 csoport lehetõség került kiválasztásra, akkor példányosítjuk a piros csapatú játékosok ablakait is
-
-        if (selectedGroupCount == 2)
+        if (selectedGroupCount == 2) // ha 2 csoport lehetõség került kiválasztásra, akkor példányosítjuk a piros csapat játékosainak ablakait is
         {
-            _gameFormRedTeamPlayerOne = new GameForm(selectedDifficulty, selectedGroupCount, actualPlayer);
+            _gameFormRedTeamPlayerOne = new GameForm(selectedDifficulty, selectedGroupCount, 2);
             _gameFormRedTeamPlayerOne.Text = "Robotok - Piros csapat - 1. játékos nézet";
             _gameFormRedTeamPlayerOne.playerViewText.Text = "Piros csapat - 1. játékos nézet:";
             _gameFormRedTeamPlayerOne.Show();
-            _gameFormRedTeamPlayerTwo = new GameForm(selectedDifficulty, selectedGroupCount, actualPlayer);
+            _gameFormRedTeamPlayerTwo = new GameForm(selectedDifficulty, selectedGroupCount, 9);
             _gameFormRedTeamPlayerTwo.Text = "Robotok - Piros csapat - 2. játékos nézet";
             _gameFormRedTeamPlayerTwo.playerViewText.Text = "Piros csapat - 2. játékos nézet:";
             _gameFormRedTeamPlayerTwo.Show();
         }
 
-        // Példányosítjuk a játékvezetõi módot attól függõen, hogy kiválasztásra került-e
+        DisablePlayerButtons(); // letiltjuk a játékosok mûveleti gombjait az egyes játékos kivételével
 
-        if (refereeModeCheckbox.Checked)
+        if (refereeModeCheckbox.Checked)   // példányosítjuk a játékvezetõi módot attól függõen, hogy kiválasztásra került-e
         {
             _refereeModeForm = new RefereeModeForm();
             _refereeModeForm.Show();
         }
 
-        // Létrehozunk eseménykezelõket, amelyek a játékosnézetek kommunikációs ablakán történõ változásokat fogják figyelni
-        _gameFormGreenTeamPlayerOne.communicationWindow.TextChanged += new EventHandler(communication_TextChanged);
-        _gameFormGreenTeamPlayerTwo.communicationWindow.TextChanged += new EventHandler(communication_TextChanged);
+        _gameFormGreenTeamPlayerOne.communicationWindow.TextChanged += new EventHandler(Communication_TextChanged); // létrehozunk eseménykezelõket, amelyek a játékosnézetek kommunikációs ablakán történõ változásokat fogják figyelni
+        _gameFormGreenTeamPlayerTwo.communicationWindow.TextChanged += new EventHandler(Communication_TextChanged);
 
         if (selectedGroupCount == 2)
         {
-            _gameFormRedTeamPlayerOne.communicationWindow.TextChanged += new EventHandler(communication_TextChanged);
-            _gameFormRedTeamPlayerTwo.communicationWindow.TextChanged += new EventHandler(communication_TextChanged);
+            _gameFormRedTeamPlayerOne.communicationWindow.TextChanged += new EventHandler(Communication_TextChanged);
+            _gameFormRedTeamPlayerTwo.communicationWindow.TextChanged += new EventHandler(Communication_TextChanged);
         }
 
-        // Elsõ lépésként a zöld csapat 1. játékosának ablakát helyezzük elõtérbe
+        _gameFormGreenTeamPlayerOne.BringToFront(); // elsõ lépésként a zöld csapat 1. játékosának ablakát helyezzük elõtérbe
 
-        _gameFormGreenTeamPlayerOne.BringToFront();
-
-        // Idõzítõ létrehozása és elindítása (a fõmenübõl történik a Tick esemény lekezelése, a megváltozott állapotokat a nézetek letükrözik)
-
-        _timer = new System.Windows.Forms.Timer();
+        _timer = new System.Windows.Forms.Timer();  // idõzítõ létrehozása és elindítása (a fõmenübõl történik a Tick esemény lekezelése, a megváltozott állapotokat a nézetek letükrözik)
         _timer.Interval = 1000;
         _timer.Tick += new EventHandler(Timer_Tick);
         _timer.Start();
 
-        // Letiltjuk a fõmenü gombjait, amíg a játék tart
-        startButton.Enabled = false;
+        startButton.Enabled = false;   // letiltjuk a fõmenü gombjait, amíg a játék tart
         difficultyChoice.Enabled = false;
         groupChoice.Enabled = false;
-        refereeModeCheckbox.Enabled = false;
+        refereeModeCheckbox.Enabled = false;       
     }
 
+    /// <summary>
+    /// Fõmenü bezárása
+    /// </summary>
     private void GameMenuForm_FormClosing(object sender, FormClosingEventArgs e)
     {
         if (MessageBox.Show("A fõmenü bezárásával az összes játékablak bezáródik. Folytatja?", "Figyelmeztetés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
@@ -137,21 +116,25 @@ public partial class GameMenuForm : Form
 
     #region Timer event handler
 
+    /// <summary>
+    /// Idõ múlásának eseménykezelõje
+    /// </summary>
     private void Timer_Tick(Object? sender, EventArgs e)
     {
-        GameOver();
+        GameOver(); // játék végének ellenõrzése és kezelése
+        UpdateActivePlayerButtonStatuses(); 
         _model.AdvanceTime(actualPlayer); // játék léptetése
 
         _gameFormGreenTeamPlayerOne.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc"; // frissítjük a hátralevõ másodpercek számának kijelzését
         _gameFormGreenTeamPlayerTwo.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc";
 
-        // Amennyiben 2 csapat játszik a többi játékos Formjának értékeit is kell frisíteni
-        if (selectedGroupCount == 2)
+       
+        if (selectedGroupCount == 2)  // amennyiben 2 csapat játszik a többi játékos Formjának értékeit is kell frisíteni
         {
             _gameFormRedTeamPlayerOne.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc";
             _gameFormRedTeamPlayerTwo.remainingSecondsValueText.Text = _model.RemainingSeconds.ToString() + " másodperc";
         }
-
+       
         if (_model.RemainingSeconds == 0)
         {
             if (selectedGroupCount == 1)
@@ -159,10 +142,12 @@ public partial class GameMenuForm : Form
                 if (actualPlayer == 1)
                 {
                     actualPlayer = 8;
+                    _gameFormGreenTeamPlayerOne.DisableButtons();
                 }
                 else
                 {
                     actualPlayer = 1;
+                    _gameFormGreenTeamPlayerTwo.DisableButtons();
                 }
             }
             else if (selectedGroupCount == 2)
@@ -170,20 +155,25 @@ public partial class GameMenuForm : Form
                 if (actualPlayer == 1)
                 {
                     actualPlayer = 8;
+                    _gameFormGreenTeamPlayerOne.DisableButtons();
                 }
                 else if (actualPlayer == 8)
                 {
                     actualPlayer = 2;
+                    _gameFormGreenTeamPlayerTwo.DisableButtons();
                 }
                 else if (actualPlayer == 2)
                 {
                     actualPlayer = 9;
+                    _gameFormRedTeamPlayerOne.DisableButtons();
                 }
                 else if (actualPlayer == 9)
                 {
                     actualPlayer = 1;
+                    _gameFormRedTeamPlayerTwo.DisableButtons();
                 }
             }
+
             if (actualPlayer == 1)
             {
                 _gameFormGreenTeamPlayerOne.stepsLeftValueText.Text = (_model.GameStepCount - 1).ToString(); // ha elfogyott a gondolkodási idõ, csökkenti a hátralevõ lépések számát
@@ -222,48 +212,56 @@ public partial class GameMenuForm : Form
                     _gameFormRedTeamPlayerTwo.taskTwoDeadlineValueText.Text = _model.SecondTaskDeadline.ToString() + " lépés van hátra";
                 }
             }
-
-            UpdatePlayerButtonStatuses();
+   
             ShowNextPlayerForm();
 
             if (refereeModeCheckbox.Checked)
             {
                 _refereeModeForm.RefreshRefereeView();
             }
-
-        }
-        else if(_model.RemainingSeconds == 5)
-        {
-            UpdatePlayerButtonStatuses();
-        }
-           
+        }   
     }
 
     #endregion
 
     #region Radio button event handlers
 
-    private void hardDifficultyOption_CheckedChanged(object sender, EventArgs e)
+    /// <summary>
+    /// Nehéz nehézségû játékmód kiválasztása
+    /// </summary>
+    private void HardDifficultyOption_CheckedChanged(object sender, EventArgs e)
     {
         selectedDifficulty = 3;
     }
 
-    private void mediumDifficultyOption_CheckedChanged(object sender, EventArgs e)
+    /// <summary>
+    /// Közepes nehézségû játékmód kiválasztása
+    /// </summary>
+    private void MediumDifficultyOption_CheckedChanged(object sender, EventArgs e)
     {
         selectedDifficulty = 2;
     }
 
-    private void easyDifficultyOption_CheckedChanged(object sender, EventArgs e)
+    /// <summary>
+    /// Könnyû nehézségû játékmód kiválasztása
+    /// </summary>
+    private void EasyDifficultyOption_CheckedChanged(object sender, EventArgs e)
     {
         selectedDifficulty = 1;
     }
 
-    private void oneGroupOption_CheckedChanged(object sender, EventArgs e)
+    /// <summary>
+    /// Egy csapat választása
+    /// </summary>
+    private void OneGroupOption_CheckedChanged(object sender, EventArgs e)
     {
         selectedGroupCount = 1;
     }
 
-    private void twoGroupsOption_CheckedChanged(object sender, EventArgs e)
+    /// <summary>
+    /// Két csapat választása
+    /// </summary>
+    private void TwoGroupsOption_CheckedChanged(object sender, EventArgs e)
     {
         selectedGroupCount = 2;
     }
@@ -272,12 +270,10 @@ public partial class GameMenuForm : Form
 
     #region Communication window event handler
 
-    /*
-    Megnézi melyik szövegdobozban történt változás és a többi tartalmát ennek megfelelõen aktualizálja,
-    két csoport esetén a csoportok külön-külön kommunikációs felülettel rendelkeznek, egymásét nem látják
-        
-    */
-    private void communication_TextChanged(object sender, EventArgs e)
+    /// <summary>
+    /// Kommunikációs ablakok tartalmának aktualizálása azonos csapaton belül
+    /// </summary>
+    private void Communication_TextChanged(object sender, EventArgs e)
     {
         TextBox changedTextBox = (TextBox)sender;
 
@@ -318,75 +314,50 @@ public partial class GameMenuForm : Form
 
     #region Private methods
 
-    // Kör kezdetén az aktív játékos gombját engedélyezi, a többit letiltja
-    private void UpdatePlayerButtonStatuses()
+    /// <summary>
+    /// Aktív játékos mûveleti gombjainak engedélyezése
+    /// </summary>
+    private void UpdateActivePlayerButtonStatuses() 
     {
-        if (selectedGroupCount == 1)
+        if (actualPlayer == 1)
         {
-            
-            if (actualPlayer == 1)
-            {
-                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0) 
-                {
-                    _gameFormGreenTeamPlayerOne.EnableButtons();
-                }
-                _gameFormGreenTeamPlayerTwo.DisableButtons();
+            _gameFormGreenTeamPlayerOne.EnableButtons();
 
-            }
-            else
-            {
-                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0)
-                {
-                    _gameFormGreenTeamPlayerOne.DisableButtons();
-                }
-                _gameFormGreenTeamPlayerTwo.EnableButtons();
-            }
         }
-        else if (selectedGroupCount == 2)
+        else if(actualPlayer == 8)
+        { 
+            _gameFormGreenTeamPlayerTwo.EnableButtons();
+        }
+        
+        if (selectedGroupCount == 2)
         {
-            if (actualPlayer == 1)
-            {
-                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0)
-                {
-                    _gameFormGreenTeamPlayerOne.EnableButtons();
-                }
-                _gameFormGreenTeamPlayerTwo.DisableButtons();
-                _gameFormRedTeamPlayerOne.DisableButtons();
-                _gameFormRedTeamPlayerTwo.DisableButtons();
-            }
-            if (actualPlayer == 8)
-            {
-                _gameFormGreenTeamPlayerOne.DisableButtons();
-                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0)
-                {
-                    _gameFormGreenTeamPlayerTwo.EnableButtons();
-                }
-                _gameFormRedTeamPlayerOne.DisableButtons();
-                _gameFormRedTeamPlayerTwo.DisableButtons();
-            }
             if (actualPlayer == 2)
             {
-                _gameFormGreenTeamPlayerOne.DisableButtons();
-                _gameFormGreenTeamPlayerTwo.DisableButtons();
-                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0)
-                {
                     _gameFormRedTeamPlayerOne.EnableButtons();
-                }
-                _gameFormRedTeamPlayerTwo.DisableButtons();
             }
-            if (actualPlayer == 9)
+            else if (actualPlayer == 9)
             {
-                _gameFormGreenTeamPlayerOne.DisableButtons();
-                _gameFormGreenTeamPlayerTwo.DisableButtons();
-                _gameFormRedTeamPlayerOne.DisableButtons();
-                if (_gameFormGreenTeamPlayerOne.stepsLeftValueText.Text != "0" && _model.RemainingSeconds != 0)
-                {
                     _gameFormRedTeamPlayerTwo.EnableButtons();
-                }
             }
         }
     }
 
+    /// <summary>
+    /// Az elsõ játékos kivételével az összes játékos mûveleti gombjainak letiltása
+    /// </summary>
+    private void DisablePlayerButtons()
+    {
+        _gameFormGreenTeamPlayerTwo.DisableButtons();
+        if (selectedGroupCount == 2)
+        {
+            _gameFormRedTeamPlayerOne.DisableButtons();
+            _gameFormRedTeamPlayerTwo.DisableButtons();
+        }
+    }
+
+    /// <summary>
+    /// Játékos ablakok váltása
+    /// </summary>
     private void ShowNextPlayerForm() // egyben, amikor megjelenítjük a nézetet, frissítjük is
     {
         if (actualPlayer == 1)
@@ -411,23 +382,9 @@ public partial class GameMenuForm : Form
         }
     }
 
-    public void DisposeAllForms()
-    {
-        _gameFormGreenTeamPlayerOne.Dispose();
-        _gameFormGreenTeamPlayerTwo.Dispose();
-        if (selectedGroupCount == 2)
-        {
-            _gameFormRedTeamPlayerOne.Dispose();
-            _gameFormRedTeamPlayerTwo.Dispose();
-        }
-        if (refereeModeCheckbox.Checked)
-        {
-            _refereeModeForm.Dispose();
-        }
-        _timer.Enabled = false;
-        EnableButtons();
-    }
-
+    /// <summary>
+    /// Játék beállításainak engedélyezése
+    /// </summary>
     private void EnableButtons()
     {
         startButton.Enabled = true;
@@ -436,12 +393,15 @@ public partial class GameMenuForm : Form
         refereeModeCheckbox.Enabled = true;
     }
 
+    /// <summary>
+    /// Játék végének kezelése
+    /// </summary>
     private void GameOver()
     {
         if (_model.IsGameOver)
         {
             _timer.Enabled = false;
-            string winner = "A zöld csapat pontszáma: " + instance._model.GreenTeamPoints.ToString();
+            String winner = "A zöld csapat pontszáma: " + instance._model.GreenTeamPoints.ToString();
             if (instance._model.Teams == 2)
             {
                 if (instance._model.GreenTeamPoints > instance._model.RedTeamPoints)
@@ -460,6 +420,30 @@ public partial class GameMenuForm : Form
             MessageBox.Show(winner, "Game over!" , MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             DisposeAllForms();
         }
+    }
+
+    #endregion
+
+    #region Public methods
+
+    /// <summary>
+    /// Játékosok ablakainak bezárása
+    /// </summary>
+    public void DisposeAllForms()
+    {
+        _gameFormGreenTeamPlayerOne.Dispose();
+        _gameFormGreenTeamPlayerTwo.Dispose();
+        if (selectedGroupCount == 2)
+        {
+            _gameFormRedTeamPlayerOne.Dispose();
+            _gameFormRedTeamPlayerTwo.Dispose();
+        }
+        if (refereeModeCheckbox.Checked)
+        {
+            _refereeModeForm.Dispose();
+        }
+        _timer.Enabled = false;
+        EnableButtons();
     }
 
     #endregion

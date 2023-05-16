@@ -9,14 +9,16 @@ namespace Robotok.WinForms.View
         #region Fields
 
         private Button[,] _buttonGrid = null!; // gombrács (játékvezetői)
-
         private Panel[,] _verticalPanels = null!; // függőleges panelek (kapcsolódások megjelenítésére)
-
         private Panel[,] _horizontalPanels = null!; // vízszintes panelek
 
         #endregion
 
         #region Constructor
+
+        /// <summary>
+        /// Játékvezetői ablak példányosítása
+        /// </summary>
         public RefereeModeForm()
         {
             InitializeComponent();
@@ -28,10 +30,13 @@ namespace Robotok.WinForms.View
 
         #region Private methods
 
+        /// <summary>
+        /// Játékvezetői tábla kigenerálása 
+        /// </summary>
         private void GenerateRefereeTable()
         {
-            // Játékvezetői tábla
             _buttonGrid = new Button[GameMenuForm.instance._model.Table.SizeX, GameMenuForm.instance._model.Table.SizeY];
+
             for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
             {
                 for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
@@ -39,10 +44,10 @@ namespace Robotok.WinForms.View
                     _buttonGrid[i, j] = new Button();
                     _buttonGrid[i, j].Location = new Point(Convert.ToInt32(115 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * j, Convert.ToInt32(85 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * i); // elhelyezkedés
                     _buttonGrid[i, j].Size = new Size(Convert.ToInt32(22 * GetScalingFactor()), Convert.ToInt32(22 * GetScalingFactor())); // méret
-                    _buttonGrid[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
-                    _buttonGrid[i, j].Enabled = false; // kikapcsolt állapot
-                    _buttonGrid[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
-                    _buttonGrid[i, j].BackgroundImageLayout = ImageLayout.Stretch; // kép cella méretéhez igazítása
+                    _buttonGrid[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); 
+                    _buttonGrid[i, j].Enabled = false;
+                    _buttonGrid[i, j].FlatStyle = FlatStyle.Flat; 
+                    _buttonGrid[i, j].BackgroundImageLayout = ImageLayout.Stretch; // kép mezőhöz méretezése
 
                     if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == -2)
                     {
@@ -105,32 +110,27 @@ namespace Robotok.WinForms.View
                         _buttonGrid[i, j].BackgroundImage = Resources.robot;
                     }
 
-
-                    Controls.Add(_buttonGrid[i, j]);
-                    // felvesszük az ablakra a gombot
+                    Controls.Add(_buttonGrid[i, j]);   // felvesszük az ablakra a gombot
                 }
             }
         }
 
-        /*Panelek kigenerálására szolgáló függvény. A panelek célja, hogyha egy játékos csatlakozik egy kockához, jelenjen meg egy
-        vastag vonal a kapcsolódott két kocka között. Azért kellett ezt az alternatív megoldást alkalmazni, mivel a Windows Forms
-        nem támogatja egy gomb határainak egyenkénti módosítását. Az összes panelt kigenerálju előre, kapcsolódáskor csak a láthatóságát
-        állítjuk át igazra.
-        */
+        /// <summary>
+        /// Panelek kigenerálása a játékvezetői nézeten (a kockaösszekapcsolások megjelenítésére) 
+        /// </summary>
         private void GenerateRefereeAttachments()
         {
-
             _verticalPanels = new Panel[GameMenuForm.instance._model.Table.SizeX, GameMenuForm.instance._model.Table.SizeY];
             _horizontalPanels = new Panel[GameMenuForm.instance._model.Table.SizeX, GameMenuForm.instance._model.Table.SizeY];
 
-            for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
+            for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++) // a kockák pozíciójához viszonyítva két kocka határán jelenítjük meg a kapcsolatokat
             {
                 for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
                 {
                     _verticalPanels[i, j] = new Panel();
-                    _verticalPanels[i, j].Location = new Point(Convert.ToInt32(113 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * j, Convert.ToInt32(85 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * i); // elhelyezkedés
-                    _verticalPanels[i, j].Size = new Size(Convert.ToInt32(5 * GetScalingFactor()), Convert.ToInt32(22 * GetScalingFactor())); // méret
-                    _verticalPanels[i, j].BackColor = Color.Red; // debuggolás miatt piros, hogy a határoknál ne olvadjon bele a fekete színbe, később át lehet írni
+                    _verticalPanels[i, j].Location = new Point(Convert.ToInt32(113 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * j, Convert.ToInt32(85 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * i); // elhelyezés két kocka határára
+                    _verticalPanels[i, j].Size = new Size(Convert.ToInt32(5 * GetScalingFactor()), Convert.ToInt32(22 * GetScalingFactor())); 
+                    _verticalPanels[i, j].BackColor = Color.Red; 
                     _verticalPanels[i, j].Visible = false;
 
                     _horizontalPanels[i, j] = new Panel();
@@ -139,16 +139,18 @@ namespace Robotok.WinForms.View
                     _horizontalPanels[i, j].BackColor = Color.Red;
                     _horizontalPanels[i, j].Visible = false;
 
-                    Controls.Add(_verticalPanels[i, j]); // Felvesszük őket az ablakra
+                    Controls.Add(_verticalPanels[i, j]); // felvesszük őket az ablakra
                     Controls.Add(_horizontalPanels[i, j]);
 
-                    _verticalPanels[i, j].BringToFront(); // Előtérbe kell hozni a paneleket, hogy a pálya gombjai ne takarják el
+                    _verticalPanels[i, j].BringToFront(); // előtérbe kell hozni a paneleket, hogy a pálya gombjai ne takarják el
                     _horizontalPanels[i, j].BringToFront();
-
                 }
             }
         }
 
+        /// <summary>
+        /// Játékvezetői nézet bezárása
+        /// </summary>
         private void RefereeModeForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
@@ -174,6 +176,10 @@ namespace Robotok.WinForms.View
         #endregion
 
         #region Public methods
+
+        /// <summary>
+        /// Játékvezetői tábla frissítése
+        /// </summary>
         public void RefreshRefereeView()
         {
             for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
@@ -245,9 +251,8 @@ namespace Robotok.WinForms.View
                         _buttonGrid[i, j].BackgroundImage = Resources.robot;
                         RotateRefereeImage(i, j);
                     }
-
-                    // Kapcsolatok megjelenítésének frissítése
-                    if (GameMenuForm.instance._model.Table.GetAttachmentEast(i, j))
+      
+                    if (GameMenuForm.instance._model.Table.GetAttachmentEast(i, j))  // kapcsolatok megjelenítésének frissítése
                     {
                         _verticalPanels[i, j + 1].Visible = true;
                     }
@@ -278,12 +283,14 @@ namespace Robotok.WinForms.View
             }
         }
 
-        // Robotok képeinek forgatása 
-        public void RotateRefereeImage(int i, int j)
+        /// <summary>
+        /// Robotok képeinek forgatása a játékvezetői nézeten
+        /// </summary>
+        public void RotateRefereeImage(Int32 i, Int32 j)
         {
-            if (GameMenuForm.instance._model.Table.GetFaceNorth(i, j)) // Megnézzük, hogy a robot melyik irányba néz          
+            if (GameMenuForm.instance._model.Table.GetFaceNorth(i, j)) // megnézzük, hogy a robot melyik irányba néz, és ez alapján forgatjuk a robot képét         
             {
-                _buttonGrid[i , j].BackgroundImage.RotateFlip(RotateFlipType.Rotate180FlipX);    // Abba az irányba forgatjuk a képet, amerre a robot néz
+                _buttonGrid[i , j].BackgroundImage.RotateFlip(RotateFlipType.Rotate180FlipX);    
             }
             else if (GameMenuForm.instance._model.Table.GetFaceWest(i, j))
             {
@@ -295,7 +302,10 @@ namespace Robotok.WinForms.View
             }
         }
 
-        public void RefreshRefereeCleaningOperationImage(int i, int j)
+        /// <summary>
+        /// Hátralévő tisztítási műveletek képének frissítése
+        /// </summary>
+        public void RefreshRefereeCleaningOperationImage(Int32 i, Int32 j)
         {
             if(GameMenuForm.instance._model.GameDifficulty  == GameDifficulty.Easy)
             {

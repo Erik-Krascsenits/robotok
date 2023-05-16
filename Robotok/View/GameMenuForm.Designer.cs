@@ -86,7 +86,7 @@ partial class GameMenuForm
             this.startButton.TabIndex = 7;
             this.startButton.Text = "Játék indítása";
             this.startButton.UseVisualStyleBackColor = true;
-            this.startButton.Click += new System.EventHandler(this.startButton_Click);
+            this.startButton.Click += new System.EventHandler(this.StartButton_Click);
             // 
             // refereeModeText
             // 
@@ -128,7 +128,7 @@ partial class GameMenuForm
             this.easyDifficultyOption.TabIndex = 11;
             this.easyDifficultyOption.Text = "Könnyű";
             this.easyDifficultyOption.UseVisualStyleBackColor = true;
-            this.easyDifficultyOption.CheckedChanged += new System.EventHandler(this.easyDifficultyOption_CheckedChanged);
+            this.easyDifficultyOption.CheckedChanged += new System.EventHandler(this.EasyDifficultyOption_CheckedChanged);
             // 
             // mediumDifficultyOption
             // 
@@ -141,7 +141,7 @@ partial class GameMenuForm
             this.mediumDifficultyOption.TabStop = true;
             this.mediumDifficultyOption.Text = "Közepes";
             this.mediumDifficultyOption.UseVisualStyleBackColor = true;
-            this.mediumDifficultyOption.CheckedChanged += new System.EventHandler(this.mediumDifficultyOption_CheckedChanged);
+            this.mediumDifficultyOption.CheckedChanged += new System.EventHandler(this.MediumDifficultyOption_CheckedChanged);
             // 
             // hardDifficultyOption
             // 
@@ -152,7 +152,7 @@ partial class GameMenuForm
             this.hardDifficultyOption.TabIndex = 13;
             this.hardDifficultyOption.Text = "Nehéz";
             this.hardDifficultyOption.UseVisualStyleBackColor = true;
-            this.hardDifficultyOption.CheckedChanged += new System.EventHandler(this.hardDifficultyOption_CheckedChanged);
+            this.hardDifficultyOption.CheckedChanged += new System.EventHandler(this.HardDifficultyOption_CheckedChanged);
             // 
             // oneGroupOption
             // 
@@ -164,7 +164,7 @@ partial class GameMenuForm
             this.oneGroupOption.TabIndex = 14;
             this.oneGroupOption.TabStop = true;
             this.oneGroupOption.UseVisualStyleBackColor = true;
-            this.oneGroupOption.CheckedChanged += new System.EventHandler(this.oneGroupOption_CheckedChanged);
+            this.oneGroupOption.CheckedChanged += new System.EventHandler(this.OneGroupOption_CheckedChanged);
             // 
             // twoGroupsOption
             // 
@@ -174,7 +174,7 @@ partial class GameMenuForm
             this.twoGroupsOption.Size = new System.Drawing.Size(17, 16);
             this.twoGroupsOption.TabIndex = 15;
             this.twoGroupsOption.UseVisualStyleBackColor = true;
-            this.twoGroupsOption.CheckedChanged += new System.EventHandler(this.twoGroupsOption_CheckedChanged);
+            this.twoGroupsOption.CheckedChanged += new System.EventHandler(this.TwoGroupsOption_CheckedChanged);
             // 
             // groupChoice
             // 

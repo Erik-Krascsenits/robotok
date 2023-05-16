@@ -279,7 +279,7 @@
             this.waitButton.Size = new System.Drawing.Size(50, 50);
             this.waitButton.TabIndex = 23;
             this.waitButton.UseVisualStyleBackColor = true;
-            this.waitButton.Click += new System.EventHandler(this.waitButton_Click);
+            this.waitButton.Click += new System.EventHandler(this.WaitButton_Click);
             // 
             // moveButton
             // 
@@ -290,7 +290,7 @@
             this.moveButton.Size = new System.Drawing.Size(50, 50);
             this.moveButton.TabIndex = 24;
             this.moveButton.UseVisualStyleBackColor = true;
-            this.moveButton.Click += new System.EventHandler(this.moveButton_Click);
+            this.moveButton.Click += new System.EventHandler(this.MoveButton_Click);
             // 
             // turnButton
             // 
@@ -301,7 +301,7 @@
             this.turnButton.Size = new System.Drawing.Size(50, 50);
             this.turnButton.TabIndex = 25;
             this.turnButton.UseVisualStyleBackColor = true;
-            this.turnButton.Click += new System.EventHandler(this.turnButton_Click);
+            this.turnButton.Click += new System.EventHandler(this.TurnButton_Click);
             // 
             // attachButton
             // 
@@ -312,7 +312,7 @@
             this.attachButton.Size = new System.Drawing.Size(50, 50);
             this.attachButton.TabIndex = 26;
             this.attachButton.UseVisualStyleBackColor = true;
-            this.attachButton.Click += new System.EventHandler(this.attachButton_Click);
+            this.attachButton.Click += new System.EventHandler(this.AttachButton_Click);
             // 
             // detachButton
             // 
@@ -323,7 +323,7 @@
             this.detachButton.Size = new System.Drawing.Size(50, 50);
             this.detachButton.TabIndex = 27;
             this.detachButton.UseVisualStyleBackColor = true;
-            this.detachButton.Click += new System.EventHandler(this.dettachButton_Click);
+            this.detachButton.Click += new System.EventHandler(this.DettachButton_Click);
             // 
             // attachCubesButton
             // 
@@ -334,7 +334,7 @@
             this.attachCubesButton.Size = new System.Drawing.Size(50, 50);
             this.attachCubesButton.TabIndex = 28;
             this.attachCubesButton.UseVisualStyleBackColor = true;
-            this.attachCubesButton.Click += new System.EventHandler(this.attachCubesButton_Click);
+            this.attachCubesButton.Click += new System.EventHandler(this.AttachCubesButton_Click);
             // 
             // detachCubesButton
             // 
@@ -345,7 +345,7 @@
             this.detachCubesButton.Size = new System.Drawing.Size(50, 50);
             this.detachCubesButton.TabIndex = 29;
             this.detachCubesButton.UseVisualStyleBackColor = true;
-            this.detachCubesButton.Click += new System.EventHandler(this.detachCubesButton_Click);
+            this.detachCubesButton.Click += new System.EventHandler(this.DetachCubesButton_Click);
             // 
             // clearButton
             // 
@@ -356,7 +356,7 @@
             this.clearButton.Size = new System.Drawing.Size(50, 50);
             this.clearButton.TabIndex = 30;
             this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            this.clearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // operationParametersText
             // 

@@ -400,7 +400,7 @@ namespace ELTE.Robotok.Model
                     break;
             }
 
-            Boolean toMerge = false; // Ha egy játékos a csapattársának a Manhattan-távolságában van, akkor egyesítik nézetüket
+            Boolean toMerge = false; // ha egy játékos a csapattársának a Manhattan-távolságában van, akkor egyesítik nézetüket
 
             for (Int32 i = 0; i < _table.SizeX; i++)
             {
