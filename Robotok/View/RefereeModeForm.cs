@@ -110,7 +110,7 @@ namespace Robotok.WinForms.View
                         _buttonGrid[i, j].BackgroundImage = Resources.robot;
                     }
 
-                    Controls.Add(_buttonGrid[i, j]);   // felvesszük az ablakra a gombot
+                    Controls.Add(_buttonGrid[i, j]); // felvesszük az ablakra a gombot
                 }
             }
         }

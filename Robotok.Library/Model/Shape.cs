@@ -1,7 +1,7 @@
 ﻿namespace ELTE.Robotok.Model
 {
     /// <summary>
-    /// Játékban szereplő alakzatok típusa.
+    /// Játékban szereplő alakzatok típusa
     /// </summary>
     public class Shape
     {
@@ -23,7 +23,7 @@
             {-2, -2, -2},
             {5, 5, 5}
         };
-        private Int32[,] _lType = new Int32[3, 3] { // l-betű féle alakzat
+        private Int32[,] _lType = new Int32[3, 3] { // l típusú alakzat
             { -2, -2, -2},
             { 6, -2, -2},
             { 6, 6, 6}

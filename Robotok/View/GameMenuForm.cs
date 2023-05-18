@@ -273,20 +273,30 @@ public partial class GameMenuForm : Form
     /// <summary>
     /// Kommunikációs ablakok tartalmának aktualizálása azonos csapaton belül
     /// </summary>
-    private void Communication_TextChanged(object sender, EventArgs e)
+    private void Communication_TextChanged(object ?sender, EventArgs e)
     {
-        TextBox changedTextBox = (TextBox)sender;
+        TextBox? changedTextBox = null;
+        if (sender != null)
+        {
+            changedTextBox = (TextBox)sender;
+        }
 
         if (selectedGroupCount == 1)
         {
 
             if (changedTextBox == _gameFormGreenTeamPlayerOne.communicationWindow)
             {
-                _gameFormGreenTeamPlayerTwo.communicationWindow.Text = changedTextBox.Text;
+                if (changedTextBox != null)
+                {
+                    _gameFormGreenTeamPlayerTwo.communicationWindow.Text = changedTextBox.Text;
+                }
             }
             else
             {
-                _gameFormGreenTeamPlayerOne.communicationWindow.Text = changedTextBox.Text;
+                if (changedTextBox != null)
+                {
+                    _gameFormGreenTeamPlayerOne.communicationWindow.Text = changedTextBox.Text;
+                }
             }
         }
         else if (selectedGroupCount == 2)

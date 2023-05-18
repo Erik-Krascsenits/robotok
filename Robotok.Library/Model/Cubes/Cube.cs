@@ -5,18 +5,18 @@
     /// </summary>
     public class Cube : CubeToEvaluate
     {
-        public bool northAttachment;
-        public bool southAttachment;
-        public bool eastAttachment;
-        public bool westAttachment;
+        public Boolean northAttachment;
+        public Boolean southAttachment;
+        public Boolean eastAttachment;
+        public Boolean westAttachment;
         public string direction;
-        public int remainingCleaningOperations;
-        public Cube(int x, int y, int value, bool n, bool s, bool e, bool w, string direction, int remainingCleaningOperations) : base(x, y, value)
+        public Int32 remainingCleaningOperations;
+        public Cube(Int32 x, Int32 y, Int32 value, Boolean north, Boolean south, Boolean east, Boolean west, string direction, Int32 remainingCleaningOperations) : base(x, y, value)
         {
-            northAttachment = n;
-            southAttachment = s;
-            eastAttachment = e;
-            westAttachment = w;
+            northAttachment = north;
+            southAttachment = south;
+            eastAttachment = east;
+            westAttachment = west;
             this.direction = direction;
             this.remainingCleaningOperations = remainingCleaningOperations;
         }

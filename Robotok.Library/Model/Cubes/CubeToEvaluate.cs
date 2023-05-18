@@ -5,11 +5,11 @@
     /// </summary>
     public class CubeToEvaluate
     {
-        public int x;
-        public int y;
-        public int value;
+        public Int32 x;
+        public Int32 y;
+        public Int32 value;
 
-        public CubeToEvaluate(int x, int y, int value)
+        public CubeToEvaluate(Int32 x, Int32 y, Int32 value)
         {
             this.x = x;
             this.y = y;

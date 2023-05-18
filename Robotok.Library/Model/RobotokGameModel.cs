@@ -49,8 +49,10 @@ namespace ELTE.Robotok.Model
         private List<Cube> _outOfTableRedPlayerOne = new List<Cube>(); // piros csapat első játékosához kapcsolt, művelet elvégzése után pályán kívülre eső alakzat kockáinak eltárolása
         private List<Cube> _outOfTableRedPlayerTwo = new List<Cube>(); // piros csapat második játékosához kapcsolt, művelet elvégzése után pályán kívülre eső alakzat kockáinak eltárolása
         private Int32 _greenTeamCubeAttachState, _redTeamCubeAttachState; // annak eltárolása, hogy hol tart az összekapcsolás művelet csapatonként, 0 - nincs kezdeményezve, 1 - az első csapattárs megadta a koordinátákat, 2 - a második csapattárs megadta a koordinátákat, >2 - a második csapattárs más műveletet kezdeményezett (így érvénytelen lesz az összekapcsolás)
-        private Int32 _CubeToDetach1X, _CubeToDetach1Y, _CubeToDetach2X, _CubeToDetach2Y; // eltároljuk a szétválasztani kívánt két kocka koordinátáit
-        private Int32 _Cube1XPlayer1TeamGreen, _Cube1YPlayer1TeamGreen, _Cube2XPlayer1TeamGreen, _Cube2YPlayer1TeamGreen, _cube1XPlayer2TeamGreen, _cube1YPlayer2TeamGreen, _cube2XPlayer2TeamGreen, _cube2YPlayer2TeamGreen, _cube1XPlayer1TeamRed, _cube1YPlayer1TeamRed, _Cube2XPlayer1TeamRed, _cube2YPlayer1TeamRed, _Cube1XPlayer2TeamRed, _cube1YPlayer2TeamRed, _Cube2XPlayer2TeamRed, _Cube2YPlayer2TeamRed; // eltároljuk mindkét játékos által megadott összekapcsolni kívánt kockák x és y koordinátáját mindkét csapat esetében
+        private Int32 _cubeToDetach1X, _cubeToDetach1Y, _cubeToDetach2X, _cubeToDetach2Y; // eltároljuk a szétválasztani kívánt két kocka koordinátáit
+        private Int32 _cube1XPlayer1TeamGreen, _cube1YPlayer1TeamGreen, _cube2XPlayer1TeamGreen, _cube2YPlayer1TeamGreen, _cube1XPlayer2TeamGreen, _cube1YPlayer2TeamGreen, _cube2XPlayer2TeamGreen, _cube2YPlayer2TeamGreen, _cube1XPlayer1TeamRed, _cube1YPlayer1TeamRed, _cube2XPlayer1TeamRed, _cube2YPlayer1TeamRed, _cube1XPlayer2TeamRed, _cube1YPlayer2TeamRed, _cube2XPlayer2TeamRed, _cube2YPlayer2TeamRed; // eltároljuk mindkét játékos által megadott összekapcsolni kívánt kockák x és y koordinátáját mindkét csapat esetében
+        private Boolean _caravanInProgress; // annak eltárolása, hogy egy adott körben karavánmozgást hajtunk-e végre (tehát ha egy építményre több csapattárs is rá van csatlakozva)
+        private String _caravanDirectionPlayer1, _caravanDirectionPlayer2; // annak eltárolása, hogy a karaván egyes játékosai milyen irányba szeretnének haladni
 
         #endregion
 
@@ -164,42 +166,42 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Első lecsatolandó kocka X koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 CubeToDetach1X { get { return _CubeToDetach1X; } set { _CubeToDetach1X = value; } }
+        public Int32 CubeToDetach1X { get { return _cubeToDetach1X; } set { _cubeToDetach1X = value; } }
 
         /// <summary>
         /// Első lecsatolandó kocka Y koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 CubeToDetach1Y { get { return _CubeToDetach1Y; } set { _CubeToDetach1Y = value; } }
+        public Int32 CubeToDetach1Y { get { return _cubeToDetach1Y; } set { _cubeToDetach1Y = value; } }
 
         /// <summary>
         /// Második lecsatolandó kocka X koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 CubeToDetach2X { get { return _CubeToDetach2X; } set { _CubeToDetach2X = value; } }
+        public Int32 CubeToDetach2X { get { return _cubeToDetach2X; } set { _cubeToDetach2X = value; } }
 
         /// <summary>
         /// Második lecsatolandó kocka Y koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 CubeToDetach2Y { get { return _CubeToDetach2Y; } set { _CubeToDetach2Y = value; } }
+        public Int32 CubeToDetach2Y { get { return _cubeToDetach2Y; } set { _cubeToDetach2Y = value; } }
 
         /// <summary>
         /// Zöld csapat 1. játékosa által megadott 1. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 Cube1XPlayer1TeamGreen { get { return _Cube1XPlayer1TeamGreen; } set { _Cube1XPlayer1TeamGreen = value; } }
+        public Int32 Cube1XPlayer1TeamGreen { get { return _cube1XPlayer1TeamGreen; } set { _cube1XPlayer1TeamGreen = value; } }
 
         /// <summary>
         /// Zöld csapat 1. játékosa által megadott 1. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 Cube1YPlayer1TeamGreen { get { return _Cube1YPlayer1TeamGreen; } set { _Cube1YPlayer1TeamGreen = value; } }
+        public Int32 Cube1YPlayer1TeamGreen { get { return _cube1YPlayer1TeamGreen; } set { _cube1YPlayer1TeamGreen = value; } }
 
         /// <summary>
         /// Zöld csapat 1. játékosa által megadott 2. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 Cube2XPlayer1TeamGreen { get { return _Cube2XPlayer1TeamGreen; } set { _Cube2XPlayer1TeamGreen = value; } }
+        public Int32 Cube2XPlayer1TeamGreen { get { return _cube2XPlayer1TeamGreen; } set { _cube2XPlayer1TeamGreen = value; } }
 
         /// <summary>
         /// Zöld csapat 1. játékosa által megadott 2. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 Cube2YPlayer1TeamGreen { get { return _Cube2YPlayer1TeamGreen; } set { _Cube2YPlayer1TeamGreen = value; } }
+        public Int32 Cube2YPlayer1TeamGreen { get { return _cube2YPlayer1TeamGreen; } set { _cube2YPlayer1TeamGreen = value; } }
 
         /// <summary>
         /// Zöld csapat 2. játékosa által megadott 1. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
@@ -234,7 +236,7 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Piros csapat 1. játékosa által megadott 2. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 Cube2XPlayer1TeamRed { get { return _Cube2XPlayer1TeamRed; } set { _Cube2XPlayer1TeamRed = value; } }
+        public Int32 Cube2XPlayer1TeamRed { get { return _cube2XPlayer1TeamRed; } set { _cube2XPlayer1TeamRed = value; } }
 
         /// <summary>
         /// Piros csapat 1. játékosa által megadott 2. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
@@ -244,7 +246,7 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Piros csapat 2. játékosa által megadott 1. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 Cube1XPlayer2TeamRed { get { return _Cube1XPlayer2TeamRed; } set { _Cube1XPlayer2TeamRed = value; } }
+        public Int32 Cube1XPlayer2TeamRed { get { return _cube1XPlayer2TeamRed; } set { _cube1XPlayer2TeamRed = value; } }
 
         /// <summary>
         /// Piros csapat 2. játékosa által megadott 1. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
@@ -254,12 +256,12 @@ namespace ELTE.Robotok.Model
         /// <summary>
         /// Piros csapat 2. játékosa által megadott 2. összekapcsolandó kocka X koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 Cube2XPlayer2TeamRed { get { return _Cube2XPlayer2TeamRed; } set { _Cube2XPlayer2TeamRed = value; } }
+        public Int32 Cube2XPlayer2TeamRed { get { return _cube2XPlayer2TeamRed; } set { _cube2XPlayer2TeamRed = value; } }
 
         /// <summary>
         /// Piros csapat 2. játékosa által megadott 2. összekapcsolandó kocka Y koordinátájának lekérdezése, vagy beállítása
         /// </summary>
-        public Int32 Cube2YPlayer2TeamRed { get { return _Cube2YPlayer2TeamRed; } set { _Cube2YPlayer2TeamRed = value; } }
+        public Int32 Cube2YPlayer2TeamRed { get { return _cube2YPlayer2TeamRed; } set { _cube2YPlayer2TeamRed = value; } }
 
         #endregion
 
@@ -363,6 +365,10 @@ namespace ELTE.Robotok.Model
             }
 
             _gameStepCount = 300;
+
+            _caravanInProgress = false;
+            _caravanDirectionPlayer1 = "";
+            _caravanDirectionPlayer2 = "";
 
             GenerateFields();
             GenerateObstacles();
@@ -1240,8 +1246,8 @@ namespace ELTE.Robotok.Model
         /// </summary>
         /// <param name="direction">Játékos által megadott irány</param>
         /// <param name="playerNumber">Játékos azonosítója</param>
-        /// <returns>A művelet sikeressége</returns>
-        public Boolean Move(String direction, Int32 playerNumber)
+        /// <returns>A művelet sikeressége (0 - sikertelen, 1 - sikeres, 2 - sikeres karaván részművelet, 3 - sikeres karavánmozgás)</returns>
+        public Int32 Move(String direction, Int32 playerNumber)
         {
             (Int32 playerCoordinateX, Int32 playerCoordinateY) = GetActivePlayerCoordinates(playerNumber, _table);
 
@@ -1255,11 +1261,11 @@ namespace ELTE.Robotok.Model
                         _table.SetFaceDirection(playerCoordinateX - 1, playerCoordinateY, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY)); // az új helyre átadjuk, hogy merre nézett a játékos
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1); // régi helyről letöröljük a játékost
                         _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false); // a régi helyről töröljük hogy merre nézett a játékos
-                        return true;
+                        return 1;
                     }
                     else
                     {
-                        return false;
+                        return 0;
                     }
                 }
                 else if (direction == "dél")
@@ -1270,11 +1276,11 @@ namespace ELTE.Robotok.Model
                         _table.SetFaceDirection(playerCoordinateX + 1, playerCoordinateY, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY));
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
                         _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false);
-                        return true;
+                        return 1;
                     }
                     else
                     {
-                        return false;
+                        return 0;
                     }
                 }
                 else if (direction == "kelet")
@@ -1285,11 +1291,11 @@ namespace ELTE.Robotok.Model
                         _table.SetFaceDirection(playerCoordinateX, playerCoordinateY + 1, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY));
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
                         _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false);
-                        return true;
+                        return 1;
                     }
                     else
                     {
-                        return false;
+                        return 0;
                     }
                 }
                 else
@@ -1300,11 +1306,11 @@ namespace ELTE.Robotok.Model
                         _table.SetFaceDirection(playerCoordinateX, playerCoordinateY - 1, _table.GetFaceNorth(playerCoordinateX, playerCoordinateY), _table.GetFaceSouth(playerCoordinateX, playerCoordinateY), _table.GetFaceEast(playerCoordinateX, playerCoordinateY), _table.GetFaceWest(playerCoordinateX, playerCoordinateY));
                         _table.SetValue(playerCoordinateX, playerCoordinateY, 7, -1);
                         _table.SetFaceDirection(playerCoordinateX, playerCoordinateY, false, false, false, false);
-                        return true;
+                        return 1;
                     }
                     else
                     {
-                        return false;
+                        return 0;
                     }
                 }
             }
@@ -1327,34 +1333,34 @@ namespace ELTE.Robotok.Model
                     AddCubesToOldList(playerCoordinateX, playerCoordinateY, playerNumber, "nyugat", _table);
                 }
 
-                Boolean validStep = true;
+                Int32 validStep = 1;
 
                 if (direction == "észak") // ellenőrizzük azokat az eseteket, ha a játékos a pálya szélén áll az építménnyel, és ki szeretne lépni a pályáról
                 {
                     if (playerCoordinateX == 3)
                     {
-                        validStep = false;
+                        validStep = 0;
                     }
                 }
                 else if (direction == "dél")
                 {
                     if (playerCoordinateX == 13)
                     {
-                        validStep = false;
+                        validStep = 0;
                     }
                 }
                 else if (direction == "kelet")
                 {
                     if (playerCoordinateY == 23)
                     {
-                        validStep = false;
+                        validStep = 0;
                     }
                 }
                 else if (direction == "nyugat")
                 {
                     if (playerCoordinateY == 4)
                     {
-                        validStep = false;
+                        validStep = 0;
                     }
                 }
 
@@ -1373,57 +1379,118 @@ namespace ELTE.Robotok.Model
                     stepTest[_cubesOldPosition[i].x, _cubesOldPosition[i].y] = 7;
                 }
 
-                for (Int32 i = 0; i < _cubesOldPosition.Count && validStep; i++) // ellenőrizzük, hogy az adott irányba történő léptetés után a kocka érvényes pozícióra kerülne-e
+                for (Int32 i = 0; i < _cubesOldPosition.Count && (validStep == 1 || validStep == 3); i++) // ellenőrizzük, hogy az adott irányba történő léptetés után a kocka érvényes pozícióra kerülne-e
                 {
+                    if (playerNumber == 1 && _cubesOldPosition[i].value == 8) // Ha a zöld csapat 1. játékosához kapcsolt építményben megtalájuk a csapattársat, karavánmozgás logikára váltunk át
+                    {
+                        _caravanDirectionPlayer1 = direction;
+                        validStep = 2;
+                    }
+                    else if (playerNumber == 8 && _cubesOldPosition[i].value == 1) // Fordított sorrendben nem engedélyezzük a karavánmozgást, kivéve, ha már folyamatban van egy
+                    {
+                        if (_caravanInProgress)
+                        {
+                            _caravanDirectionPlayer2 = direction;
+                            validStep = 3;
+                        }
+                        else
+                        {
+                            validStep = 0;
+                        }
+                    }
+                    else if (playerNumber == 2 && _cubesOldPosition[i].value == 9)
+                    {
+                        _caravanDirectionPlayer1 = direction;
+                        validStep = 2;
+                    }
+                    else if (playerNumber == 9 && _cubesOldPosition[i].value == 2)
+                    {
+                        if (_caravanInProgress)
+                        {
+                            _caravanDirectionPlayer2 = direction;
+                            validStep = 3;
+                        }
+                        else
+                        {
+                            validStep = 0;
+                        }
+                    }
+
+                    // Azon esetek lekezelése, amikor egy játékos építményéhez egy másik csapatbeli játékos van csatlakozva, és mozogni szeretnének
+                    if ((playerNumber == 1 && _cubesOldPosition[i].value == 2) || (playerNumber == 1 && _cubesOldPosition[i].value == 9) || (playerNumber == 2 && _cubesOldPosition[i].value == 1) || (playerNumber == 2 && _cubesOldPosition[i].value == 8) || (playerNumber == 8 && _cubesOldPosition[i].value == 2) || (playerNumber == 8 && _cubesOldPosition[i].value == 9) || (playerNumber == 9 && _cubesOldPosition[i].value == 1) || (playerNumber == 9 && _cubesOldPosition[i].value == 8))
+                    {
+                        validStep = 0;
+                    }
+
                     if (direction == "észak")
                     {
                         if (_cubesOldPosition[i].x - 1 < 0) // annak az esetnek a kiszűrése, ha kiindexelnénk a pályáról
                         {
-                            validStep = false;
+                            validStep = 0;
                         }
                         else if (stepTest[_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y] != 7 && stepTest[_cubesOldPosition[i].x - 1, _cubesOldPosition[i].y] != -2) // abban az esetben, ha az aktív kocka olyan pozícióra kerülne, ami nem üres kocka sem pedig játékon kívüli terület, érvénytelen a lépés
                         {
-                            validStep = false;
+                            validStep = 0;
                         }
                     }
                     else if (direction == "dél")
                     {
                         if (_cubesOldPosition[i].x + 1 == _table.SizeX)
                         {
-                            validStep = false;
+                            validStep = 0;
                         }
                         else if (stepTest[_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y] != 7 && stepTest[_cubesOldPosition[i].x + 1, _cubesOldPosition[i].y] != -2)
                         {
-                            validStep = false;
+                            validStep = 0;
                         }
                     }
                     else if (direction == "kelet")
                     {
                         if (_cubesOldPosition[i].y + 1 == _table.SizeY)
                         {
-                            validStep = false;
+                            validStep = 0;
                         }
                         else if (stepTest[_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1] != 7 && stepTest[_cubesOldPosition[i].x, _cubesOldPosition[i].y + 1] != -2)
                         {
-                            validStep = false;
+                            validStep = 0;
                         }
                     }
                     else if (direction == "nyugat")
                     {
                         if (_cubesOldPosition[i].y - 1 < 0)
                         {
-                            validStep = false;
+                            validStep = 0;
                         }
                         else if (stepTest[_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1] != 7 && stepTest[_cubesOldPosition[i].x, _cubesOldPosition[i].y - 1] != -2)
                         {
-                            validStep = false;
+                            validStep = 0;
                         }
                     }
                 }
 
-                if (validStep)
+                if (validStep == 1) // Többkockás lépés (karaván nélkül)
                 {
                     ExecuteSafeSteps(direction);
+                }
+                else if (validStep == 2) // Karavánt észleltünk (nem lépünk, a lépés a karaván másik tagjától is függ)
+                {
+                    _caravanInProgress = true;
+                }
+                else if (validStep == 3)
+                {
+                    if (_caravanDirectionPlayer1 == _caravanDirectionPlayer2) // Csak abban esetben lépünk a karavánnal, ha mindkét csapattárs ugyanabba az irányba szeretne lépni
+                    {
+                        ExecuteSafeSteps(direction);
+                        _caravanInProgress = false;
+                    }
+                    else
+                    {
+                        validStep = 0;
+                    }
+                }
+                else if (validStep == 0)
+                {
+                    _caravanInProgress = false;
                 }
 
                 _cubesOldPosition.Clear(); // sikerességtől függetlenül a lépés után visszaállítjuk a listákat az eredeti állapotukba

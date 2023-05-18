@@ -1,7 +1,7 @@
 ﻿namespace ELTE.Robotok.Persistence
 {
     /// <summary>
-    /// Robotok játéktábla típusa.
+    /// Robotok játéktáblájának típusa
     /// </summary>
     public class RobotokTable
     {
@@ -19,7 +19,7 @@
 
         #region Fields
 
-        private Field[,] _fields; // Field típusú mezők tömbje
+        private Field[,] _fields;
 
         #endregion
 
@@ -40,7 +40,7 @@
         #region Constructors
 
         /// <summary>
-        /// Robotok játéktábla példányosítása.
+        /// Robotok játéktábla példányosítása
         /// </summary>
         /// <param name="tableSizeX">Játéktábla szélessége.</param>
         /// <param name="tableSizeY">Játéktábla magassága.</param>
