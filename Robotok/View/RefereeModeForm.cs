@@ -60,6 +60,7 @@ namespace Robotok.WinForms.View
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 0)
                     {
                         _buttonGrid[i, j].BackColor = Color.Brown;
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall;
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 1)
                     {
@@ -311,45 +312,108 @@ namespace Robotok.WinForms.View
             {
                 if(GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.crack3;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_3;
+                    }
                 }
                 else
                 {
-                    _buttonGrid[i, j].BackgroundImage = null;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = null;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall;
+                    }
                 }
             }
             else if(GameMenuForm.instance._model.GameDifficulty == GameDifficulty.Medium)
             {
                 if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 2)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack2;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack2;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_2;
+                    }
                 }
                 else if(GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_3;
+                    }
                 }
                 else
                 {
-                    _buttonGrid[i, j].BackgroundImage = null;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = null;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall;
+                    }
                 }
             }
             else
             {
                 if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 3)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack1;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack1;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_1;
+                    }
                 }
                 else if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 2)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack2;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack2;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_2;
+                    }
                 }
                 else if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_3;
+                    }
                 }
                 else
                 {
-                    _buttonGrid[i, j].BackgroundImage = null;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = null;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall;
+                    }
                 }
             }
         }

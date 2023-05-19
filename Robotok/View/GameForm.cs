@@ -400,7 +400,7 @@ namespace ELTE.Robotok.View
                         _buttonGridPlayer[i - 3, j - 4] = new Button();
                         _buttonGridPlayer[i - 3, j - 4].Location = new Point(Convert.ToInt32(60 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * (j - 4), Convert.ToInt32(85 * GetScalingFactor()) + Convert.ToInt32(25 * GetScalingFactor()) * (i - 3)); // elhelyezkedés
                         _buttonGridPlayer[i - 3, j - 4].Size = new Size(Convert.ToInt32(25 * GetScalingFactor()), Convert.ToInt32(25 * GetScalingFactor())); // méret
-                        _buttonGridPlayer[i - 3, j - 4].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold);
+                        _buttonGridPlayer[i - 3, j - 4].Font = new Font(FontFamily.GenericSansSerif, 5, FontStyle.Bold);
                         _buttonGridPlayer[i - 3, j - 4].Enabled = true;
                         _buttonGridPlayer[i - 3, j - 4].Visible = true;
                         _buttonGridPlayer[i - 3, j - 4].FlatStyle = FlatStyle.Flat;
@@ -416,6 +416,7 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 0)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Brown;
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.brick_wall;
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 1)
                             {
@@ -488,6 +489,7 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 0)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Brown;
+                                _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.brick_wall;
                             }
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 1)
                             {
@@ -562,6 +564,7 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 0)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Brown;
+                                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.brick_wall;
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 1)
                                 {
@@ -634,6 +637,7 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 0)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.Brown;
+                                    _buttonGridPlayer[i - 3, j - 4].BackgroundImage = Resources.brick_wall;
                                 }
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 1)
                                 {
@@ -974,45 +978,108 @@ namespace ELTE.Robotok.View
             {
                 if (playerTable.GetFieldRemainingCleaningOperations(coordinateX, coordinateY) == 1)
                 {
-                    _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack3;
+                    if (playerTable.GetFieldValue(coordinateX, coordinateY) != 0)
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack3;
+                    }
+                    else
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.brick_wall_cracked_3;
+                    }
                 }
                 else
                 {
-                    _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = null;
+                    if (playerTable.GetFieldValue(coordinateX, coordinateY) != 0)
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = null;
+                    }
+                    else
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.brick_wall;
+                    }
                 }
             }
             else if (GameMenuForm.instance._model.GameDifficulty == GameDifficulty.Medium)
             {
                 if (playerTable.GetFieldRemainingCleaningOperations(coordinateX, coordinateY) == 2)
                 {
-                    _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack2;
+                    if (playerTable.GetFieldValue(coordinateX, coordinateY) != 0)
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack2;
+                    }
+                    else
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.brick_wall_cracked_2;
+                    }
                 }
                 else if (playerTable.GetFieldRemainingCleaningOperations(coordinateX, coordinateY) == 1)
                 {
-                    _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack3;
+                    if (playerTable.GetFieldValue(coordinateX, coordinateY) != 0)
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack3;
+                    }
+                    else
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.brick_wall_cracked_3;
+                    }
                 }
                 else
                 {
-                    _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = null;
+                    if (playerTable.GetFieldValue(coordinateX, coordinateY) != 0)
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = null;
+                    }
+                    else
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.brick_wall;
+                    }
                 }
             }
             else
             {
                 if (playerTable.GetFieldRemainingCleaningOperations(coordinateX, coordinateY) == 3)
                 {
-                    _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack1;
+                    if (playerTable.GetFieldValue(coordinateX, coordinateY) != 0)
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack1;
+                    }
+                    else
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.brick_wall_cracked_1;
+                    }
                 }
                 else if (playerTable.GetFieldRemainingCleaningOperations(coordinateX, coordinateY) == 2)
                 {
-                    _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack2;
+                    if (playerTable.GetFieldValue(coordinateX, coordinateY) != 0)
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack2;
+                    }
+                    else
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.brick_wall_cracked_2;
+                    }
                 }
                 else if (playerTable.GetFieldRemainingCleaningOperations(coordinateX, coordinateY) == 1)
                 {
-                    _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack3;
+                    if (playerTable.GetFieldValue(coordinateX, coordinateY) != 0)
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.crack3;
+                    }
+                    else
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.brick_wall_cracked_3;
+                    }
                 }
                 else
                 {
-                    _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = null;
+                    if (playerTable.GetFieldValue(coordinateX, coordinateY) != 0)
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = null;
+                    }
+                    else
+                    {
+                        _buttonGridPlayer[coordinateX, coordinateY].BackgroundImage = Resources.brick_wall;
+                    }
                 }
             }
         }
