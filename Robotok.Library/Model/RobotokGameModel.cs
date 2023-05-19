@@ -10,7 +10,7 @@ namespace ELTE.Robotok.Model
         /// Manhattan-távolságok beállítására szolgáló konstansok (játék nehézségétől függ)
         /// </summary>
         private Int32 _manhattanDistanceEasy = 6;
-        private Int32 _manhattanDistanceMedium = 5;
+        private Int32 _manhattanDistanceMedium = 3;
         private Int32 _manhattanDistanceHard = 4;
 
         #endregion
@@ -409,6 +409,63 @@ namespace ELTE.Robotok.Model
                 {
                     if (i >= 3 && i <= 13 && j >= 4 && j <= 23) // játék pályán vagyunk-e
                     {
+                        if (Math.Abs(i - playerCoordinateX) + Math.Abs(j - playerCoordinateY) == maxDistance) // ha van a határon kívüli kockának kapcsolata, akkor megnézzük hogy melyik irányban, és ha a játékos felé, akkor megjelenítjük 
+                        {
+                            if (_table.HasAttachments(i, j))
+                            {
+                                if (player == 1)
+                                {
+                                    if(!_syncGreenPlayerOne)
+                                    {
+                                        ObserveAttachedCubesOnManhattanBorder(playerCoordinateX, playerCoordinateY, i, j, player, _tableGreenPlayerOne, _greenTeamObservation);
+                                    }
+                                    else if(_tableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 2 && _tableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 8 && _tableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 9)
+                                    {
+                                        ObserveAttachedCubesOnManhattanBorder(playerCoordinateX, playerCoordinateY, i, j, player, _tableGreenPlayerOne, _greenTeamObservation);
+                                    }
+                                    
+                                }
+                                else if (player == 8)
+                                {
+                                    if(!_syncGreenPlayerTwo)
+                                    {
+                                        ObserveAttachedCubesOnManhattanBorder(playerCoordinateX, playerCoordinateY, i, j, player, _tableGreenPlayerTwo, _greenTeamObservation);
+                                    }
+                                    else if(_tableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != 1 && _tableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != 2 && _tableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != 9)
+                                    {
+                                        ObserveAttachedCubesOnManhattanBorder(playerCoordinateX, playerCoordinateY, i, j, player, _tableGreenPlayerTwo, _greenTeamObservation);
+                                    }
+                                }
+
+                                if (_teams == 2)
+                                {
+                                    if (player == 2)
+                                    {
+                                        if (!_syncRedPlayerOne)
+                                        {
+                                            ObserveAttachedCubesOnManhattanBorder(playerCoordinateX, playerCoordinateY, i, j, player, _tableRedPlayerOne, _redTeamObservation);
+                                        }
+                                        else if(_tableRedPlayerOne.GetFieldValue(i - 3, j - 4) != 1 && _tableRedPlayerOne.GetFieldValue(i - 3, j - 4) != 8 && _tableRedPlayerOne.GetFieldValue(i - 3, j - 4) != 9)
+                                        {
+                                            ObserveAttachedCubesOnManhattanBorder(playerCoordinateX, playerCoordinateY, i, j, player, _tableRedPlayerOne, _redTeamObservation);
+                                        }
+                                    }
+                                    else if (player == 9)
+                                    {
+                                        if (!_syncRedPlayerTwo)
+                                        {
+                                            ObserveAttachedCubesOnManhattanBorder(playerCoordinateX, playerCoordinateY, i, j, player, _tableRedPlayerTwo, _redTeamObservation);
+                                        }
+                                        else if(_tableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 1 && _tableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 2 && _tableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 8)
+                                        {
+                                            ObserveAttachedCubesOnManhattanBorder(playerCoordinateX, playerCoordinateY, i, j, player, _tableRedPlayerTwo, _redTeamObservation);
+                                        }  
+                                    }
+                                }
+
+                            }
+                        }
+
                         if (Math.Abs(i - playerCoordinateX) + Math.Abs(j - playerCoordinateY) < maxDistance) // ha igen, akkor megnézzük, hogy benne van-e a mező a Manhattan-távolságban
                         {
                             if (player == 1)
@@ -472,22 +529,22 @@ namespace ELTE.Robotok.Model
                             {
                                 _tableGreenPlayerOne.SetInDistance(i - 3, j - 4, false);
                             }
-                            if (player == 8)
+                            else if (player == 8)
                             {
                                 _tableGreenPlayerTwo.SetInDistance(i - 3, j - 4, false);
                             }
+
                             if (_teams == 2)
                             {
                                 if (player == 2)
                                 {
                                     _tableRedPlayerOne.SetInDistance(i - 3, j - 4, false);
                                 }
-                                if(player == 9)
+                                else if(player == 9)
                                 {
                                     _tableRedPlayerTwo.SetInDistance(i - 3, j - 4, false);
                                 }
-                            }
-                            
+                            }   
                         }
                     }
                    
@@ -529,7 +586,92 @@ namespace ELTE.Robotok.Model
                     }
                     break;
             }
+        }
 
+        /// <summary>
+        /// A Manhattan-távolság szélén lévő kapcsolt kockákat megjeleníti a játékosnézeten (azonos színű kockák kapcsolhatóak csak, a robot feltételezi hogy az tényleg egy ugyanolyan kocka)
+        /// </summary>
+        /// <param name="playerCoordinateX">Játékos X koordinátája</param>
+        /// <param name="playerCoordinateY">Játékos Y koordinátája</param>
+        /// <param name="i">Manhattan-távolság határán lévő kocka X koordinátája</param>
+        /// <param name="j">Manhattan-távolság határán levő kocka Y koordinátája</param>
+        /// <param name="playerNumber">A játékos száma</param>
+        /// <param name="playerTable">A játékos táblája</param>
+        /// <param name="teamObservation">A játékos csapatának megfigyelései</param>
+        public void ObserveAttachedCubesOnManhattanBorder(Int32 playerCoordinateX, Int32 playerCoordinateY, Int32 i, Int32 j, Int32 playerNumber, RobotokTable playerTable, Int32[,] teamObservation)
+        {
+            if (i == playerCoordinateX && j < playerCoordinateY && _table.GetAttachmentEast(i, j) && _table.GetFieldValue(i, j + 1) != 1 && _table.GetFieldValue(i, j + 1) != 2 && _table.GetFieldValue(i, j + 1) != 8 && _table.GetFieldValue(i, j + 1) != 9) // ha játékoshoz van csatolva manhattanen kívül kocka, akkor azt nem változtatjuk meg, a kocka iránya a játékostól számítva: nyugat
+            {
+                teamObservation[i - 3, j - 4] = playerNumber;
+                playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j + 1), _cleaningOperations);
+            }
+            else if (i == playerCoordinateX && j > playerCoordinateY && _table.GetAttachmentWest(i, j) && _table.GetFieldValue(i, j - 1) != 1 && _table.GetFieldValue(i, j - 1) != 2 && _table.GetFieldValue(i, j - 1) != 8 && _table.GetFieldValue(i, j - 1) != 9) // kelet
+            {
+                teamObservation[i - 3, j - 4] = playerNumber;
+                playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j - 1), _cleaningOperations);
+            }
+            else if (i < playerCoordinateX && j == playerCoordinateY && _table.GetAttachmentSouth(i, j) && _table.GetFieldValue(i + 1, j) != 1 && _table.GetFieldValue(i + 1, j) != 2 && _table.GetFieldValue(i + 1, j) != 8 && _table.GetFieldValue(i + 1, j) != 9) // észak
+            {
+                teamObservation[i - 3, j - 4] = playerNumber;
+                playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i + 1, j), _cleaningOperations);
+            }
+            else if (i > playerCoordinateX && j == playerCoordinateY && _table.GetAttachmentNorth(i, j) && _table.GetFieldValue(i - 1, j) != 1 && _table.GetFieldValue(i - 1, j) != 2 && _table.GetFieldValue(i - 1, j) != 8 && _table.GetFieldValue(i - 1, j) != 9) // dél
+            {
+                teamObservation[i - 3, j - 4] = playerNumber;
+                playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i - 1, j), _cleaningOperations);
+            }
+            else if (i < playerCoordinateX && j < playerCoordinateY) // észak nyugat
+            {
+                if (_table.GetAttachmentSouth(i, j) && _table.GetFieldValue(i + 1, j) != 1 && _table.GetFieldValue(i + 1, j) != 2 && _table.GetFieldValue(i + 1, j) != 8 && _table.GetFieldValue(i + 1, j) != 9)
+                {
+                    teamObservation[i - 3, j - 4] = playerNumber;
+                    playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i + 1, j), _cleaningOperations);
+                }
+                if (_table.GetAttachmentEast(i, j) && _table.GetFieldValue(i, j + 1) != 1 && _table.GetFieldValue(i, j + 1) != 2 && _table.GetFieldValue(i, j + 1) != 8 && _table.GetFieldValue(i, j + 1) != 9)
+                {
+                    teamObservation[i - 3, j - 4] = playerNumber;
+                    playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j + 1), _cleaningOperations);
+                }
+            }
+            else if (i > playerCoordinateX && j < playerCoordinateY) // dél nyugat
+            {
+                if (_table.GetAttachmentNorth(i, j) && _table.GetFieldValue(i - 1, j) != 1 && _table.GetFieldValue(i - 1, j) != 2 && _table.GetFieldValue(i - 1, j) != 8 && _table.GetFieldValue(i - 1, j) != 9)
+                {
+                    teamObservation[i - 3, j - 4] = playerNumber;
+                    playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i - 1, j), _cleaningOperations);
+                }
+                if (_table.GetAttachmentEast(i, j) && _table.GetFieldValue(i, j + 1) != 1 && _table.GetFieldValue(i, j + 1) != 2 && _table.GetFieldValue(i, j + 1) != 8 && _table.GetFieldValue(i, j + 1) != 9)
+                {
+                    teamObservation[i - 3, j - 4] = playerNumber;
+                    playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j + 1), _cleaningOperations);
+                }
+            }
+            else if (i > playerCoordinateX && j > playerCoordinateY) // dél kelet
+            {
+                if (_table.GetAttachmentNorth(i, j) && _table.GetFieldValue(i - 1, j) != 1 && _table.GetFieldValue(i - 1, j) != 2 && _table.GetFieldValue(i - 1, j) != 8 && _table.GetFieldValue(i - 1, j) != 9)
+                {
+                    teamObservation[i - 3, j - 4] = playerNumber;
+                    playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i - 1, j), _cleaningOperations);
+                }
+                if (_table.GetAttachmentWest(i, j) && _table.GetFieldValue(i, j - 1) != 1 && _table.GetFieldValue(i, j - 1) != 2 && _table.GetFieldValue(i, j - 1) != 8 && _table.GetFieldValue(i, j - 1) != 9)
+                {
+                    teamObservation[i - 3, j - 4] = playerNumber;
+                    playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j - 1), _cleaningOperations);
+                }
+            }
+            else if (i < playerCoordinateX && j > playerCoordinateY) // észak kelet
+            {
+                if (_table.GetAttachmentSouth(i, j) && _table.GetFieldValue(i + 1, j) != 1 && _table.GetFieldValue(i + 1, j) != 2 && _table.GetFieldValue(i + 1, j) != 8 && _table.GetFieldValue(i + 1, j) != 9)
+                {
+                    teamObservation[i - 3, j - 4] = playerNumber;
+                    playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i + 1, j), _cleaningOperations);
+                }
+                if (_table.GetAttachmentWest(i, j) && _table.GetFieldValue(i, j - 1) != 1 && _table.GetFieldValue(i, j - 1) != 2 && _table.GetFieldValue(i, j - 1) != 8 && _table.GetFieldValue(i, j - 1) != 9)
+                {
+                    teamObservation[i - 3, j - 4] = playerNumber;
+                    playerTable.SetValue(i - 3, j - 4, _table.GetFieldValue(i, j - 1), _cleaningOperations);
+                }
+            }
         }
 
         /// <summary>
@@ -1026,17 +1168,31 @@ namespace ELTE.Robotok.Model
         {
             (Int32 playerCoordinateX, Int32 playerCoordinateY) = GetActivePlayerCoordinates(playerNumber, _table);
 
-            if (direction == "észak")
-            {
-                if (playerCoordinateX == 3 && _table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY)) // játékos irányától függően megnézzük, hogy a játékterület szélén áll-e és szeretne-e kockát lecsatolni (ez az az eset, amikor alakzatkiértékelést hajtunk végre)
+            if (_table.HasAttachments(playerCoordinateX, playerCoordinateY)) { 
+                if (direction == "észak")
                 {
-                    Int32 result = EvaluateShape(direction);
-
-                    if (result > 0)
+                    if (playerCoordinateX == 3 && _table.GetAttachmentNorth(playerCoordinateX, playerCoordinateY)) // játékos irányától függően megnézzük, hogy a játékterület szélén áll-e és szeretne-e kockát lecsatolni (ez az az eset, amikor alakzatkiértékelést hajtunk végre)
                     {
-                        EvaluateResult(result, playerNumber);
+                        Int32 result = EvaluateShape(direction);
 
-                        _table.SetAttachmentNorth(playerCoordinateX, playerCoordinateY, false); // az alakzat és a játékos közötti csatolást külön el kell távolítanunk
+                        if (result > 0)
+                        {
+                            EvaluateResult(result, playerNumber);
+
+                            _table.SetAttachmentNorth(playerCoordinateX, playerCoordinateY, false); // az alakzat és a játékos közötti csatolást külön el kell távolítanunk
+
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+
+                    }
+                    else if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 6 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 11 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 12) // ellenőrzi, hogy a lecsatolni kívánt kocka építőkocka-e
+                    {
+                        _table.SetAttachmentNorth(playerCoordinateX, playerCoordinateY, false);
+                        _table.SetAttachmentSouth(playerCoordinateX - 1, playerCoordinateY, false);
 
                         return true;
                     }
@@ -1044,61 +1200,60 @@ namespace ELTE.Robotok.Model
                     {
                         return false;
                     }
-
                 }
-                else if (_table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 6 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 11 || _table.GetFieldValue(playerCoordinateX - 1, playerCoordinateY) == 12) // ellenőrzi, hogy a lecsatolni kívánt kocka építőkocka-e
+                else if (direction == "dél")
                 {
-                    _table.SetAttachmentNorth(playerCoordinateX, playerCoordinateY, false);
-                    _table.SetAttachmentSouth(playerCoordinateX - 1, playerCoordinateY, false);
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else if (direction == "dél")
-            {
-                if (playerCoordinateX == 13 && _table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
-                {
-                    Int32 result = EvaluateShape("dél");
-                    if (result > 0)
+                    if (playerCoordinateX == 13 && _table.GetAttachmentSouth(playerCoordinateX, playerCoordinateY))
                     {
-                        EvaluateResult(result, playerNumber);
+                        Int32 result = EvaluateShape("dél");
+                        if (result > 0)
+                        {
+                            EvaluateResult(result, playerNumber);
 
+                            _table.SetAttachmentSouth(playerCoordinateX, playerCoordinateY, false);
+
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 6 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 11 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 12)
+                    {
                         _table.SetAttachmentSouth(playerCoordinateX, playerCoordinateY, false);
+                        _table.SetAttachmentNorth(playerCoordinateX + 1, playerCoordinateY, false);
 
                         return true;
-                    } 
+                    }
                     else
                     {
                         return false;
                     }
                 }
-                else if (_table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 3 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 4 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 5 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 6 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 11 || _table.GetFieldValue(playerCoordinateX + 1, playerCoordinateY) == 12)
-                {
-                    _table.SetAttachmentSouth(playerCoordinateX, playerCoordinateY, false);
-                    _table.SetAttachmentNorth(playerCoordinateX + 1, playerCoordinateY, false);
 
-                    return true;
-                }
-                else
+                else if (direction == "kelet")
                 {
-                    return false;
-                }
-            }
-
-            else if (direction == "kelet")
-            {
-                if (playerCoordinateY == 23 && _table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
-                {
-                    Int32 result = EvaluateShape("kelet");
-                    if (result > 0)
+                    if (playerCoordinateY == 23 && _table.GetAttachmentEast(playerCoordinateX, playerCoordinateY))
                     {
-                        EvaluateResult(result, playerNumber);
+                        Int32 result = EvaluateShape("kelet");
+                        if (result > 0)
+                        {
+                            EvaluateResult(result, playerNumber);
 
+                            _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY, false);
+
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 6 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 11 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 12)
+                    {
                         _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY, false);
+                        _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY + 1, false);
 
                         return true;
                     }
@@ -1107,29 +1262,29 @@ namespace ELTE.Robotok.Model
                         return false;
                     }
                 }
-                else if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 6 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 11 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY + 1) == 12)
-                {
-                    _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY, false);
-                    _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY + 1, false);
 
-                    return true;
-                }
                 else
                 {
-                    return false;
-                }
-            }
-
-            else
-            {
-                if (playerCoordinateY == 4 && _table.GetAttachmentWest(playerCoordinateX, playerCoordinateY))
-                {
-                    Int32 result = EvaluateShape("nyugat");
-                    if (result > 0)
+                    if (playerCoordinateY == 4 && _table.GetAttachmentWest(playerCoordinateX, playerCoordinateY))
                     {
-                        EvaluateResult(result, playerNumber);
+                        Int32 result = EvaluateShape("nyugat");
+                        if (result > 0)
+                        {
+                            EvaluateResult(result, playerNumber);
 
+                            _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY, false);
+
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 6 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 11 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 12)
+                    {
                         _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY, false);
+                        _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY - 1, false);
 
                         return true;
                     }
@@ -1138,18 +1293,8 @@ namespace ELTE.Robotok.Model
                         return false;
                     }
                 }
-                else if (_table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 3 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 4 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 5 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 6 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 11 || _table.GetFieldValue(playerCoordinateX, playerCoordinateY - 1) == 12)
-                {
-                    _table.SetAttachmentWest(playerCoordinateX, playerCoordinateY, false);
-                    _table.SetAttachmentEast(playerCoordinateX, playerCoordinateY - 1, false);
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
             }
+            return false;
         }
 
         /// <summary>
@@ -1586,24 +1731,40 @@ namespace ELTE.Robotok.Model
                 {
                     _table.SetAttachmentWest(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
                     _table.SetAttachmentEast(Cube1XPlayer1TeamGreen, Cube2YPlayer1TeamGreen, true);
+
+                    SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
+                    SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+
                     return true;
                 }
                 if ((Cube1XPlayer1TeamGreen == Cube2XPlayer1TeamGreen) && (Cube1YPlayer1TeamGreen == Cube2YPlayer1TeamGreen - 1))
                 {
                     _table.SetAttachmentEast(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
                     _table.SetAttachmentWest(Cube1XPlayer1TeamGreen, Cube2YPlayer1TeamGreen, true);
+
+                    SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
+                    SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+
                     return true;
                 }
                 if ((Cube1XPlayer1TeamGreen - 1 == Cube2XPlayer1TeamGreen) && (Cube1YPlayer1TeamGreen == Cube2YPlayer1TeamGreen))
                 {
                     _table.SetAttachmentSouth(Cube2XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
                     _table.SetAttachmentNorth(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
+
+                    SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
+                    SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+
                     return true;
                 }
                 if ((Cube1XPlayer1TeamGreen == Cube2XPlayer1TeamGreen - 1) && (Cube1YPlayer1TeamGreen == Cube2YPlayer1TeamGreen))
                 {
                     _table.SetAttachmentNorth(Cube2XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
                     _table.SetAttachmentSouth(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
+
+                    SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
+                    SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+
                     return true;
                 }
                 else // ez az az eset, amikor a kiválasztott kockák nem élszomszédosak
@@ -1617,24 +1778,41 @@ namespace ELTE.Robotok.Model
                 {
                     _table.SetAttachmentWest(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
                     _table.SetAttachmentEast(Cube1XPlayer1TeamRed, Cube2YPlayer1TeamRed, true);
+
+                  
+                        SetAttachedCubesOnManhattanBorder(2, HasAttachedCubesOnManhattanBorder(2));
+                        SetAttachedCubesOnManhattanBorder(9, HasAttachedCubesOnManhattanBorder(9));
+                    
                     return true;
                 }
                 if ((Cube1XPlayer1TeamRed == Cube2XPlayer1TeamRed) && (Cube1YPlayer1TeamRed == Cube2YPlayer1TeamRed - 1))
                 {
                     _table.SetAttachmentEast(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
                     _table.SetAttachmentWest(Cube1XPlayer1TeamRed, Cube2YPlayer1TeamRed, true);
+
+                        SetAttachedCubesOnManhattanBorder(2, HasAttachedCubesOnManhattanBorder(2));
+                        SetAttachedCubesOnManhattanBorder(9, HasAttachedCubesOnManhattanBorder(9));
+  
                     return true;
                 }
                 if ((Cube1XPlayer1TeamRed - 1 == Cube2XPlayer1TeamRed) && (Cube1YPlayer1TeamRed == Cube2YPlayer1TeamRed))
                 {
                     _table.SetAttachmentSouth(Cube2XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
                     _table.SetAttachmentNorth(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
+
+                    SetAttachedCubesOnManhattanBorder(2, HasAttachedCubesOnManhattanBorder(2));
+                    SetAttachedCubesOnManhattanBorder(9, HasAttachedCubesOnManhattanBorder(9));
+
                     return true;
                 }
                 if ((Cube1XPlayer1TeamRed == Cube2XPlayer1TeamRed - 1) && (Cube1YPlayer1TeamRed == Cube2YPlayer1TeamRed))
                 {
                     _table.SetAttachmentNorth(Cube2XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
                     _table.SetAttachmentSouth(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
+
+                    SetAttachedCubesOnManhattanBorder(2, HasAttachedCubesOnManhattanBorder(2));
+                    SetAttachedCubesOnManhattanBorder(9, HasAttachedCubesOnManhattanBorder(9));
+
                     return true;
                 }
                 else
@@ -1642,6 +1820,116 @@ namespace ELTE.Robotok.Model
                     return false;
                 }
             }
+        }
+
+        /// <summary>
+        /// Manhattan távolság szélén lévő kockák értékének beállítása
+        /// </summary>
+        /// <param name="playerNumber">Játékos azonosítója</param>
+        /// <param name="cubeId">Kocka azonosítója 0 - egyik kockát sem kell beállítani, 1 - az első kockát kell beállítani, 2 - a második kockát kell beállítani</param>
+        public void SetAttachedCubesOnManhattanBorder(Int32 playerNumber, Int32 cubeId)
+        {
+            if (cubeId != 0)
+            {
+                if (playerNumber == 1)
+                {
+                    if(cubeId == 1)
+                    {
+                        TableGreenPlayerOne.SetValue(Cube1XPlayer1TeamGreen - 3, Cube1YPlayer1TeamGreen - 4, _table.GetFieldValue(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen), _cleaningOperations);
+                    }
+                    else
+                    {
+                        TableGreenPlayerOne.SetValue(Cube2XPlayer1TeamGreen - 3, Cube2YPlayer1TeamGreen - 4, _table.GetFieldValue(Cube2XPlayer1TeamGreen, Cube2YPlayer1TeamGreen), _cleaningOperations);
+                    }
+                }
+                else if (playerNumber == 8)
+                {
+                    if (cubeId == 1)
+                    {
+                        TableGreenPlayerTwo.SetValue(Cube1XPlayer1TeamGreen - 3, Cube1YPlayer1TeamGreen - 4, _table.GetFieldValue(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen), _cleaningOperations);
+                    }
+                    else
+                    {
+                        TableGreenPlayerTwo.SetValue(Cube2XPlayer1TeamGreen - 3, Cube2YPlayer1TeamGreen - 4, _table.GetFieldValue(Cube2XPlayer1TeamGreen, Cube2YPlayer1TeamGreen), _cleaningOperations);
+                    }           
+                }
+                else if (playerNumber == 2)
+                {
+                    if(cubeId == 1)
+                    {
+                        TableRedPlayerOne.SetValue(Cube1XPlayer1TeamRed - 3, Cube1YPlayer1TeamRed - 4, _table.GetFieldValue(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed), _cleaningOperations);
+                    }
+                    else
+                    {
+                        TableRedPlayerOne.SetValue(Cube2XPlayer1TeamRed - 3, Cube2YPlayer1TeamRed - 4, _table.GetFieldValue(Cube2XPlayer1TeamRed, Cube2YPlayer1TeamRed), _cleaningOperations);
+                    }          
+                }
+                else
+                {
+                    if(cubeId == 1)
+                    {
+                        TableRedPlayerTwo.SetValue(Cube1XPlayer1TeamRed - 3, Cube1YPlayer1TeamRed - 4, _table.GetFieldValue(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed), _cleaningOperations);
+                    }
+                    else
+                    {
+                        TableRedPlayerTwo.SetValue(Cube2XPlayer1TeamRed - 3, Cube2YPlayer1TeamRed - 4, _table.GetFieldValue(Cube2XPlayer1TeamRed, Cube2YPlayer1TeamRed), _cleaningOperations);
+                    }  
+                }
+            }
+        }
+
+        /// <summary>
+        /// Összekapcsolt kockák játékostól való Manhattan-távolság szélén vannak-e
+        /// </summary>
+        /// <param name="playerNumber">Játékos azonosítója</param>
+        /// <returns> 0 - a kockák nem a Manhattan-távolság szélén vannak, 1 - az első kocka van Manhattan-távolságon kívül, 2 - a második kocka van Manhattan-távolságon kívül</returns>
+        public Int32 HasAttachedCubesOnManhattanBorder(Int32 playerNumber)
+        {
+
+            Int32 maxDistance; // adott konstans szerinti maximális távolság, amelyen belül frissítjük a nézetet
+
+            switch (_gameDifficulty)
+            {
+                case GameDifficulty.Easy:
+                    maxDistance = _manhattanDistanceEasy;
+                    break;
+                case GameDifficulty.Medium:
+                    maxDistance = _manhattanDistanceMedium;
+                    break;
+                case GameDifficulty.Hard:
+                    maxDistance = _manhattanDistanceHard;
+                    break;
+                default:
+                    maxDistance = 0;
+                    break;
+            }
+            (Int32 playerCoordinateX, Int32 playerCoordinateY) = GetActivePlayerCoordinates(playerNumber, _table);
+
+            if (playerNumber == 1 || playerNumber == 8)
+            {
+                if (Math.Abs(Cube1XPlayer1TeamGreen - playerCoordinateX) + Math.Abs(Cube1YPlayer1TeamGreen - playerCoordinateY) < maxDistance && Math.Abs(Cube2XPlayer1TeamGreen - playerCoordinateX) + Math.Abs(Cube2YPlayer1TeamGreen - playerCoordinateY) == maxDistance)
+                {
+                    return 2;
+                }
+                else if(Math.Abs(Cube1XPlayer1TeamGreen - playerCoordinateX) + Math.Abs(Cube1YPlayer1TeamGreen - playerCoordinateY) == maxDistance && Math.Abs(Cube2XPlayer1TeamGreen - playerCoordinateX) + Math.Abs(Cube2YPlayer1TeamGreen - playerCoordinateY) < maxDistance)
+                {
+                    return 1;
+                }
+            }
+
+            if (playerNumber == 2 || playerNumber == 9)
+            {
+                if (Math.Abs(Cube1XPlayer1TeamRed - playerCoordinateX) + Math.Abs(Cube1YPlayer1TeamRed - playerCoordinateY) < maxDistance && Math.Abs(Cube2XPlayer1TeamRed - playerCoordinateX) + Math.Abs(Cube2YPlayer1TeamRed - playerCoordinateY) == maxDistance)
+                {
+                    return 2;
+                }
+                else if (Math.Abs(Cube1XPlayer1TeamRed - playerCoordinateX) + Math.Abs(Cube1YPlayer1TeamRed - playerCoordinateY) == maxDistance && Math.Abs(Cube2XPlayer1TeamRed - playerCoordinateX) + Math.Abs(Cube2YPlayer1TeamRed - playerCoordinateY) < maxDistance)
+                {
+                    return 1;
+                }
+            }
+
+            return 0;
         }
 
         /// <summary>
@@ -2910,6 +3198,8 @@ namespace ELTE.Robotok.Model
                 }
             }
 
+            _table.SetFaceDirection(_cubesNewPosition[0].x, _cubesNewPosition[0].y, _table.GetFaceNorth(_cubesOldPosition[0].x, _cubesOldPosition[0].y), _table.GetFaceSouth(_cubesOldPosition[0].x, _cubesOldPosition[0].y), _table.GetFaceEast(_cubesOldPosition[0].x, _cubesOldPosition[0].y), _table.GetFaceWest(_cubesOldPosition[0].x, _cubesOldPosition[0].y)); // beállítjuk a játékos irányát
+
             for (Int32 i = 0; i < _cubesOldPosition.Count; i++) // először letöröljük a tábláról a régi pozíciós kockákat
             {
                 if (_cubesOldPosition[i].x < 3 || _cubesOldPosition[i].x > 13 || _cubesOldPosition[i].y < 4 || _cubesOldPosition[i].y > 23) // az az eset, amikor játékon kívüli kockát törlünk (-2 értékre kell visszaállítani)
@@ -2928,7 +3218,6 @@ namespace ELTE.Robotok.Model
             for (Int32 i = 0; i < _cubesNewPosition.Count; i++) // a kockákat újrarajzoljuk a táblán az új pozíciókat tartalmazó lista szerint
             {
                 _table.SetValue(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].value, _cubesNewPosition[i].remainingCleaningOperations);
-                _table.SetFaceDirection(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _table.GetFaceNorth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceSouth(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceEast(_cubesOldPosition[i].x, _cubesOldPosition[i].y), _table.GetFaceWest(_cubesOldPosition[i].x, _cubesOldPosition[i].y));
                 _table.SetAttachmentValues(_cubesNewPosition[i].x, _cubesNewPosition[i].y, _cubesNewPosition[i].northAttachment, _cubesNewPosition[i].southAttachment, _cubesNewPosition[i].eastAttachment, _cubesNewPosition[i].westAttachment);
             }
         }
