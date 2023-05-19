@@ -192,10 +192,21 @@ namespace ELTE.Robotok.View
             }
             else
             {
-                if (GameMenuForm.instance._model.Move(operationParameter.Text, _activePlayer))
+                Int32 moveResult = GameMenuForm.instance._model.Move(operationParameter.Text, _activePlayer);
+
+                if (moveResult == 1)
                 {
                     GameMenuForm.instance._model.MovePlayerView(operationParameter.Text, _activePlayer);
                     _successText = "Sikeres mozgás!";
+                }
+                else if (moveResult == 2)
+                {
+                    _successText = "Sikeres részművelet!";
+                }
+                else if (moveResult == 3)
+                {
+                    GameMenuForm.instance._model.MovePlayerView(operationParameter.Text, _activePlayer);
+                    _successText = "Sikeres karavánmozgás!";
                 }
                 else
                 {
