@@ -10,7 +10,7 @@ namespace ELTE.Robotok.Model
         /// Manhattan-távolságok beállítására szolgáló konstansok (játék nehézségétől függ)
         /// </summary>
         private Int32 _manhattanDistanceEasy = 6;
-        private Int32 _manhattanDistanceMedium = 3;
+        private Int32 _manhattanDistanceMedium = 5;
         private Int32 _manhattanDistanceHard = 4;
 
         #endregion

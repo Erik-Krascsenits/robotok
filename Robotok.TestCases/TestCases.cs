@@ -1,8 +1,5 @@
 ﻿using ELTE.Robotok.Model;
 using ELTE.Robotok.Persistence;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using System.Reflection;
 
 namespace Robotok.TestCases
 {
@@ -21,6 +18,8 @@ namespace Robotok.TestCases
         }
 
         #endregion
+
+        #region Testing Model
 
         #region Testing setups
 
@@ -153,7 +152,7 @@ namespace Robotok.TestCases
                 }
             }
 
-            bool moved = _model.Move("észak", 1);
+            int moved = _model.Move("észak", 1);
 
             for (int i = 3; i < 14; i++) // itt előfordulhat, hogy kijáraton lesz a robot
             {
@@ -166,7 +165,7 @@ namespace Robotok.TestCases
                 }
             }
 
-            if (moved)
+            if (moved == 1)
             {
                 Assert.AreEqual(1, (greenPlayerCoordinateXBeforeMove - greenPlayerCoordinateXAfterMove));
             } else
@@ -195,7 +194,7 @@ namespace Robotok.TestCases
                 }
             }
 
-            bool moved = _model.Move("dél", 1);
+            int moved = _model.Move("dél", 1);
 
             for (int i = 3; i < 14; i++) // itt előfordulhat, hogy kijáraton lesz a robot
             {
@@ -208,7 +207,7 @@ namespace Robotok.TestCases
                 }
             }
 
-            if (moved)
+            if (moved == 1)
             {
                 Assert.AreEqual(-1, (greenPlayerCoordinateXBeforeMove - greenPlayerCoordinateXAfterMove));
             }
@@ -238,7 +237,7 @@ namespace Robotok.TestCases
                 }
             }
 
-            bool moved = _model.Move("kelet", 1);
+            int moved = _model.Move("kelet", 1);
 
             for (int i = 4; i < 13; i++)
             {
@@ -251,7 +250,7 @@ namespace Robotok.TestCases
                 }
             }
 
-            if (moved)
+            if (moved == 1)
             {
                 Assert.AreEqual(-1, (greenPlayerCoordinateYBeforeMove - greenPlayerCoordinateYAfterMove));
             }
@@ -281,7 +280,7 @@ namespace Robotok.TestCases
                 }
             }
 
-            bool moved = _model.Move("nyugat", 1);
+            int moved = _model.Move("nyugat", 1);
 
             for (int i = 4; i < 13; i++)
             {
@@ -294,7 +293,7 @@ namespace Robotok.TestCases
                 }
             }
 
-            if (moved)
+            if (moved == 1)
             {
                 Assert.AreEqual(1, (greenPlayerCoordinateYBeforeMove - greenPlayerCoordinateYAfterMove));
             }
@@ -334,9 +333,9 @@ namespace Robotok.TestCases
 
             Assert.IsTrue(_model.AttachCubes("green"));
 
-            bool succes = _model.Move("észak", 1);
+            int succes = _model.Move("észak", 1);
 
-            Assert.IsTrue(succes);
+            Assert.AreEqual(1, succes);
             Assert.AreEqual(4, _model.Table.GetFieldValue(7, 10));
             Assert.AreEqual(4, _model.Table.GetFieldValue(8, 10));
             Assert.AreEqual(1, _model.Table.GetFieldValue(9, 10));
@@ -373,9 +372,9 @@ namespace Robotok.TestCases
 
             Assert.IsTrue(_model.AttachCubes("green"));
 
-            bool succes = _model.Move("kelet", 1);
+            int succes = _model.Move("kelet", 1);
 
-            Assert.IsTrue(succes);
+            Assert.AreEqual(1, succes);
             Assert.AreEqual(4, _model.Table.GetFieldValue(9, 12));
             Assert.AreEqual(4, _model.Table.GetFieldValue(9, 11));
             Assert.AreEqual(1, _model.Table.GetFieldValue(10, 11));
@@ -411,9 +410,9 @@ namespace Robotok.TestCases
 
             Assert.IsTrue(_model.AttachCubes("green"));
 
-            bool succes = _model.Move("dél", 1);
+            int succes = _model.Move("dél", 1);
 
-            Assert.IsTrue(succes);
+            Assert.AreEqual(1, succes);
             Assert.AreEqual(4, _model.Table.GetFieldValue(13, 10));
             Assert.AreEqual(4, _model.Table.GetFieldValue(12, 10));
             Assert.AreEqual(1, _model.Table.GetFieldValue(11, 10));
@@ -449,9 +448,9 @@ namespace Robotok.TestCases
 
             Assert.IsTrue(_model.AttachCubes("green"));
 
-            bool succes = _model.Move("nyugat", 1);
+            int succes = _model.Move("nyugat", 1);
 
-            Assert.IsTrue(succes);
+            Assert.AreEqual(1, succes);
             Assert.AreEqual(4, _model.Table.GetFieldValue(11, 8));
             Assert.AreEqual(4, _model.Table.GetFieldValue(11, 9));
             Assert.AreEqual(1, _model.Table.GetFieldValue(10, 9));
@@ -472,14 +471,14 @@ namespace Robotok.TestCases
             }
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(9, 10, 0, 3);
-            Assert.IsFalse(_model.Move("észak", 1));
+            Assert.AreEqual(0, _model.Move("észak", 1));
 
             _model.Table.SetValue(9, 10, -1, -1);
-            Assert.IsFalse(_model.Move("észak", 1)); 
+            Assert.AreEqual(0, _model.Move("észak", 1)); 
             _model.Table.SetValue(9, 10, 0, 3);
-            Assert.IsFalse(_model.Move("észak", 1));
+            Assert.AreEqual(0, _model.Move("észak", 1));
             _model.Table.SetValue(9, 10, 5, 3);
-            Assert.IsFalse(_model.Move("észak", 1));
+            Assert.AreEqual(0, _model.Move("észak", 1));
         }
 
         [TestMethod]
@@ -497,14 +496,14 @@ namespace Robotok.TestCases
             _model.Table.SetValue(10, 10, 0, 3);
             _model.Table.SetValue(9, 10, 1, -1);
 
-            Assert.IsFalse(_model.Move("dél", 1));
+            Assert.AreEqual(0, _model.Move("dél", 1));
 
             _model.Table.SetValue(10, 10, -1, -1);
-            Assert.IsFalse(_model.Move("dél", 1));
+            Assert.AreEqual(0, _model.Move("dél", 1));
             _model.Table.SetValue(10, 10, 0, 3);
-            Assert.IsFalse(_model.Move("dél", 1));
+            Assert.AreEqual(0, _model.Move("dél", 1));
             _model.Table.SetValue(10, 10, 5, 3);
-            Assert.IsFalse(_model.Move("dél", 1));
+            Assert.AreEqual(0, _model.Move("dél", 1));
         }
 
         [TestMethod]
@@ -522,14 +521,14 @@ namespace Robotok.TestCases
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(10, 11, 0, 3);
 
-            Assert.IsFalse(_model.Move("kelet", 1));
+            Assert.AreEqual(0, _model.Move("kelet", 1));
 
             _model.Table.SetValue(10, 11, -1, -1);
-            Assert.IsFalse(_model.Move("kelet", 1));
+            Assert.AreEqual(0, _model.Move("kelet", 1));
             _model.Table.SetValue(10, 11, 5, 3);
-            Assert.IsFalse(_model.Move("kelet", 1));
+            Assert.AreEqual(0, _model.Move("kelet", 1));
             _model.Table.SetValue(10, 11, 0, 3);
-            Assert.IsFalse(_model.Move("kelet", 1));
+            Assert.AreEqual(0, _model.Move("kelet", 1));
         }
 
         [TestMethod]
@@ -547,14 +546,14 @@ namespace Robotok.TestCases
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(10, 9, 0, 3);
 
-            Assert.IsFalse(_model.Move("nyugat", 1));
+            Assert.AreEqual(0, _model.Move("nyugat", 1));
 
             _model.Table.SetValue(10, 9, -1, -1);
-            Assert.IsFalse(_model.Move("nyugat", 1));
+            Assert.AreEqual(0, _model.Move("nyugat", 1));
             _model.Table.SetValue(10, 9, 0, 3);
-            Assert.IsFalse(_model.Move("nyugat", 1));
+            Assert.AreEqual(0, _model.Move("nyugat", 1));
             _model.Table.SetValue(10, 9, 5, 3);
-            Assert.IsFalse(_model.Move("nyugat", 1));
+            Assert.AreEqual(0, _model.Move("nyugat", 1));
         }
 
         [TestMethod]
@@ -587,11 +586,11 @@ namespace Robotok.TestCases
             Assert.IsTrue(_model.AttachCubes("green"));
 
             _model.Table.SetValue(7, 10, 0, 3);
-            Assert.IsFalse(_model.Move("észak", 1));
+            Assert.AreEqual(0, _model.Move("észak", 1));
             _model.Table.SetValue(7, 10, -1, -1);
-            Assert.IsFalse(_model.Move("észak", 1));
+            Assert.AreEqual(0, _model.Move("észak", 1));
             _model.Table.SetValue(7, 10, 5, 3);
-            Assert.IsFalse(_model.Move("észak", 1));
+            Assert.AreEqual(0, _model.Move("észak", 1));
         }
 
         [TestMethod]
@@ -624,11 +623,11 @@ namespace Robotok.TestCases
             Assert.IsTrue(_model.AttachCubes("green"));
 
             _model.Table.SetValue(11, 10, 0, 3);
-            Assert.IsFalse(_model.Move("dél", 1));
+            Assert.AreEqual(0, _model.Move("dél", 1));
             _model.Table.SetValue(11, 10, -1, -1);
-            Assert.IsFalse(_model.Move("dél", 1));
+            Assert.AreEqual(0, _model.Move("dél", 1));
             _model.Table.SetValue(11, 10, 5, 3);
-            Assert.IsFalse(_model.Move("dél", 1));
+            Assert.AreEqual(0, _model.Move("dél", 1));
         }
 
         [TestMethod]
@@ -661,11 +660,11 @@ namespace Robotok.TestCases
             Assert.IsTrue(_model.AttachCubes("green"));
 
             _model.Table.SetValue(11, 12, 0, 3);
-            Assert.IsFalse(_model.Move("kelet", 1));
+            Assert.AreEqual(0, _model.Move("kelet", 1));
             _model.Table.SetValue(11, 12, -1, -1);
-            Assert.IsFalse(_model.Move("kelet", 1));
+            Assert.AreEqual(0, _model.Move("kelet", 1));
             _model.Table.SetValue(11, 12, 5, 3);
-            Assert.IsFalse(_model.Move("kelet", 1));
+            Assert.AreEqual(0, _model.Move("kelet", 1));
         }
 
         [TestMethod]
@@ -698,11 +697,11 @@ namespace Robotok.TestCases
             Assert.IsTrue(_model.AttachCubes("green"));
 
             _model.Table.SetValue(11, 8, 0, 3);
-            Assert.IsFalse(_model.Move("nyugat", 1));
+            Assert.AreEqual(0, _model.Move("nyugat", 1));
             _model.Table.SetValue(11, 8, -1, -1);
-            Assert.IsFalse(_model.Move("nyugat", 1));
+            Assert.AreEqual(0, _model.Move("nyugat", 1));
             _model.Table.SetValue(11, 8, 5, 3);
-            Assert.IsFalse(_model.Move("nyugat", 1));
+            Assert.AreEqual(0, _model.Move("nyugat", 1));
         }
 
         #endregion
@@ -1399,5 +1398,136 @@ namespace Robotok.TestCases
         }
 
         #endregion
+
+        #region Testing View
+
+
+
+        #endregion
+
+        #endregion
+
+        #region Testing View
+
+        #region Testing Manhattan distance
+
+        [TestMethod]
+        public void CheckManhattanDistanceEasy()
+        {
+            _model = new RobotokGameModel(1, 1);
+
+            for (int i = 0; i < _model.Table.SizeX; i++)
+            {
+                for (int j = 0; j < _model.Table.SizeY; j++)
+                {
+                    if (i > 3 && i < 13 && j > 4 && j < 23)
+                    {
+                        _model.Table.SetValue(i, j, 7, -1);
+                    }
+                }
+            }
+
+            _model.Table.SetValue(14, 12, 1, -1);
+            _model.Table.SetValue(12, 11, 4, 4);
+            _model.Table.SetValue(14, 11, 0, 4);
+            _model.Table.SetValue(15, 11, 8, -1);
+
+            _model.ManhattanDistance(1, 1);
+
+            for (int i = 0; i < _model.Table.SizeX; i++)
+            {
+                for (int j = 0; j < _model.Table.SizeY; j++)
+                {
+                    if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                    {
+                        if (Math.Abs(i - 14) + Math.Abs(j - 12) < 6)
+                        {
+                            Assert.AreEqual(_model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4), _model.Table.GetFieldValue(i, j));
+                        }
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public void CheckManhattanDistanceMedium()
+        {
+            _model = new RobotokGameModel(2, 1);
+
+            for (int i = 0; i < _model.Table.SizeX; i++)
+            {
+                for (int j = 0; j < _model.Table.SizeY; j++)
+                {
+                    if (i > 3 && i < 13 && j > 4 && j < 23)
+                    {
+                        _model.Table.SetValue(i, j, 7, -1);
+                    }
+                }
+            }
+
+            _model.Table.SetValue(9, 9, 1, -1);
+            _model.Table.SetValue(10, 9, 4, 4);
+            _model.Table.SetValue(11, 11, 0, 4);
+            _model.Table.SetValue(9, 10, 8, -1);
+
+            _model.ManhattanDistance(2, 1);
+
+            for (int i = 0; i < _model.Table.SizeX; i++)
+            {
+                for (int j = 0; j < _model.Table.SizeY; j++)
+                {
+                    if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                    {
+                        if (Math.Abs(i - 9) + Math.Abs(j - 9) < 5)
+                        {
+                            Assert.AreEqual(_model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4), _model.Table.GetFieldValue(i, j));
+                        }
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public void CheckManhattanDistanceHard()
+        {
+            _model = new RobotokGameModel(2, 1);
+
+            for (int i = 0; i < _model.Table.SizeX; i++)
+            {
+                for (int j = 0; j < _model.Table.SizeY; j++)
+                {
+                    if (i > 3 && i < 13 && j > 4 && j < 23)
+                    {
+                        _model.Table.SetValue(i, j, 7, -1);
+                    }
+                }
+            }
+
+            _model.Table.SetValue(6, 13, 1, -1);
+            _model.Table.SetValue(7, 13, 4, 4);
+            _model.Table.SetValue(5, 12, 0, 4);
+            _model.Table.SetValue(9, 10, 8, -1);
+
+            _model.ManhattanDistance(2, 1);
+
+            for (int i = 0; i < _model.Table.SizeX; i++)
+            {
+                for (int j = 0; j < _model.Table.SizeY; j++)
+                {
+                    if (i >= 3 && i <= 13 && j >= 4 && j <= 23)
+                    {
+                        if (Math.Abs(i - 6) + Math.Abs(j - 13) < 4)
+                        {
+                            Assert.AreEqual(_model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4), _model.Table.GetFieldValue(i, j));
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #endregion
+
     }
 }
