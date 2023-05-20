@@ -27,7 +27,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void GeneratedFieldsAmount()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
 
             int playingField = 0;
             for (int i = 0; i < _model.Table.SizeX; ++i)
@@ -45,7 +45,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckSetUpForOneTeam()
         {
-            _model = new RobotokGameModel( 2, 1);
+            _model = new RobotokGameModel( 2, 1, false);
 
             int players = 0;
             int walls = 0;
@@ -89,7 +89,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckSetUpForTwoTeam()
         {
-            _model = new RobotokGameModel(2, 2);
+            _model = new RobotokGameModel(2, 2, false);
 
             int players = 0;
             int walls = 0;
@@ -136,7 +136,7 @@ namespace Robotok.TestCases
         //Megnézzük, hogy tudunk lépni északra kocka/kockák nélkül
         [TestMethod]
         public void CheckMoveFunctionWithoutCubesNorth() {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
 
             int greenPlayerCoordinateXBeforeMove = 0;
             int greenPlayerCoordinateXAfterMove = 0;
@@ -178,7 +178,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckMovFunctionWithoutCubesSouth()
         {
-            _model = new RobotokGameModel(2, 1);    
+            _model = new RobotokGameModel(2, 1, false);    
 
             int greenPlayerCoordinateXBeforeMove = 0;
             int greenPlayerCoordinateXAfterMove = 0;
@@ -221,7 +221,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckMoveFunctionWithoutCubesEast()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
 
             int greenPlayerCoordinateYBeforeMove = 0;
             int greenPlayerCoordinateYAfterMove = 0;
@@ -264,7 +264,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckMoveFunctionWithoutCubesWest()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
 
             int greenPlayerCoordinateYBeforeMove = 0;
             int greenPlayerCoordinateYAfterMove = 0;
@@ -307,7 +307,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckMoveWithCubesNorth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -345,7 +345,7 @@ namespace Robotok.TestCases
         // Megnézzük, hogy kockákkal tudunk keletre lépni
         public void CheckMoveWithCubesEast()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
 
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
@@ -384,7 +384,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckMoveWithCubesSouth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -422,7 +422,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckMoveWithCubesWest()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -460,7 +460,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckingMoveWithoutCubesInObstaclesNorth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -484,7 +484,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckingMoveWithoutCubesInObstaclesSouth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -509,7 +509,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckingMoveWithoutCubesInObstaclesWest()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -534,7 +534,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckingMoveWithoutCubesInObstaclesEast()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -559,7 +559,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckingMoveWithCubesInObstaclesNorth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -596,7 +596,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckingMoveWithCubesInObstaclesSouth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -633,7 +633,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckingMoveWithCubesInObstaclesWest()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -670,7 +670,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckingMoveWithCubesInInObstaclesEast()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -712,7 +712,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckWaitFunction()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Wait(1, 1);
 
             Assert.AreEqual(1, _model.RemainingSeconds);
@@ -726,7 +726,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckAttachRobotToCubeNorth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
 
@@ -747,7 +747,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckAttachRobotToCubeSouth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(9, 10, 1, -1);
 
@@ -768,7 +768,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckAttachRobotToCubeWest()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
 
@@ -789,7 +789,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckAttachRobotToCubeEast()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 9, 1, -1);
 
@@ -810,7 +810,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckAttachWithCubesNorth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(9, 10, 4, 3);
@@ -842,7 +842,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckAttachWithCubesEast()
         {
-            _model = new RobotokGameModel( 2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(9, 10, 4, 3);
@@ -874,7 +874,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckAttachWithCubesSouth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(11, 10, 4, 3);
@@ -906,7 +906,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckAttachWithCubesWest()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(11, 10, 4, 3);
@@ -943,7 +943,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckDetachRobotFromCubeNorth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(9, 10, 4, 3);
@@ -956,7 +956,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckDetachRobotFromCubeSouth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(9, 10, 1, -1);
             _model.Table.SetValue(10, 10, 4, 3);
@@ -970,7 +970,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckDetachRobotFromCubeWest()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(10, 9, 4, 3);
@@ -983,7 +983,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckDetachRobotFromCubeEast()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 9, 1, -1);
             _model.Table.SetValue(10, 10, 4, 3);
@@ -996,7 +996,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckDetachWithCubesNorth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(9, 10, 4, 3);
@@ -1028,7 +1028,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckDetachWithCubesEast()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(9, 10, 4, 3);
@@ -1060,7 +1060,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckDetachWithCubesSouth()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(11, 10, 4, 3);
@@ -1092,7 +1092,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckDetachWithCubesWest()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 10, 1, -1);
             _model.Table.SetValue(11, 10, 4, 3);
@@ -1129,7 +1129,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckRotatePlayerWithoutCubesClockwise()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 9, 1, -1);
             bool faceToSouth = _model.Table.GetFaceSouth(10, 9);
@@ -1156,7 +1156,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckRotatePlayerWithoutCubesNotClockwise()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             _model.Table.SetValue(10, 9, 1, -1);
             bool faceToSouth = _model.Table.GetFaceSouth(10, 9);
@@ -1183,7 +1183,7 @@ namespace Robotok.TestCases
         // Megnézzük a forgást óramutatóval megegyező írányba több kocka esetén
         public void CheckRotatePlayerWithCubesClockwise()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -1228,7 +1228,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckRotatePlayerWithCubesNotClockwise()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -1275,7 +1275,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckCleaningWithoutCubes()
         {
-            _model = new RobotokGameModel(3, 1);
+            _model = new RobotokGameModel(3, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -1359,7 +1359,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckCleaningWithCubes()
         {
-            _model = new RobotokGameModel(3, 1);
+            _model = new RobotokGameModel(3, 1, false);
             _model.Table = _mockedTable;
             for (int i = 0; i < _model.Table.SizeX; ++i)
             {
@@ -1414,7 +1414,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckManhattanDistanceEasy()
         {
-            _model = new RobotokGameModel(1, 1);
+            _model = new RobotokGameModel(1, 1, false);
 
             for (int i = 0; i < _model.Table.SizeX; i++)
             {
@@ -1452,7 +1452,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckManhattanDistanceMedium()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
 
             for (int i = 0; i < _model.Table.SizeX; i++)
             {
@@ -1490,7 +1490,7 @@ namespace Robotok.TestCases
         [TestMethod]
         public void CheckManhattanDistanceHard()
         {
-            _model = new RobotokGameModel(2, 1);
+            _model = new RobotokGameModel(2, 1, false);
 
             for (int i = 0; i < _model.Table.SizeX; i++)
             {

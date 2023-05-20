@@ -49,7 +49,7 @@ namespace ELTE.Robotok.View
         /// </summary>
         private void StartButton_Click(object sender, EventArgs e)
         {
-            _model = new RobotokGameModel(selectedDifficulty, selectedGroupCount); // példányosítjuk a model-t
+            _model = new RobotokGameModel(selectedDifficulty, selectedGroupCount, improvedRobotsCheckbox.Checked); // példányosítjuk a model-t
             _gameFormGreenTeamPlayerOne = new GameForm(selectedDifficulty, selectedGroupCount, 1); // példányosítjuk és megjelenítjük a zöld csapat játékosainak ablakait és jelezzük, hogy melyik ablak melyik játékosé
             _gameFormGreenTeamPlayerOne.Text = "Robotok - Zöld csapat - 1. játékos nézet";
             _gameFormGreenTeamPlayerOne.playerViewText.Text = "Zöld csapat - 1. játékos nézet:";

@@ -53,6 +53,7 @@ namespace ELTE.Robotok.Model
         private Int32 _cube1XPlayer1TeamGreen, _cube1YPlayer1TeamGreen, _cube2XPlayer1TeamGreen, _cube2YPlayer1TeamGreen, _cube1XPlayer2TeamGreen, _cube1YPlayer2TeamGreen, _cube2XPlayer2TeamGreen, _cube2YPlayer2TeamGreen, _cube1XPlayer1TeamRed, _cube1YPlayer1TeamRed, _cube2XPlayer1TeamRed, _cube2YPlayer1TeamRed, _cube1XPlayer2TeamRed, _cube1YPlayer2TeamRed, _cube2XPlayer2TeamRed, _cube2YPlayer2TeamRed; // eltároljuk mindkét játékos által megadott összekapcsolni kívánt kockák x és y koordinátáját mindkét csapat esetében
         private Boolean _caravanInProgress; // annak eltárolása, hogy egy adott körben karavánmozgást hajtunk-e végre (tehát ha egy építményre több csapattárs is rá van csatlakozva)
         private String _caravanDirectionPlayer1, _caravanDirectionPlayer2; // annak eltárolása, hogy a karaván egyes játékosai milyen irányba szeretnének haladni
+        private Boolean _improvedRobots; // fejlesztett robotnézet esetén igaz, normál nézet esetén hamis
 
         #endregion
 
@@ -147,6 +148,11 @@ namespace ELTE.Robotok.Model
         /// Játék végének lekérdezése
         /// </summary>
         public Boolean IsGameOver { get { return (_gameStepCount == 0); } }
+
+        /// <summary>
+        /// Robotok fejlesztett nézetének lekérdezése
+        /// </summary>
+        public Boolean ImprovedRobots { get { return _improvedRobots; } }
 
         /// <summary>
         /// Játék nehézségének lekérdezése, vagy beállítása
@@ -272,7 +278,7 @@ namespace ELTE.Robotok.Model
         /// </summary>
         /// <param name="selectedDifficulty">Játékos által kiválasztott nehézség</param>
         /// <param name="teams">Játékos által kiválasztott csapatok száma</param>
-        public RobotokGameModel(Int32 selectedDifficulty, Int32 teams)
+        public RobotokGameModel(Int32 selectedDifficulty, Int32 teams, Boolean improvedRobots)
         {
             // Piros játékostáblák esetén a null értékek soha nem fordulhatnak elő, a kódban mindig le vannak kezelve
             _tableRedPlayerOne = null!;
@@ -299,6 +305,8 @@ namespace ELTE.Robotok.Model
             }
 
             _teams = teams;
+
+            _improvedRobots = improvedRobots;
 
             _figure1 = new Shape(); // első feladat alakzatának kigenerálása
             _figure2 = new Shape(); // második feladat alakzatának kigenerálása
@@ -415,7 +423,7 @@ namespace ELTE.Robotok.Model
                 {
                     if (i >= 3 && i <= 13 && j >= 4 && j <= 23) // játék pályán vagyunk-e
                     {
-                        if (Math.Abs(i - playerCoordinateX) + Math.Abs(j - playerCoordinateY) == maxDistance) // ha van a határon kívüli kockának kapcsolata, akkor megnézzük hogy melyik irányban, és ha a játékos felé, akkor megjelenítjük 
+                        if (_improvedRobots && Math.Abs(i - playerCoordinateX) + Math.Abs(j - playerCoordinateY) == maxDistance) // ha van a határon kívüli kockának kapcsolata, akkor megnézzük hogy melyik irányban, és ha a játékos felé, akkor megjelenítjük 
                         {
                             if (_table.HasAttachments(i, j))
                             {
@@ -1799,8 +1807,11 @@ namespace ELTE.Robotok.Model
                     _table.SetAttachmentWest(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
                     _table.SetAttachmentEast(Cube1XPlayer1TeamGreen, Cube2YPlayer1TeamGreen, true);
 
-                    SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
-                    SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+                    if (_improvedRobots)
+                    {
+                        SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
+                        SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+                    }
 
                     return true;
                 }
@@ -1809,8 +1820,11 @@ namespace ELTE.Robotok.Model
                     _table.SetAttachmentEast(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
                     _table.SetAttachmentWest(Cube1XPlayer1TeamGreen, Cube2YPlayer1TeamGreen, true);
 
-                    SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
-                    SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+                    if (_improvedRobots)
+                    {
+                        SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
+                        SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+                    }
 
                     return true;
                 }
@@ -1819,8 +1833,11 @@ namespace ELTE.Robotok.Model
                     _table.SetAttachmentSouth(Cube2XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
                     _table.SetAttachmentNorth(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
 
-                    SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
-                    SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+                    if (_improvedRobots)
+                    {
+                        SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
+                        SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+                    }
 
                     return true;
                 }
@@ -1829,8 +1846,11 @@ namespace ELTE.Robotok.Model
                     _table.SetAttachmentNorth(Cube2XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
                     _table.SetAttachmentSouth(Cube1XPlayer1TeamGreen, Cube1YPlayer1TeamGreen, true);
 
-                    SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
-                    SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+                    if (_improvedRobots)
+                    {
+                        SetAttachedCubesOnManhattanBorder(1, HasAttachedCubesOnManhattanBorder(1));
+                        SetAttachedCubesOnManhattanBorder(8, HasAttachedCubesOnManhattanBorder(8));
+                    }
 
                     return true;
                 }
@@ -1846,10 +1866,12 @@ namespace ELTE.Robotok.Model
                     _table.SetAttachmentWest(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
                     _table.SetAttachmentEast(Cube1XPlayer1TeamRed, Cube2YPlayer1TeamRed, true);
 
-                  
+                    if (_improvedRobots)
+                    {
                         SetAttachedCubesOnManhattanBorder(2, HasAttachedCubesOnManhattanBorder(2));
                         SetAttachedCubesOnManhattanBorder(9, HasAttachedCubesOnManhattanBorder(9));
-                    
+                    }
+
                     return true;
                 }
                 if ((Cube1XPlayer1TeamRed == Cube2XPlayer1TeamRed) && (Cube1YPlayer1TeamRed == Cube2YPlayer1TeamRed - 1))
@@ -1857,18 +1879,24 @@ namespace ELTE.Robotok.Model
                     _table.SetAttachmentEast(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
                     _table.SetAttachmentWest(Cube1XPlayer1TeamRed, Cube2YPlayer1TeamRed, true);
 
+                    if (_improvedRobots)
+                    {
                         SetAttachedCubesOnManhattanBorder(2, HasAttachedCubesOnManhattanBorder(2));
                         SetAttachedCubesOnManhattanBorder(9, HasAttachedCubesOnManhattanBorder(9));
-  
+                    }
+
                     return true;
                 }
                 if ((Cube1XPlayer1TeamRed - 1 == Cube2XPlayer1TeamRed) && (Cube1YPlayer1TeamRed == Cube2YPlayer1TeamRed))
                 {
                     _table.SetAttachmentSouth(Cube2XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
                     _table.SetAttachmentNorth(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
-
-                    SetAttachedCubesOnManhattanBorder(2, HasAttachedCubesOnManhattanBorder(2));
-                    SetAttachedCubesOnManhattanBorder(9, HasAttachedCubesOnManhattanBorder(9));
+                    
+                    if (_improvedRobots)
+                    {
+                        SetAttachedCubesOnManhattanBorder(2, HasAttachedCubesOnManhattanBorder(2));
+                        SetAttachedCubesOnManhattanBorder(9, HasAttachedCubesOnManhattanBorder(9));
+                    }
 
                     return true;
                 }
@@ -1877,8 +1905,11 @@ namespace ELTE.Robotok.Model
                     _table.SetAttachmentNorth(Cube2XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
                     _table.SetAttachmentSouth(Cube1XPlayer1TeamRed, Cube1YPlayer1TeamRed, true);
 
-                    SetAttachedCubesOnManhattanBorder(2, HasAttachedCubesOnManhattanBorder(2));
-                    SetAttachedCubesOnManhattanBorder(9, HasAttachedCubesOnManhattanBorder(9));
+                    if (_improvedRobots)
+                    {
+                        SetAttachedCubesOnManhattanBorder(2, HasAttachedCubesOnManhattanBorder(2));
+                        SetAttachedCubesOnManhattanBorder(9, HasAttachedCubesOnManhattanBorder(9));
+                    }
 
                     return true;
                 }
@@ -3279,7 +3310,11 @@ namespace ELTE.Robotok.Model
                 }
 
                 _table.SetAttachmentValues(_cubesOldPosition[i].x, _cubesOldPosition[i].y, false, false, false, false);
-                _table.SetFaceDirection(_cubesOldPosition[i].x, _cubesOldPosition[i].x, false, false, false, false);
+
+                if (i != 0)
+                {
+                    _table.SetFaceDirection(_cubesOldPosition[i].x, _cubesOldPosition[i].x, false, false, false, false);
+                }
             }
 
             for (Int32 i = 0; i < _cubesNewPosition.Count; i++) // a kockákat újrarajzoljuk a táblán az új pozíciókat tartalmazó lista szerint

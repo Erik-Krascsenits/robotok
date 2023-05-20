@@ -43,6 +43,8 @@ partial class GameMenuForm
             this.twoGroupsOption = new System.Windows.Forms.RadioButton();
             this.groupChoice = new System.Windows.Forms.GroupBox();
             this.difficultyChoice = new System.Windows.Forms.GroupBox();
+            this.improvedRobotsCheckbox = new System.Windows.Forms.CheckBox();
+            this.improvedRobotsText = new System.Windows.Forms.Label();
             this.groupChoice.SuspendLayout();
             this.difficultyChoice.SuspendLayout();
             this.SuspendLayout();
@@ -80,7 +82,7 @@ partial class GameMenuForm
             // startButton
             // 
             this.startButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.startButton.Location = new System.Drawing.Point(136, 400);
+            this.startButton.Location = new System.Drawing.Point(114, 457);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(264, 85);
             this.startButton.TabIndex = 7;
@@ -197,11 +199,34 @@ partial class GameMenuForm
             this.difficultyChoice.TabIndex = 17;
             this.difficultyChoice.TabStop = false;
             // 
+            // improvedRobotsCheckbox
+            // 
+            this.improvedRobotsCheckbox.Checked = true;
+            this.improvedRobotsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.improvedRobotsCheckbox.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.improvedRobotsCheckbox.Location = new System.Drawing.Point(241, 387);
+            this.improvedRobotsCheckbox.Name = "improvedRobotsCheckbox";
+            this.improvedRobotsCheckbox.Size = new System.Drawing.Size(34, 47);
+            this.improvedRobotsCheckbox.TabIndex = 19;
+            this.improvedRobotsCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // improvedRobotsText
+            // 
+            this.improvedRobotsText.AutoSize = true;
+            this.improvedRobotsText.Font = new System.Drawing.Font("Segoe UI", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.improvedRobotsText.Location = new System.Drawing.Point(46, 393);
+            this.improvedRobotsText.Name = "improvedRobotsText";
+            this.improvedRobotsText.Size = new System.Drawing.Size(189, 30);
+            this.improvedRobotsText.TabIndex = 18;
+            this.improvedRobotsText.Text = "Okosabb robotok:";
+            // 
             // GameMenuForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(530, 513);
+            this.ClientSize = new System.Drawing.Size(530, 574);
+            this.Controls.Add(this.improvedRobotsCheckbox);
+            this.Controls.Add(this.improvedRobotsText);
             this.Controls.Add(this.difficultyChoice);
             this.Controls.Add(this.groupChoice);
             this.Controls.Add(this.twoGroupsOptionText);
@@ -242,4 +267,6 @@ partial class GameMenuForm
     private RadioButton twoGroupsOption;
     private GroupBox groupChoice;
     private GroupBox difficultyChoice;
+    private CheckBox improvedRobotsCheckbox;
+    private Label improvedRobotsText;
 }

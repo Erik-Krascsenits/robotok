@@ -196,7 +196,10 @@ namespace ELTE.Robotok.View
 
                 if (moveResult == 1)
                 {
-                    GameMenuForm.instance._model.MovePlayerView(operationParameter.Text, _activePlayer);
+                    if (GameMenuForm.instance._model.ImprovedRobots)
+                    {
+                        GameMenuForm.instance._model.MovePlayerView(operationParameter.Text, _activePlayer);
+                    }
                     _successText = "Sikeres mozgás!";
                 }
                 else if (moveResult == 2)
@@ -205,7 +208,10 @@ namespace ELTE.Robotok.View
                 }
                 else if (moveResult == 3)
                 {
-                    GameMenuForm.instance._model.MovePlayerView(operationParameter.Text, _activePlayer);
+                    if (GameMenuForm.instance._model.ImprovedRobots)
+                    {
+                        GameMenuForm.instance._model.MovePlayerView(operationParameter.Text, _activePlayer);
+                    }
                     _successText = "Sikeres karavánmozgás!";
                 }
                 else
@@ -231,7 +237,10 @@ namespace ELTE.Robotok.View
             {
                 if (GameMenuForm.instance._model.Rotate(operationParameter.Text, _activePlayer))
                 {
-                    GameMenuForm.instance._model.RotatePlayerView(operationParameter.Text, _activePlayer);
+                    if (GameMenuForm.instance._model.ImprovedRobots)
+                    {
+                        GameMenuForm.instance._model.RotatePlayerView(operationParameter.Text, _activePlayer);
+                    }
                     _successText = "Sikeres forgás!";
                 }
                 else
@@ -1225,7 +1234,6 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) == 10) // nem látható mezők
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
-                                ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerOne);
                             }
 
                             if (!GameMenuForm.instance._model.TableGreenPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableGreenPlayerOne.GetFieldValue(i - 3, j - 4) != 10)
@@ -1346,7 +1354,6 @@ namespace ELTE.Robotok.View
                             else if (GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) == 10)
                             {
                                 _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
-                                ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableGreenPlayerTwo);
                             }
 
                             if (!GameMenuForm.instance._model.TableGreenPlayerTwo.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableGreenPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
@@ -1461,7 +1468,6 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) == 10)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
-                                    ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerOne);
                                 }
                                 if (!GameMenuForm.instance._model.TableRedPlayerOne.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableRedPlayerOne.GetFieldValue(i - 3, j - 4) != 10)
                                 {
@@ -1572,7 +1578,6 @@ namespace ELTE.Robotok.View
                                 else if (GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) == 10)
                                 {
                                     _buttonGridPlayer[i - 3, j - 4].BackColor = Color.DarkGray;
-                                    ClearAttachments(i - 3, j - 4, GameMenuForm.instance._model.TableRedPlayerTwo);
                                 }
                                 if (!GameMenuForm.instance._model.TableRedPlayerTwo.GetInDistance(i - 3, j - 4) && GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != -1 && GameMenuForm.instance._model.TableRedPlayerTwo.GetFieldValue(i - 3, j - 4) != 10)
                                 {
@@ -1672,40 +1677,43 @@ namespace ELTE.Robotok.View
                     }
                 }
             }
-            if (_teams == 1) // elmenti az előző körben észlelt kocka mozgatásokat
+            if (GameMenuForm.instance._model.ImprovedRobots)
             {
-                if (active == 1)
+                if (_teams == 1) // elmenti az előző körben észlelt kocka mozgatásokat
                 {
-                    GameMenuForm.instance._model.ImprovedObservation(2);
-                    GameMenuForm.instance._model.ClearImprovedObservationList(2);
+                    if (active == 1)
+                    {
+                        GameMenuForm.instance._model.ImprovedObservation(8);
+                        GameMenuForm.instance._model.ClearImprovedObservationList(8);
+                    }
+                    else
+                    {
+                        GameMenuForm.instance._model.ImprovedObservation(1);
+                        GameMenuForm.instance._model.ClearImprovedObservationList(1);
+                    }
                 }
                 else
                 {
-                    GameMenuForm.instance._model.ImprovedObservation(1);
-                    GameMenuForm.instance._model.ClearImprovedObservationList(1);
-                }
-            }
-            else
-            {
-                if (active == 1)
-                {
-                    GameMenuForm.instance._model.ImprovedObservation(2);
-                    GameMenuForm.instance._model.ClearImprovedObservationList(2);
-                }
-                else if (active == 2)
-                {
-                    GameMenuForm.instance._model.ImprovedObservation(1);
-                    GameMenuForm.instance._model.ClearImprovedObservationList(1);
-                }
-                else if (active == 3)
-                {
-                    GameMenuForm.instance._model.ImprovedObservation(4);
-                    GameMenuForm.instance._model.ClearImprovedObservationList(4);
-                }
-                else
-                {
-                    GameMenuForm.instance._model.ImprovedObservation(3);
-                    GameMenuForm.instance._model.ClearImprovedObservationList(3);
+                    if (active == 1)
+                    {
+                        GameMenuForm.instance._model.ImprovedObservation(8);
+                        GameMenuForm.instance._model.ClearImprovedObservationList(8);
+                    }
+                    else if (active == 8)
+                    {
+                        GameMenuForm.instance._model.ImprovedObservation(1);
+                        GameMenuForm.instance._model.ClearImprovedObservationList(1);
+                    }
+                    else if (active == 2)
+                    {
+                        GameMenuForm.instance._model.ImprovedObservation(9);
+                        GameMenuForm.instance._model.ClearImprovedObservationList(9);
+                    }
+                    else
+                    {
+                        GameMenuForm.instance._model.ImprovedObservation(2);
+                        GameMenuForm.instance._model.ClearImprovedObservationList(2);
+                    }
                 }
             }
         }
