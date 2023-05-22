@@ -134,9 +134,8 @@
             this.taskTwoPointsValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.taskTwoPointsValueText.Location = new System.Drawing.Point(848, 177);
             this.taskTwoPointsValueText.Name = "taskTwoPointsValueText";
-            this.taskTwoPointsValueText.Size = new System.Drawing.Size(32, 25);
+            this.taskTwoPointsValueText.Size = new System.Drawing.Size(0, 25);
             this.taskTwoPointsValueText.TabIndex = 11;
-            this.taskTwoPointsValueText.Text = GameMenuForm.instance._model.SecondTaskPoints.ToString();
             // 
             // taskTwoDeadlineValueText
             // 
@@ -144,9 +143,8 @@
             this.taskTwoDeadlineValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.taskTwoDeadlineValueText.Location = new System.Drawing.Point(848, 148);
             this.taskTwoDeadlineValueText.Name = "taskTwoDeadlineValueText";
-            this.taskTwoDeadlineValueText.Size = new System.Drawing.Size(92, 25);
+            this.taskTwoDeadlineValueText.Size = new System.Drawing.Size(0, 25);
             this.taskTwoDeadlineValueText.TabIndex = 10;
-            this.taskTwoDeadlineValueText.Text = GameMenuForm.instance._model.SecondTaskDeadline.ToString() + " lépés van hátra";
             // 
             // taskOnePointsValueText
             // 
@@ -154,9 +152,8 @@
             this.taskOnePointsValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.taskOnePointsValueText.Location = new System.Drawing.Point(848, 118);
             this.taskOnePointsValueText.Name = "taskOnePointsValueText";
-            this.taskOnePointsValueText.Size = new System.Drawing.Size(32, 25);
+            this.taskOnePointsValueText.Size = new System.Drawing.Size(0, 25);
             this.taskOnePointsValueText.TabIndex = 9;
-            this.taskOnePointsValueText.Text = GameMenuForm.instance._model.FirstTaskPoints.ToString();
             // 
             // taskOneDeadlineValueText
             // 
@@ -164,9 +161,8 @@
             this.taskOneDeadlineValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.taskOneDeadlineValueText.Location = new System.Drawing.Point(848, 89);
             this.taskOneDeadlineValueText.Name = "taskOneDeadlineValueText";
-            this.taskOneDeadlineValueText.Size = new System.Drawing.Size(92, 25);
+            this.taskOneDeadlineValueText.Size = new System.Drawing.Size(0, 25);
             this.taskOneDeadlineValueText.TabIndex = 8;
-            this.taskOneDeadlineValueText.Text = GameMenuForm.instance._model.FirstTaskDeadline.ToString() + " lépés van hátra";
             // 
             // stepsLeftText
             // 
@@ -194,9 +190,8 @@
             this.redGroupPointsValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.redGroupPointsValueText.Location = new System.Drawing.Point(848, 244);
             this.redGroupPointsValueText.Name = "redGroupPointsValueText";
-            this.redGroupPointsValueText.Size = new System.Drawing.Size(22, 25);
+            this.redGroupPointsValueText.Size = new System.Drawing.Size(0, 25);
             this.redGroupPointsValueText.TabIndex = 17;
-
             // 
             // greenGroupPointsValueText
             // 
@@ -204,9 +199,8 @@
             this.greenGroupPointsValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.greenGroupPointsValueText.Location = new System.Drawing.Point(848, 215);
             this.greenGroupPointsValueText.Name = "greenGroupPointsValueText";
-            this.greenGroupPointsValueText.Size = new System.Drawing.Size(22, 25);
+            this.greenGroupPointsValueText.Size = new System.Drawing.Size(0, 25);
             this.greenGroupPointsValueText.TabIndex = 16;
-            this.greenGroupPointsValueText.Text = GameMenuForm.instance._model.GreenTeamPoints.ToString();
             // 
             // redGroupPointsText
             // 
@@ -265,6 +259,7 @@
             this.communicationWindow.Name = "communicationWindow";
             this.communicationWindow.Size = new System.Drawing.Size(383, 96);
             this.communicationWindow.TabIndex = 21;
+            this.communicationWindow.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.communicationWindow_KeyPress);
             // 
             // availableOperationsText
             // 
@@ -285,7 +280,7 @@
             this.waitButton.Size = new System.Drawing.Size(50, 50);
             this.waitButton.TabIndex = 23;
             this.waitButton.UseVisualStyleBackColor = true;
-            this.waitButton.Click += new System.EventHandler(this.waitButton_Click);
+            this.waitButton.Click += new System.EventHandler(this.WaitButton_Click);
             // 
             // moveButton
             // 
@@ -296,7 +291,7 @@
             this.moveButton.Size = new System.Drawing.Size(50, 50);
             this.moveButton.TabIndex = 24;
             this.moveButton.UseVisualStyleBackColor = true;
-            this.moveButton.Click += new System.EventHandler(this.moveButton_Click);
+            this.moveButton.Click += new System.EventHandler(this.MoveButton_Click);
             // 
             // turnButton
             // 
@@ -307,7 +302,7 @@
             this.turnButton.Size = new System.Drawing.Size(50, 50);
             this.turnButton.TabIndex = 25;
             this.turnButton.UseVisualStyleBackColor = true;
-            this.turnButton.Click += new System.EventHandler(this.turnButton_Click);
+            this.turnButton.Click += new System.EventHandler(this.TurnButton_Click);
             // 
             // attachButton
             // 
@@ -318,7 +313,7 @@
             this.attachButton.Size = new System.Drawing.Size(50, 50);
             this.attachButton.TabIndex = 26;
             this.attachButton.UseVisualStyleBackColor = true;
-            this.attachButton.Click += new System.EventHandler(this.attachButton_Click);
+            this.attachButton.Click += new System.EventHandler(this.AttachButton_Click);
             // 
             // detachButton
             // 
@@ -329,7 +324,7 @@
             this.detachButton.Size = new System.Drawing.Size(50, 50);
             this.detachButton.TabIndex = 27;
             this.detachButton.UseVisualStyleBackColor = true;
-            this.detachButton.Click += new System.EventHandler(this.dettachButton_Click);
+            this.detachButton.Click += new System.EventHandler(this.DettachButton_Click);
             // 
             // attachCubesButton
             // 
@@ -340,7 +335,7 @@
             this.attachCubesButton.Size = new System.Drawing.Size(50, 50);
             this.attachCubesButton.TabIndex = 28;
             this.attachCubesButton.UseVisualStyleBackColor = true;
-            this.attachCubesButton.Click += new System.EventHandler(this.attachCubesButton_Click);
+            this.attachCubesButton.Click += new System.EventHandler(this.AttachCubesButton_Click);
             // 
             // detachCubesButton
             // 
@@ -351,7 +346,7 @@
             this.detachCubesButton.Size = new System.Drawing.Size(50, 50);
             this.detachCubesButton.TabIndex = 29;
             this.detachCubesButton.UseVisualStyleBackColor = true;
-            this.detachCubesButton.Click += new System.EventHandler(this.detachCubesButton_Click);
+            this.detachCubesButton.Click += new System.EventHandler(this.DetachCubesButton_Click);
             // 
             // clearButton
             // 
@@ -362,7 +357,7 @@
             this.clearButton.Size = new System.Drawing.Size(50, 50);
             this.clearButton.TabIndex = 30;
             this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            this.clearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // operationParametersText
             // 
@@ -405,9 +400,9 @@
             this.nextRoundValueText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.nextRoundValueText.Location = new System.Drawing.Point(848, 317);
             this.nextRoundValueText.Name = "nextRoundValueText";
-            this.nextRoundValueText.Size = new System.Drawing.Size(108, 25);
+            this.nextRoundValueText.Size = new System.Drawing.Size(184, 25);
             this.nextRoundValueText.TabIndex = 36;
-            this.nextRoundValueText.Text = "piros csapat";
+            this.nextRoundValueText.Text = "Zöld csapat 2. játékos";
             // 
             // nextRoundText
             // 
@@ -435,9 +430,9 @@
             this.successfulText.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.successfulText.Location = new System.Drawing.Point(848, 356);
             this.successfulText.Name = "successfulText";
-            this.successfulText.Size = new System.Drawing.Size(65, 25);
+            this.successfulText.Size = new System.Drawing.Size(128, 25);
             this.successfulText.TabIndex = 38;
-            this.successfulText.Text = "sikeres";
+            this.successfulText.Text = "Nincs művelet!";
             // 
             // coordinate2
             // 

@@ -43,6 +43,8 @@ partial class GameMenuForm
             this.twoGroupsOption = new System.Windows.Forms.RadioButton();
             this.groupChoice = new System.Windows.Forms.GroupBox();
             this.difficultyChoice = new System.Windows.Forms.GroupBox();
+            this.improvedRobotsCheckbox = new System.Windows.Forms.CheckBox();
+            this.improvedRobotsText = new System.Windows.Forms.Label();
             this.groupChoice.SuspendLayout();
             this.difficultyChoice.SuspendLayout();
             this.SuspendLayout();
@@ -80,13 +82,13 @@ partial class GameMenuForm
             // startButton
             // 
             this.startButton.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.startButton.Location = new System.Drawing.Point(136, 400);
+            this.startButton.Location = new System.Drawing.Point(114, 457);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(264, 85);
             this.startButton.TabIndex = 7;
             this.startButton.Text = "Játék indítása";
             this.startButton.UseVisualStyleBackColor = true;
-            this.startButton.Click += new System.EventHandler(this.startButton_Click);
+            this.startButton.Click += new System.EventHandler(this.StartButton_Click);
             // 
             // refereeModeText
             // 
@@ -128,7 +130,7 @@ partial class GameMenuForm
             this.easyDifficultyOption.TabIndex = 11;
             this.easyDifficultyOption.Text = "Könnyű";
             this.easyDifficultyOption.UseVisualStyleBackColor = true;
-            this.easyDifficultyOption.CheckedChanged += new System.EventHandler(this.easyDifficultyOption_CheckedChanged);
+            this.easyDifficultyOption.CheckedChanged += new System.EventHandler(this.EasyDifficultyOption_CheckedChanged);
             // 
             // mediumDifficultyOption
             // 
@@ -141,7 +143,7 @@ partial class GameMenuForm
             this.mediumDifficultyOption.TabStop = true;
             this.mediumDifficultyOption.Text = "Közepes";
             this.mediumDifficultyOption.UseVisualStyleBackColor = true;
-            this.mediumDifficultyOption.CheckedChanged += new System.EventHandler(this.mediumDifficultyOption_CheckedChanged);
+            this.mediumDifficultyOption.CheckedChanged += new System.EventHandler(this.MediumDifficultyOption_CheckedChanged);
             // 
             // hardDifficultyOption
             // 
@@ -152,7 +154,7 @@ partial class GameMenuForm
             this.hardDifficultyOption.TabIndex = 13;
             this.hardDifficultyOption.Text = "Nehéz";
             this.hardDifficultyOption.UseVisualStyleBackColor = true;
-            this.hardDifficultyOption.CheckedChanged += new System.EventHandler(this.hardDifficultyOption_CheckedChanged);
+            this.hardDifficultyOption.CheckedChanged += new System.EventHandler(this.HardDifficultyOption_CheckedChanged);
             // 
             // oneGroupOption
             // 
@@ -164,7 +166,7 @@ partial class GameMenuForm
             this.oneGroupOption.TabIndex = 14;
             this.oneGroupOption.TabStop = true;
             this.oneGroupOption.UseVisualStyleBackColor = true;
-            this.oneGroupOption.CheckedChanged += new System.EventHandler(this.oneGroupOption_CheckedChanged);
+            this.oneGroupOption.CheckedChanged += new System.EventHandler(this.OneGroupOption_CheckedChanged);
             // 
             // twoGroupsOption
             // 
@@ -174,7 +176,7 @@ partial class GameMenuForm
             this.twoGroupsOption.Size = new System.Drawing.Size(17, 16);
             this.twoGroupsOption.TabIndex = 15;
             this.twoGroupsOption.UseVisualStyleBackColor = true;
-            this.twoGroupsOption.CheckedChanged += new System.EventHandler(this.twoGroupsOption_CheckedChanged);
+            this.twoGroupsOption.CheckedChanged += new System.EventHandler(this.TwoGroupsOption_CheckedChanged);
             // 
             // groupChoice
             // 
@@ -197,11 +199,34 @@ partial class GameMenuForm
             this.difficultyChoice.TabIndex = 17;
             this.difficultyChoice.TabStop = false;
             // 
+            // improvedRobotsCheckbox
+            // 
+            this.improvedRobotsCheckbox.Checked = true;
+            this.improvedRobotsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.improvedRobotsCheckbox.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.improvedRobotsCheckbox.Location = new System.Drawing.Point(241, 387);
+            this.improvedRobotsCheckbox.Name = "improvedRobotsCheckbox";
+            this.improvedRobotsCheckbox.Size = new System.Drawing.Size(34, 47);
+            this.improvedRobotsCheckbox.TabIndex = 19;
+            this.improvedRobotsCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // improvedRobotsText
+            // 
+            this.improvedRobotsText.AutoSize = true;
+            this.improvedRobotsText.Font = new System.Drawing.Font("Segoe UI", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.improvedRobotsText.Location = new System.Drawing.Point(46, 393);
+            this.improvedRobotsText.Name = "improvedRobotsText";
+            this.improvedRobotsText.Size = new System.Drawing.Size(189, 30);
+            this.improvedRobotsText.TabIndex = 18;
+            this.improvedRobotsText.Text = "Okosabb robotok:";
+            // 
             // GameMenuForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(530, 513);
+            this.ClientSize = new System.Drawing.Size(530, 574);
+            this.Controls.Add(this.improvedRobotsCheckbox);
+            this.Controls.Add(this.improvedRobotsText);
             this.Controls.Add(this.difficultyChoice);
             this.Controls.Add(this.groupChoice);
             this.Controls.Add(this.twoGroupsOptionText);
@@ -242,4 +267,6 @@ partial class GameMenuForm
     private RadioButton twoGroupsOption;
     private GroupBox groupChoice;
     private GroupBox difficultyChoice;
+    private CheckBox improvedRobotsCheckbox;
+    private Label improvedRobotsText;
 }

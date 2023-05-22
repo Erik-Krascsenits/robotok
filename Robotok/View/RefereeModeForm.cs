@@ -1,14 +1,5 @@
 ﻿using ELTE.Robotok.View;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using ELTE.Robotok.Model;
 using Robotok.WinForms.Properties;
 
 namespace Robotok.WinForms.View
@@ -18,14 +9,16 @@ namespace Robotok.WinForms.View
         #region Fields
 
         private Button[,] _buttonGrid = null!; // gombrács (játékvezetői)
-
         private Panel[,] _verticalPanels = null!; // függőleges panelek (kapcsolódások megjelenítésére)
-
         private Panel[,] _horizontalPanels = null!; // vízszintes panelek
 
         #endregion
 
         #region Constructor
+
+        /// <summary>
+        /// Játékvezetői ablak példányosítása
+        /// </summary>
         public RefereeModeForm()
         {
             InitializeComponent();
@@ -35,23 +28,43 @@ namespace Robotok.WinForms.View
 
         #endregion
 
+        #region Closing events
+        
+        /// <summary>
+        /// Játékvezetői nézet bezárása
+        /// </summary>
+        private void RefereeModeForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                if (MessageBox.Show("A játékvezetői mód bezárásával a nézet végleg elérhetetlenné válik. Folytatja?", "Figyelmeztetés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+        #endregion
+
         #region Private methods
 
+        /// <summary>
+        /// Játékvezetői tábla kigenerálása 
+        /// </summary>
         private void GenerateRefereeTable()
         {
-            // Játékvezetői tábla
             _buttonGrid = new Button[GameMenuForm.instance._model.Table.SizeX, GameMenuForm.instance._model.Table.SizeY];
+
             for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
             {
                 for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
                 {
                     _buttonGrid[i, j] = new Button();
-                    _buttonGrid[i, j].Location = new Point(115 + 22 * j, 85 + 22 * i); // elhelyezkedés
-                    _buttonGrid[i, j].Size = new Size(22, 22); // méret
-                    _buttonGrid[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); // betűtípus
-                    _buttonGrid[i, j].Enabled = false; // kikapcsolt állapot
-                    _buttonGrid[i, j].FlatStyle = FlatStyle.Flat; // lapított stípus
-                    _buttonGrid[i, j].BackgroundImageLayout = ImageLayout.Stretch; // kép cella méretéhez igazítása
+                    _buttonGrid[i, j].Location = new Point(Convert.ToInt32(115 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * j, Convert.ToInt32(85 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * i); // elhelyezkedés
+                    _buttonGrid[i, j].Size = new Size(Convert.ToInt32(22 * GetScalingFactor()), Convert.ToInt32(22 * GetScalingFactor())); // méret
+                    _buttonGrid[i, j].Font = new Font(FontFamily.GenericSansSerif, 25, FontStyle.Bold); 
+                    _buttonGrid[i, j].Enabled = false;
+                    _buttonGrid[i, j].FlatStyle = FlatStyle.Flat; 
+                    _buttonGrid[i, j].BackgroundImageLayout = ImageLayout.Stretch; // kép mezőhöz méretezése
 
                     if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == -2)
                     {
@@ -64,6 +77,7 @@ namespace Robotok.WinForms.View
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 0)
                     {
                         _buttonGrid[i, j].BackColor = Color.Brown;
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall;
                     }
                     else if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) == 1)
                     {
@@ -114,63 +128,62 @@ namespace Robotok.WinForms.View
                         _buttonGrid[i, j].BackgroundImage = Resources.robot;
                     }
 
-
-                    Controls.Add(_buttonGrid[i, j]);
-                    // felvesszük az ablakra a gombot
+                    Controls.Add(_buttonGrid[i, j]); // felvesszük az ablakra a gombot
                 }
             }
         }
 
-        /*Panelek kigenerálására szolgáló függvény. A panelek célja, hogyha egy játékos csatlakozik egy kockához, jelenjen meg egy
-        vastag vonal a kapcsolódott két kocka között. Azért kellett ezt az alternatív megoldást alkalmazni, mivel a Windows Forms
-        nem támogatja egy gomb határainak egyenkénti módosítását. Az összes panelt kigenerálju előre, kapcsolódáskor csak a láthatóságát
-        állítjuk át igazra.
-        */
+        /// <summary>
+        /// Panelek kigenerálása a játékvezetői nézeten (a kockaösszekapcsolások megjelenítésére) 
+        /// </summary>
         private void GenerateRefereeAttachments()
         {
-
             _verticalPanels = new Panel[GameMenuForm.instance._model.Table.SizeX, GameMenuForm.instance._model.Table.SizeY];
             _horizontalPanels = new Panel[GameMenuForm.instance._model.Table.SizeX, GameMenuForm.instance._model.Table.SizeY];
 
-            for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
+            for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++) // a kockák pozíciójához viszonyítva két kocka határán jelenítjük meg a kapcsolatokat
             {
                 for (Int32 j = 0; j < GameMenuForm.instance._model.Table.SizeY; j++)
                 {
                     _verticalPanels[i, j] = new Panel();
-                    _verticalPanels[i, j].Location = new Point(113 + 22 * j, 85 + 22 * i); // elhelyezkedés
-                    _verticalPanels[i, j].Size = new Size(5, 22); // méret
-                    _verticalPanels[i, j].BackColor = Color.Red; // debuggolás miatt piros, hogy a határoknál ne olvadjon bele a fekete színbe, később át lehet írni
+                    _verticalPanels[i, j].Location = new Point(Convert.ToInt32(113 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * j, Convert.ToInt32(85 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * i); // elhelyezés két kocka határára
+                    _verticalPanels[i, j].Size = new Size(Convert.ToInt32(5 * GetScalingFactor()), Convert.ToInt32(22 * GetScalingFactor())); 
+                    _verticalPanels[i, j].BackColor = Color.Red; 
                     _verticalPanels[i, j].Visible = false;
 
                     _horizontalPanels[i, j] = new Panel();
-                    _horizontalPanels[i, j].Location = new Point(115 + 22 * j, 83 + 22 * i);
-                    _horizontalPanels[i, j].Size = new Size(22, 5);
+                    _horizontalPanels[i, j].Location = new Point(Convert.ToInt32(115 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * j, Convert.ToInt32(83 * GetScalingFactor()) + Convert.ToInt32(22 * GetScalingFactor()) * i);
+                    _horizontalPanels[i, j].Size = new Size(Convert.ToInt32(22 * GetScalingFactor()), Convert.ToInt32(5 * GetScalingFactor()));
                     _horizontalPanels[i, j].BackColor = Color.Red;
                     _horizontalPanels[i, j].Visible = false;
 
-                    Controls.Add(_verticalPanels[i, j]); // Felvesszük őket az ablakra
+                    Controls.Add(_verticalPanels[i, j]); // felvesszük őket az ablakra
                     Controls.Add(_horizontalPanels[i, j]);
 
-                    _verticalPanels[i, j].BringToFront(); // Előtérbe kell hozni a paneleket, hogy a pálya gombjai ne takarják el
+                    _verticalPanels[i, j].BringToFront(); // előtérbe kell hozni a paneleket, hogy a pálya gombjai ne takarják el
                     _horizontalPanels[i, j].BringToFront();
-
                 }
             }
         }
 
-        private void RefereeModeForm_FormClosing(object sender, FormClosingEventArgs e)
+        /// <summary>
+        /// Kiszámít egy relatív értéket, hogy milyen arányú felbontásváltozás történt az 1920*1080 125%-os nagyítású nézethez képest
+        /// </summary>
+        /// <returns>Relatív felbontáskülönbség</returns>
+        private float GetScalingFactor()
         {
-            if (e.CloseReason == CloseReason.UserClosing)
+            using (Graphics graphics = CreateGraphics())
             {
-                if (MessageBox.Show("A játékvezetői mód bezárásával a nézet végleg elérhetetlenné válik. Folytatja?", "Figyelmeztetés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-                {
-                    e.Cancel = true;
-                }
+                return graphics.DpiX / 120f;
             }
         }
         #endregion
 
         #region Public methods
+
+        /// <summary>
+        /// Játékvezetői tábla frissítése
+        /// </summary>
         public void RefreshRefereeView()
         {
             for (Int32 i = 0; i < GameMenuForm.instance._model.Table.SizeX; i++)
@@ -242,9 +255,8 @@ namespace Robotok.WinForms.View
                         _buttonGrid[i, j].BackgroundImage = Resources.robot;
                         RotateRefereeImage(i, j);
                     }
-
-                    // Kapcsolatok megjelenítésének frissítése
-                    if (GameMenuForm.instance._model.Table.GetAttachmentEast(i, j))
+      
+                    if (GameMenuForm.instance._model.Table.GetAttachmentEast(i, j))  // kapcsolatok megjelenítésének frissítése
                     {
                         _verticalPanels[i, j + 1].Visible = true;
                     }
@@ -275,12 +287,14 @@ namespace Robotok.WinForms.View
             }
         }
 
-        // Robotok képeinek forgatása 
-        public void RotateRefereeImage(int i, int j)
+        /// <summary>
+        /// Robotok képeinek forgatása a játékvezetői nézeten
+        /// </summary>
+        public void RotateRefereeImage(Int32 i, Int32 j)
         {
-            if (GameMenuForm.instance._model.Table.GetFaceNorth(i, j)) // Megnézzük, hogy a robot melyik irányba néz          
+            if (GameMenuForm.instance._model.Table.GetFaceNorth(i, j)) // megnézzük, hogy a robot melyik irányba néz, és ez alapján forgatjuk a robot képét         
             {
-                _buttonGrid[i , j].BackgroundImage.RotateFlip(RotateFlipType.Rotate180FlipX);    // Abba az irányba forgatjuk a képet, amerre a robot néz
+                _buttonGrid[i , j].BackgroundImage.RotateFlip(RotateFlipType.Rotate180FlipX);    
             }
             else if (GameMenuForm.instance._model.Table.GetFaceWest(i, j))
             {
@@ -292,51 +306,117 @@ namespace Robotok.WinForms.View
             }
         }
 
-        public void RefreshRefereeCleaningOperationImage(int i, int j)
+        /// <summary>
+        /// Hátralévő tisztítási műveletek képének frissítése
+        /// </summary>
+        public void RefreshRefereeCleaningOperationImage(Int32 i, Int32 j)
         {
-            if(GameMenuForm.instance._model.GameDifficulty  == ELTE.Robotok.Model.GameDifficulty.Easy)
+            if(GameMenuForm.instance._model.GameDifficulty  == GameDifficulty.Easy)
             {
                 if(GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.crack3;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_3;
+                    }
                 }
                 else
                 {
-                    _buttonGrid[i, j].BackgroundImage = null;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = null;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall;
+                    }
                 }
             }
-            else if(GameMenuForm.instance._model.GameDifficulty == ELTE.Robotok.Model.GameDifficulty.Medium)
+            else if(GameMenuForm.instance._model.GameDifficulty == GameDifficulty.Medium)
             {
                 if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 2)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack2;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack2;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_2;
+                    }
                 }
                 else if(GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_3;
+                    }
                 }
                 else
                 {
-                    _buttonGrid[i, j].BackgroundImage = null;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = null;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall;
+                    }
                 }
             }
             else
             {
                 if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 3)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack1;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack1;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_1;
+                    }
                 }
                 else if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 2)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack2;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack2;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_2;
+                    }
                 }
                 else if (GameMenuForm.instance._model.Table.GetFieldRemainingCleaningOperations(i, j) == 1)
                 {
-                    _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Properties.Resources.crack3;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall_cracked_3;
+                    }
                 }
                 else
                 {
-                    _buttonGrid[i, j].BackgroundImage = null;
+                    if (GameMenuForm.instance._model.Table.GetFieldValue(i, j) != 0)
+                    {
+                        _buttonGrid[i, j].BackgroundImage = null;
+                    }
+                    else
+                    {
+                        _buttonGrid[i, j].BackgroundImage = Resources.brick_wall;
+                    }
                 }
             }
         }
