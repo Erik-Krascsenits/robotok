@@ -1399,11 +1399,6 @@ namespace Robotok.TestCases
 
         #endregion
 
-        #region Testing View
-
-
-
-        #endregion
 
         #endregion
 
