@@ -28,6 +28,23 @@ namespace Robotok.WinForms.View
 
         #endregion
 
+        #region Closing events
+        
+        /// <summary>
+        /// Játékvezetői nézet bezárása
+        /// </summary>
+        private void RefereeModeForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                if (MessageBox.Show("A játékvezetői mód bezárásával a nézet végleg elérhetetlenné válik. Folytatja?", "Figyelmeztetés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+        #endregion
+
         #region Private methods
 
         /// <summary>
@@ -145,20 +162,6 @@ namespace Robotok.WinForms.View
 
                     _verticalPanels[i, j].BringToFront(); // előtérbe kell hozni a paneleket, hogy a pálya gombjai ne takarják el
                     _horizontalPanels[i, j].BringToFront();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Játékvezetői nézet bezárása
-        /// </summary>
-        private void RefereeModeForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                if (MessageBox.Show("A játékvezetői mód bezárásával a nézet végleg elérhetetlenné válik. Folytatja?", "Figyelmeztetés", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-                {
-                    e.Cancel = true;
                 }
             }
         }

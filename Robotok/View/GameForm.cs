@@ -14,7 +14,7 @@ namespace ELTE.Robotok.View
         private Int32 _difficulty; // játék nehézsége
         private Int32 _teams; // csapatok száma
         private Int32 _activePlayer; // játékos azonosítója
-        private string? _successText; // a végrehajtott művelet sikeressége
+        private String? _successText; // a végrehajtott művelet sikeressége
         private Boolean _operationDone; // végzett-e valamilyen műveletet a játékos
         private Int32 _activeCoordinateBox; // 1 - első összekapcsolandó kocka koorinátáinak doboza, 2 - második összekapcsolandó kocka koordinátáinak doboza
         private Panel[,] _verticalPanels = null!; // függőleges panelek (kockák közötti kapcsolódások megjelenítésére)
@@ -379,7 +379,6 @@ namespace ELTE.Robotok.View
             GameMenuForm.instance._model.Wait(_activePlayer, 1);
             DisableButtons();
         }
-
         #endregion
 
         #region Private methods

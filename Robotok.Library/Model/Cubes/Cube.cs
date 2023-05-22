@@ -9,7 +9,7 @@
         public Boolean southAttachment;
         public Boolean eastAttachment;
         public Boolean westAttachment;
-        public string direction;
+        public String direction;
         public Int32 remainingCleaningOperations;
         public Cube(Int32 x, Int32 y, Int32 value, Boolean north, Boolean south, Boolean east, Boolean west, string direction, Int32 remainingCleaningOperations) : base(x, y, value)
         {
