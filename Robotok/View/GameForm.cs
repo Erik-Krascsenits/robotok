@@ -379,6 +379,22 @@ namespace ELTE.Robotok.View
             GameMenuForm.instance._model.Wait(_activePlayer, 1);
             DisableButtons();
         }
+
+        /// <summary>
+        /// Kommunikációs ablak szigorításainak eseménykezelője
+        /// </summary>
+        private void communicationWindow_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            char inputChar = e.KeyChar;
+            // Ellenőrizzük, hogy az érkező karakter szám, kötőjel vagy a, b, c, d betű
+            if (!char.IsDigit(inputChar) && inputChar != '-' && inputChar != 'a' && inputChar != 'b' && inputChar != 'c' && inputChar != 'd' && inputChar != '\b' && inputChar != ' ')
+            {
+                // Ha az érkező karakter nem megfelelő, töröljük az eseményt
+                e.Handled = true;
+            }
+
+        }
+
         #endregion
 
         #region Private methods

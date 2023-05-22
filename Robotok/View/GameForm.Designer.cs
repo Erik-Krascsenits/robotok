@@ -259,6 +259,7 @@
             this.communicationWindow.Name = "communicationWindow";
             this.communicationWindow.Size = new System.Drawing.Size(383, 96);
             this.communicationWindow.TabIndex = 21;
+            this.communicationWindow.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.communicationWindow_KeyPress);
             // 
             // availableOperationsText
             // 
