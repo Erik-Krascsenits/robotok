@@ -1,7 +1,7 @@
 # Robotok
 
 ## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Robots is a 2D game where you have to lay out the shapes that appear on the notice board. Can be played by 2-4 players. The team that scores more points wins.
 
 ## Contributors
 Dávid Benei, Erik Krascsenits, Viktor Horváth
