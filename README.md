@@ -1,7 +1,11 @@
 # Robotok
 
 ## Description
-Robotok is a 2D game where you have to lay out the shapes that appear on the notice board. Can be played by 2-4 players. The team that scores more points wins.
+Robotok is a 2D game where you have to put together the shapes that appear on the notice board. Can be played by 2-4 players. The team that scores more points wins.
+
+## Screenshots from the game
+
+![alt text](https://github.com/Erik-Krascsenits/robotok/blob/master/1.png)
 
 ## Contributors
 Dávid Benei, Erik Krascsenits, Viktor Horváth
