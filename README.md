@@ -5,7 +5,7 @@ Robotok is a 2D game where you have to put together the shapes that appear on th
 
 ## Screenshots from the game
 
-![Player view][(https://github.com/Erik-Krascsenits/robotok/blob/master/1.png](https://raw.githubusercontent.com/Erik-Krascsenits/robotok/master/1.png)https://raw.githubusercontent.com/Erik-Krascsenits/robotok/master/1.png)
+![Player view](https://github.com/Erik-Krascsenits/robotok/blob/master/1.png)
 
 
 ## Contributors
